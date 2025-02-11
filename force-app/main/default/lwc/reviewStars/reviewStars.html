@@ -1,0 +1,14 @@
+<template>
+  <div class="rating-container">
+    <template for:each={stars} for:item="star">
+      <lightning-icon
+        key={star.index}
+        icon-name={star.iconName}
+        size="x-small"
+        class="star-icon"
+        alternative-text="star"
+      ></lightning-icon>
+    </template>
+    <span class="slds-m-left_xx-small">({numberOfReviews})</span>
+  </div>
+</template>

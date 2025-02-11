@@ -1,0 +1,43 @@
+<template>
+  <lightning-card icon-name="custom:custom85">
+    <template lwc:if={store.data}>
+      <span slot="title">{storeName}</span>
+      <lightning-button-icon
+        icon-name="utility:expand_alt"
+        slot="actions"
+        onclick={handleNavigateToRecord}
+      >
+        <label>Navigate to Record</label>
+      </lightning-button-icon>
+      <div class="slds-var-m-horizontal_medium">
+        <img
+          src={pictureURL}
+          alt="Storefront picture"
+          class="slds-var-m-bottom_x-small"
+        />
+        <lightning-record-form
+          object-api-name="Storefront__c"
+          record-id={storeId}
+          fields={storeFormFields}
+          columns="2"
+        >
+        </lightning-record-form>
+        <c-review-stars
+          review-score={reviewScore}
+          number-of-reviews={numberOfReviews}
+        ></c-review-stars>
+      </div>
+    </template>
+    <template lwc:if={hasNoStoreId}>
+      <c-error-panel
+        friendly-message="Select a storefront to see details"
+      ></c-error-panel>
+    </template>
+    <template lwc:if={store.error}>
+      <c-error-panel
+        friendly-message="Error retrieving data"
+        errors={store.error}
+      ></c-error-panel>
+    </template>
+  </lightning-card>
+</template>
