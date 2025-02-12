@@ -13,8 +13,13 @@
         <img
           src={pictureURL}
           alt="Storefront picture"
-          class="slds-var-m-bottom_x-small"
+          class="slds-var-m-bottom_small"
         />
+        <c-review-stars
+          review-score={reviewScore}
+          number-of-reviews={numberOfReviews}
+          class="slds-var-m-bottom_small"
+        ></c-review-stars>
         <lightning-record-form
           object-api-name="Storefront__c"
           record-id={storeId}
@@ -22,10 +27,6 @@
           columns="2"
         >
         </lightning-record-form>
-        <c-review-stars
-          review-score={reviewScore}
-          number-of-reviews={numberOfReviews}
-        ></c-review-stars>
       </div>
     </template>
     <template lwc:if={hasNoStoreId}>

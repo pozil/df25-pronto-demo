@@ -1,6 +1,11 @@
 import { LightningElement, api } from "lwc";
 
 export default class ReviewStars extends LightningElement {
+  _reviewScore = 0;
+  stars = [];
+
+  @api isCompact;
+
   @api
   set reviewScore(value) {
     this._reviewScore = value;
@@ -19,6 +24,15 @@ export default class ReviewStars extends LightningElement {
 
   @api numberOfReviews;
 
-  _reviewScore = 0;
-  stars = [];
+  get numberOfReviewsLabel() {
+    if (this.isCompact) {
+      return this.numberOfReviews;
+    }
+    if (!this.numberOfReviews) {
+      return "No reviews";
+    }
+    return this.numberOfReviews === 1
+      ? "1 review"
+      : `${this.numberOfReviews} reviews`;
+  }
 }

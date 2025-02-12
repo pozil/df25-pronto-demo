@@ -8,6 +8,7 @@
           <strong>{store.Name} • </strong>{store.Address__City__s}
         </h1>
         <c-review-stars
+          is-compact
           review-score={store.Average_Review_Score__c}
           number-of-reviews={store.Total_Reviews__c}
         ></c-review-stars>
