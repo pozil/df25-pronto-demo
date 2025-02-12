@@ -10,12 +10,12 @@
         <fieldName>type</fieldName>
     </lightningMessageFields>
     <lightningMessageFields>
-        <description>Cuisine</description>
-        <fieldName>cuisine</fieldName>
-    </lightningMessageFields>
-    <lightningMessageFields>
         <description>Minimum Review Score</description>
         <fieldName>minReviewScore</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Cuisine</description>
+        <fieldName>cuisine</fieldName>
     </lightningMessageFields>
     <masterLabel>Filters Change Message Channel</masterLabel>
 </LightningMessageChannel>
