@@ -66,6 +66,10 @@
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <tabSettings>
+        <tab>Storefront_Explorer</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
         <tab>Storefront__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
