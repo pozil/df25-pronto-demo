@@ -91,7 +91,7 @@ export default class StoreFilter extends LightningElement {
         searchKey: this.searchKey,
         type: this.type,
         cuisine: this.cuisine,
-        minReviewScore: this.minReviewScore
+        minReviewScore: parseInt(this.minReviewScore, 10)
       };
       console.log("Searching: ", filters);
       publish(this.messageContext, FILTERS_CHANGE_MC, filters);

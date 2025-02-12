@@ -40,7 +40,7 @@ public with sharing class StoreController {
       conditions.add('Cuisine__c = :cuisine');
     }
     if (minReviewScore != null) {
-      conditions.add('Total_Score__c >= :minReviewScore');
+      conditions.add('Average_Review_Score__c >= :minReviewScore');
     }
 
     // Count records
