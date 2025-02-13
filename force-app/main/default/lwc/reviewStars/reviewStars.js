@@ -6,7 +6,6 @@ export default class ReviewStars extends LightningElement {
 
   @api
   set reviewScore(value) {
-    console.log('SCORE: ', value);
     this._reviewScore = value;
     const stars = [];
     for (let i = 0; i < 5; i++) {
@@ -15,7 +14,6 @@ export default class ReviewStars extends LightningElement {
         iconName: i < value ? "utility:favorite" : "utility:favorite_alt"
       });
     }
-    console.log(stars);
     this.stars = stars;
   }
   get reviewScore() {
