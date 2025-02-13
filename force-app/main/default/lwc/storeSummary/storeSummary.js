@@ -7,6 +7,8 @@ import {
   MessageContext
 } from "lightning/messageService";
 import STORE_SELECTED_MC from "@salesforce/messageChannel/StoreSelected__c";
+
+// Storefront fields
 import NAME_FIELD from "@salesforce/schema/Storefront__c.Name";
 import TYPE_FIELD from "@salesforce/schema/Storefront__c.Type__c";
 import CUISINE_FIELD from "@salesforce/schema/Storefront__c.Cuisine__c";
