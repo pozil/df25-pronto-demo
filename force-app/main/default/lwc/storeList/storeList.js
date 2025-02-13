@@ -53,6 +53,7 @@ export default class StoreList extends LightningElement {
     this.type = filters.type;
     this.cuisine = filters.cuisine;
     this.minReviewScore = filters.minReviewScore;
+    this.pageNumber = 1;
   }
 
   handlePreviousPage() {
