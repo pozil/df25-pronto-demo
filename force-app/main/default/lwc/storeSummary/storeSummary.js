@@ -7,6 +7,7 @@ import {
   MessageContext
 } from "lightning/messageService";
 import STORE_SELECTED_MC from "@salesforce/messageChannel/StoreSelected__c";
+import getStoreOpeningHours from "@salesforce/apex/StoreController.getStoreOpeningHours";
 
 // Storefront fields
 import NAME_FIELD from "@salesforce/schema/Storefront__c.Name";
@@ -31,6 +32,11 @@ export default class StoreSummary extends NavigationMixin(LightningElement) {
   })
   store;
 
+  @wire(getStoreOpeningHours, {
+    storeId: "$storeId"
+  })
+  openingHours;
+
   @api
   get recordId() {
     return this.storeId;
@@ -38,26 +44,6 @@ export default class StoreSummary extends NavigationMixin(LightningElement) {
 
   set recordId(storeId) {
     this.storeId = storeId;
-  }
-
-  get hasNoStoreId() {
-    return this.storeId === undefined;
-  }
-
-  get storeName() {
-    return getFieldValue(this.store.data, NAME_FIELD);
-  }
-
-  get pictureURL() {
-    return getFieldValue(this.store.data, PICTURE_FIELD);
-  }
-
-  get reviewScore() {
-    return getFieldValue(this.store.data, SCORE_FIELD);
-  }
-
-  get numberOfReviews() {
-    return getFieldValue(this.store.data, TOTAL_REVIEWS_FIELD);
   }
 
   connectedCallback() {
@@ -88,5 +74,29 @@ export default class StoreSummary extends NavigationMixin(LightningElement) {
         actionName: "view"
       }
     });
+  }
+
+  get hasOpeningHours() {
+    return this.openingHours.data && this.openingHours.data.length > 0;
+  }
+
+  get hasNoStoreId() {
+    return this.storeId === undefined;
+  }
+
+  get storeName() {
+    return getFieldValue(this.store.data, NAME_FIELD);
+  }
+
+  get pictureURL() {
+    return getFieldValue(this.store.data, PICTURE_FIELD);
+  }
+
+  get reviewScore() {
+    return getFieldValue(this.store.data, SCORE_FIELD);
+  }
+
+  get numberOfReviews() {
+    return getFieldValue(this.store.data, TOTAL_REVIEWS_FIELD);
   }
 }

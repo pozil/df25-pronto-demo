@@ -71,4 +71,32 @@ public with sharing class StoreController {
     result.records = stores;
     return result;
   }
+
+  /**
+   * Retrieves storefront's opening hours
+   * @param storefrontId The ID of the store to get opening hours for
+   * @return List of Storefront_Hours_of_Operation__c records containing day, opening time, and closing time
+   */
+  @AuraEnabled(cacheable=true)
+  public static List<Storefront_Hours_of_Operation__c> getStoreOpeningHours(
+    Id storeId
+  ) {
+    if (String.isBlank(storeId)) {
+      throw new AuraHandledException('Storefront ID is required');
+    }
+
+    try {
+      return [
+        SELECT Day_of_Week__c, Opening_Time__c, Closing_Time__c
+        FROM Storefront_Hours_of_Operation__c
+        WHERE Storefront__c = :storeId
+        WITH USER_MODE
+        ORDER BY Day_of_Week__c
+      ];
+    } catch (Exception e) {
+      throw new AuraHandledException(
+        'Error retrieving store opening hours: ' + e.getMessage()
+      );
+    }
+  }
 }

@@ -25,10 +25,24 @@
           record-id={storeId}
           fields={storeFormFields}
           columns="2"
-          class="slds-var-m-bottom_small"
+          class="slds-var-m-bottom_medium"
         >
         </lightning-record-form>
-        <!-- TODO: add reviews here -->
+        <!-- Opening hours -->
+        <template lwc:if={hasOpeningHours}>
+          <h3 class="slds-text-heading_small slds-var-m-bottom_small">
+            Opening hours
+          </h3>
+          <table class="slds-var-m-horizontal_x-small">
+            <template for:each={openingHours.data} for:item="openingHour">
+              <tr key={openingHour.Day_of_Week__c}>
+                <td>{openingHour.Day_of_Week__c}</td>
+                <td>{openingHour.Opening_Time__c}</td>
+                <td>{openingHour.Closing_Time__c}</td>
+              </tr>
+            </template>
+          </table>
+        </template>
       </div>
     </template>
     <template lwc:if={hasNoStoreId}>
