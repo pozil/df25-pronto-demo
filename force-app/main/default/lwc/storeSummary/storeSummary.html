@@ -30,10 +30,10 @@
         </lightning-record-form>
         <!-- Opening hours -->
         <template lwc:if={hasOpeningHours}>
-          <h3 class="slds-text-heading_small slds-var-m-bottom_small">
+          <h3 class="slds-text-heading_medium slds-var-m-bottom_small">
             Opening hours
           </h3>
-          <table class="slds-var-m-horizontal_x-small">
+          <table class="slds-var-m-horizontal_small">
             <template for:each={openingHours.data} for:item="openingHour">
               <tr key={openingHour.Day_of_Week__c}>
                 <td>{openingHour.Day_of_Week__c}</td>
