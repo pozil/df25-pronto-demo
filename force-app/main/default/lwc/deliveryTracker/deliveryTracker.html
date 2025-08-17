@@ -1,0 +1,11 @@
+<template>
+  <lightning-card title={title} icon-name="standard:work_order_item">
+    <lightning-button-icon icon-name="utility:expand_alt" slot="actions">
+      <label>Navigate to Record</label>
+    </lightning-button-icon>
+    <div class="slds-var-m-bottom_small slds-var-m-horizontal_x-small">
+      Estimated delivery time: {deliveryTime}
+    </div>
+    <div class="map" lwc:dom="manual"></div>
+  </lightning-card>
+</template>
