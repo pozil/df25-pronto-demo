@@ -215,6 +215,10 @@
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
+                    <name>conditionalFormatRuleset</name>
+                    <value>Rating</value>
+                </fieldInstanceProperties>
+                <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>readonly</value>
                 </fieldInstanceProperties>

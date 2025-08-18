@@ -1,24 +1,26 @@
 import { LightningElement, api } from "lwc";
 
 export default class ReviewStars extends LightningElement {
-  _reviewScore = 0;
-  stars = [];
+  @api reviewScore;
+  @api numberOfReviews;
+  @api showScore;
 
-  @api
-  set reviewScore(value) {
-    this._reviewScore = value;
+  get stars() {
     const stars = [];
+    const reviewScore =
+      this.reviewScore === undefined ? 0 : Math.round(this.reviewScore);
     for (let i = 0; i < 5; i++) {
       stars.push({
         index: i,
-        iconName: i < value ? "utility:favorite" : "utility:favorite_alt"
+        iconName: i < reviewScore ? "utility:favorite" : "utility:favorite_alt"
       });
     }
-    this.stars = stars;
-  }
-  get reviewScore() {
-    return this._reviewScore;
+    return stars;
   }
 
-  @api numberOfReviews;
+  get label() {
+    if (this.showScore)
+      return `Score of ${this.reviewScore} based on ${this.numberOfReviews} reviews`;
+    return `(${this.numberOfReviews})`;
+  }
 }
