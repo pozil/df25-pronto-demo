@@ -1,9 +1,12 @@
 import { LightningElement, api } from "lwc";
 
+const DISPLAY_MODE_COMPACT = "compact";
+const DISPLAY_MODE_FULL = "full";
+
 export default class ReviewStars extends LightningElement {
   @api reviewScore;
   @api numberOfReviews;
-  @api showScore;
+  @api displayMode;
 
   get stars() {
     const stars = [];
@@ -18,9 +21,11 @@ export default class ReviewStars extends LightningElement {
     return stars;
   }
 
-  get label() {
-    if (this.showScore)
-      return `Score of ${this.reviewScore} based on ${this.numberOfReviews} reviews`;
-    return `(${this.numberOfReviews})`;
+  get isCompactDisplay() {
+    return this.displayMode === DISPLAY_MODE_COMPACT;
+  }
+
+  get isFullDisplay() {
+    return this.displayMode === DISPLAY_MODE_FULL;
   }
 }
