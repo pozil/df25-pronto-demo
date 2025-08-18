@@ -565,6 +565,12 @@
                     <name>relatedListFieldAliases</name>
                     <valueList>
                         <valueListItems>
+                            <value>NAME</value>
+                        </valueListItems>
+                        <valueListItems>
+                            <value>Order_Date__c</value>
+                        </valueListItems>
+                        <valueListItems>
                             <value>Customer__c</value>
                         </valueListItems>
                         <valueListItems>
@@ -572,9 +578,6 @@
                         </valueListItems>
                         <valueListItems>
                             <value>Rating__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>NAME</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
@@ -592,7 +595,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>sortFieldOrder</name>
-                    <value>Default</value>
+                    <value>Descending</value>
                 </componentInstanceProperties>
                 <componentName>lst:dynamicRelatedList</componentName>
                 <identifier>lst_dynamicRelatedList3</identifier>

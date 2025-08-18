@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier
+  >NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_5</activeVersionIdentifier>
+    <description>Summarizes customer reviews</description>
+    <developerName>Customer_Review_Summary</developerName>
+    <masterLabel>Customer Review Summary</masterLabel>
+    <relatedEntity>Storefront__c</relatedEntity>
+    <relatedField>Storefront__c.Review_Summary__c</relatedField>
+    <templateVersions>
+        <content>These are the customer reviews for this storefront:
+{!$RelatedList:Storefront__c.Reviews__r.Records}
+
+Summarize the reviews and output a report with the following structure (keep the titles):
+```
+**📊 Trend**
+&lt;trend description goes here&gt;
+
+---
+
+**😊 Positive Feedback**
+
+**😐 Mixed Feedback**
+
+**☹️ Negative Feedback**
+```
+
+Use rich text for the response format.
+
+For trend:
+Indicate if there&apos;s an positive or negative trend over time based on the Order Dates.
+- If no trend is found say &quot;None found.&quot;
+- If trend is positive, say &quot;🟢 Postitive trend: &quot; followed by what may be the cause. Indicate which period stands out.
+- If trend is negative, say &quot;🔴 Negative trend: &quot; followed by what may be the cause.  Indicate which period stands out.
+
+For feedback items:
+- Keep the responses short as a list of keywords.
+- Don&apos;t go in details over individual reviews.
+
+</content>
+        <inputs>
+            <apiName>RelatedEntity</apiName>
+            <definition>SOBJECT://Storefront__c</definition>
+            <referenceName>Input:Storefront__c</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <templateDataProviders>
+            <definition>invocable://getRelatedList</definition>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>true</isRequired>
+                <parameterName>parentRecordId</parameterName>
+                <valueExpression>{!$Input:Storefront__c.Id}</valueExpression>
+            </parameters>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>true</isRequired>
+                <parameterName>relatedListName</parameterName>
+                <valueExpression>Reviews__r</valueExpression>
+            </parameters>
+            <referenceName
+      >RelatedList:Storefront__c.Reviews__r.Records</referenceName>
+        </templateDataProviders>
+        <versionIdentifier
+    >NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_5</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__fieldCompletion</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

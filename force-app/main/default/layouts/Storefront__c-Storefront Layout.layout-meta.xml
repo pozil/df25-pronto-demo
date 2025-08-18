@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
     <layoutSections>
         <customLabel>false</customLabel>
         <detailHeading>false</detailHeading>
@@ -94,10 +95,8 @@
     <relatedLists>
         <fields>NAME</fields>
         <fields>Comments__c</fields>
-        <fields>Customer__c</fields>
         <fields>Order_Date__c</fields>
         <fields>Rating__c</fields>
-        <fields>Status__c</fields>
         <relatedList>Review__c.Storefront__c</relatedList>
         <sortField>Order_Date__c</sortField>
         <sortOrder>Asc</sortOrder>
