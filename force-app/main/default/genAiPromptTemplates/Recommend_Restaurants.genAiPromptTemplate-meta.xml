@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description
+  >Recommend restaurants based on customer&apos;s order history</description>
+    <developerName>Recommend_Restaurants</developerName>
+    <masterLabel>Recommend Restaurants</masterLabel>
+    <templateVersions>
+        <content>These are the past orders of the customer:
+{!$Apex:GetCustomerOrderHistory.Prompt}
+
+These are trendy dishes according to the web:
+{!$EinsteinSearch:sfdc_ai__WebRetrievalAction.results}
+
+Based on these information suggest some restaurants for a future order.
+</content>
+        <inputs>
+            <apiName>customerId</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>customerId</masterLabel>
+            <referenceName>Input:customerId</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Draft</status>
+        <templateDataProviders>
+            <definition>apex://GetCustomerOrderHistory</definition>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>true</isRequired>
+                <parameterName>customerId</parameterName>
+                <valueExpression>{!$Input:customerId}</valueExpression>
+            </parameters>
+            <referenceName>Apex:GetCustomerOrderHistory</referenceName>
+        </templateDataProviders>
+        <templateDataProviders>
+            <definition
+      >invocable://getEinsteinRetrieverResults/sfdc_ai__WebRetrievalAction</definition>
+            <label>Web search retriever</label>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>true</isRequired>
+                <parameterName>searchText</parameterName>
+                <valueExpression
+        >Search for 5 trendy dish names</valueExpression>
+            </parameters>
+            <referenceName
+      >EinsteinSearch:sfdc_ai__WebRetrievalAction</referenceName>
+        </templateDataProviders>
+        <versionIdentifier
+    >NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>
