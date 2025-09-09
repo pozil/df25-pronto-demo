@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
     <activeVersionIdentifier
-  >NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_3</activeVersionIdentifier>
+  >NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_5</activeVersionIdentifier>
     <description
   >Parses the PDF attached to a storefront and turn it into structured menu data.</description>
     <developerName>Extract_Menu</developerName>
@@ -10,9 +10,17 @@
         <content>The attached files hold a menu for this restaurant:
 {!$RelatedList:storefront.CombinedAttachments.Records}
 
-Parse the files and output a single JSON array holding the list of menu items following the structure of the Menu_Item__c object. Use the field API names as object keys: Name, Description__c, Price__c, Menu_Category__c
+Parse the files and output a single JSON array holding the list of menu items following the structure of the Menu_Item__c object like this:
 
-Do not output extra text, just the JSON. Do not include formatting tags in the response.
+[{
+&quot;Name&quot;: &quot;&quot;,
+&quot;Description__c&quot;: &quot;&quot;,
+&quot;Price__c&quot;: 0,
+&quot;Menu_Category__c&quot;: &quot;&quot;,
+}]
+
+All fields are strings except for Price__c which is a number.
+Directly output the array as above.
 </content>
         <inputs>
             <apiName>storefront</apiName>
@@ -22,6 +30,7 @@ Do not output extra text, just the JSON. Do not include formatting tags in the r
             <required>true</required>
         </inputs>
         <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <responseFormat>JSON</responseFormat>
         <status>Published</status>
         <templateDataProviders>
             <definition>invocable://getRelatedList</definition>
@@ -41,7 +50,7 @@ Do not output extra text, just the JSON. Do not include formatting tags in the r
       >RelatedList:storefront.CombinedAttachments.Records</referenceName>
         </templateDataProviders>
         <versionIdentifier
-    >NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_3</versionIdentifier>
+    >NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_5</versionIdentifier>
     </templateVersions>
     <type>einstein_gpt__flex</type>
     <visibility>Global</visibility>
