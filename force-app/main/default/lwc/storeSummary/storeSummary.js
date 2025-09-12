@@ -8,6 +8,7 @@ import {
 } from "lightning/messageService";
 import STORE_SELECTED_MC from "@salesforce/messageChannel/StoreSelected__c";
 import getStoreOpeningHours from "@salesforce/apex/StoreController.getStoreOpeningHours";
+import getStoreMenus from "@salesforce/apex/StoreController.getStoreMenus";
 
 // Storefront fields
 import NAME_FIELD from "@salesforce/schema/Storefront__c.Name";
@@ -36,6 +37,11 @@ export default class StoreSummary extends NavigationMixin(LightningElement) {
     storeId: "$storeId"
   })
   openingHours;
+
+  @wire(getStoreMenus, {
+    storeId: "$storeId"
+  })
+  menus;
 
   @api
   get recordId() {
@@ -76,8 +82,24 @@ export default class StoreSummary extends NavigationMixin(LightningElement) {
     });
   }
 
+  handleMenuClick(event) {
+    const menuId = event.currentTarget.dataset.menuId;
+    this[NavigationMixin.Navigate]({
+      type: "standard__recordPage",
+      attributes: {
+        recordId: menuId,
+        objectApiName: "Menu__c",
+        actionName: "view"
+      }
+    });
+  }
+
   get hasOpeningHours() {
     return this.openingHours.data && this.openingHours.data.length > 0;
+  }
+
+  get hasMenus() {
+    return this.menus.data && this.menus.data.length > 0;
   }
 
   get hasNoStoreId() {

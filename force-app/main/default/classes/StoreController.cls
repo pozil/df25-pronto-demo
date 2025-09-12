@@ -99,4 +99,30 @@ public with sharing class StoreController {
       );
     }
   }
+
+  /**
+   * Retrieves storefront's menus
+   * @param storeId The ID of the store to get menus for
+   * @return List of Menu__c records containing menu details
+   */
+  @AuraEnabled(cacheable=true)
+  public static List<Menu__c> getStoreMenus(Id storeId) {
+    if (String.isBlank(storeId)) {
+      throw new AuraHandledException('Storefront ID is required');
+    }
+
+    try {
+      return [
+        SELECT Id, Menu_Display_Name__c, Description__c
+        FROM Menu__c
+        WHERE Storefront__c = :storeId AND Active__c = TRUE
+        WITH USER_MODE
+        ORDER BY Menu_Display_Name__c
+      ];
+    } catch (Exception e) {
+      throw new AuraHandledException(
+        'Error retrieving store menus: ' + e.getMessage()
+      );
+    }
+  }
 }
