@@ -16,12 +16,11 @@ public with sharing class GetDeliveryTracking {
   }
 
   private static DeliveryTracking getDeliveryTracking(String orderId) {
-    List<MapMarker> mapMarkers = new List<MapMarker>();
-    mapMarkers.add(
-      new MapMarker(37.7897441, -122.4021046, 'Storefront Location')
-    );
-    mapMarkers.add(new MapMarker(37.7875941, -122.400459, 'Driver Location'));
-    mapMarkers.add(new MapMarker(37.7835, -122.403, 'Delivery Location'));
+    List<MapMarker> mapMarkers = new List<MapMarker>{
+      new MapMarker(37.7897441, -122.4021046, 'Storefront Location'),
+      new MapMarker(37.7875941, -122.400459, 'Driver Location'),
+      new MapMarker(37.7835, -122.403, 'Delivery Location')
+    };
 
     DeliveryTracking deliveryTracking = new DeliveryTracking();
     deliveryTracking.orderId = orderId;
