@@ -54,10 +54,7 @@ describe("c-error-panel", () => {
   });
 
   it("displays error details when errors are passed as parameters", async () => {
-    const ERROR_MESSAGES_INPUT = [
-      { statusText: "First bad error" },
-      { statusText: "Second bad error" }
-    ];
+    const ERROR_MESSAGES_INPUT = [{ statusText: "First bad error" }, { statusText: "Second bad error" }];
     const ERROR_MESSAGES_OUTPUT = ["First bad error", "Second bad error"];
 
     // Create initial element
@@ -74,17 +71,14 @@ describe("c-error-panel", () => {
     // Wait for any asynchronous DOM updates
     await flushPromises();
 
-    const messageTexts = Array.from(
-      element.shadowRoot.querySelectorAll("p")
-    ).map((errorMessage) => (errorMessage = errorMessage.textContent));
+    const messageTexts = Array.from(element.shadowRoot.querySelectorAll("p")).map(
+      (errorMessage) => (errorMessage = errorMessage.textContent)
+    );
     expect(messageTexts).toEqual(ERROR_MESSAGES_OUTPUT);
   });
 
   it("is accessible when inline message", async () => {
-    const ERROR_MESSAGES_INPUT = [
-      { statusText: "First bad error" },
-      { statusText: "Second bad error" }
-    ];
+    const ERROR_MESSAGES_INPUT = [{ statusText: "First bad error" }, { statusText: "Second bad error" }];
 
     const element = createElement("c-error-panel", {
       is: ErrorPanel
@@ -104,10 +98,7 @@ describe("c-error-panel", () => {
   });
 
   it("is accessible when no data illustration", async () => {
-    const ERROR_MESSAGES_INPUT = [
-      { statusText: "First bad error" },
-      { statusText: "Second bad error" }
-    ];
+    const ERROR_MESSAGES_INPUT = [{ statusText: "First bad error" }, { statusText: "Second bad error" }];
 
     const element = createElement("c-error-panel", {
       is: ErrorPanel

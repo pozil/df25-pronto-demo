@@ -2,19 +2,11 @@
   <lightning-card icon-name="custom:custom85">
     <template lwc:if={store.data}>
       <span slot="title">{storeName}</span>
-      <lightning-button-icon
-        icon-name="utility:expand_alt"
-        slot="actions"
-        onclick={handleNavigateToRecord}
-      >
+      <lightning-button-icon icon-name="utility:expand_alt" slot="actions" onclick={handleNavigateToRecord}>
         <label>Navigate to Record</label>
       </lightning-button-icon>
       <div class="slds-var-m-horizontal_medium">
-        <img
-          src={pictureURL}
-          alt="Storefront picture"
-          class="slds-var-m-bottom_small"
-        />
+        <img src={pictureURL} alt="Storefront picture" class="slds-var-m-bottom_small" />
         <c-review-stars
           review-score={reviewScore}
           number-of-reviews={numberOfReviews}
@@ -31,12 +23,8 @@
         </lightning-record-form>
         <!-- Menus -->
         <template lwc:if={hasMenus}>
-          <h3 class="slds-text-heading_medium slds-var-m-bottom_small">
-            Menus
-          </h3>
-          <div
-            class="slds-grid slds-wrap slds-gutters slds-var-m-bottom_medium"
-          >
+          <h3 class="slds-text-heading_medium slds-var-m-bottom_small">Menus</h3>
+          <div class="slds-grid slds-wrap slds-gutters slds-var-m-bottom_medium">
             <template for:each={menus.data} for:item="menu">
               <div key={menu.Id} class="slds-col slds-no-flex">
                 <lightning-button
@@ -51,9 +39,7 @@
         </template>
         <!-- Opening hours -->
         <template lwc:if={hasOpeningHours}>
-          <h3 class="slds-text-heading_medium slds-var-m-bottom_small">
-            Opening hours
-          </h3>
+          <h3 class="slds-text-heading_medium slds-var-m-bottom_small">Opening hours</h3>
           <table class="slds-var-m-horizontal_small">
             <template for:each={openingHours.data} for:item="openingHour">
               <tr key={openingHour.Day_of_Week__c}>
@@ -67,15 +53,10 @@
       </div>
     </template>
     <template lwc:if={hasNoStoreId}>
-      <c-error-panel
-        friendly-message="Select a storefront to see details"
-      ></c-error-panel>
+      <c-error-panel friendly-message="Select a storefront to see details"></c-error-panel>
     </template>
     <template lwc:if={store.error}>
-      <c-error-panel
-        friendly-message="Error retrieving data"
-        errors={store.error}
-      ></c-error-panel>
+      <c-error-panel friendly-message="Error retrieving data" errors={store.error}></c-error-panel>
     </template>
   </lightning-card>
 </template>

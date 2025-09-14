@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
-    <activeVersionIdentifier>NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_15</activeVersionIdentifier>
-    <description>Summarizes customer reviews</description>
-    <developerName>Customer_Review_Summary</developerName>
-    <masterLabel>Customer Review Summary</masterLabel>
-    <relatedEntity>Storefront__c</relatedEntity>
-    <relatedField>Storefront__c.Review_Summary__c</relatedField>
+    <activeVersionIdentifier>NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_1</activeVersionIdentifier>
+    <developerName>Customer_Review_Summary_Flex</developerName>
+    <masterLabel>Customer Review Summary Flex</masterLabel>
     <templateVersions>
         <content>These are the customer reviews for this storefront:
-{!$RelatedList:Storefront__c.Reviews__r.Records}
+{!$RelatedList:storefront.Reviews__r.Records}
 
 Summarize the reviews and output a report with the following rich text structure (keep the titles and don&apos;t include the ```):
 ```
@@ -22,7 +19,7 @@ Summarize the reviews and output a report with the following rich text structure
 For trend status:
 Indicate if there&apos;s an positive or negative trend over time based on the Order Dates.
 - If no trend is found, trend status is &quot;No trend found.&quot;
-- If trend is positive, trend status is &quot;🟢 Postitive trend&quot; 
+- If trend is positive, trend status is &quot;🟢 Postitive trend&quot; 
 - If trend is negative, trend status is &quot;🔴 Negative trend&quot;
 
 For trend description:
@@ -34,9 +31,10 @@ For feedback items:
 
 </content>
         <inputs>
-            <apiName>RelatedEntity</apiName>
+            <apiName>storefront</apiName>
             <definition>SOBJECT://Storefront__c</definition>
-            <referenceName>Input:Storefront__c</referenceName>
+            <masterLabel>storefront</masterLabel>
+            <referenceName>Input:storefront</referenceName>
             <required>true</required>
         </inputs>
         <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
@@ -47,7 +45,7 @@ For feedback items:
                 <definition>primitive://String</definition>
                 <isRequired>true</isRequired>
                 <parameterName>parentRecordId</parameterName>
-                <valueExpression>{!$Input:Storefront__c.Id}</valueExpression>
+                <valueExpression>{!$Input:storefront.Id}</valueExpression>
             </parameters>
             <parameters>
                 <definition>primitive://String</definition>
@@ -55,10 +53,10 @@ For feedback items:
                 <parameterName>relatedListName</parameterName>
                 <valueExpression>Reviews__r</valueExpression>
             </parameters>
-            <referenceName>RelatedList:Storefront__c.Reviews__r.Records</referenceName>
+            <referenceName>RelatedList:storefront.Reviews__r.Records</referenceName>
         </templateDataProviders>
-        <versionIdentifier>NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_15</versionIdentifier>
+        <versionIdentifier>NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_1</versionIdentifier>
     </templateVersions>
-    <type>einstein_gpt__fieldCompletion</type>
+    <type>einstein_gpt__flex</type>
     <visibility>Global</visibility>
 </GenAiPromptTemplate>

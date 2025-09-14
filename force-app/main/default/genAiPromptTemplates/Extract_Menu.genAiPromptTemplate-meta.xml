@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
-    <activeVersionIdentifier
-  >NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_5</activeVersionIdentifier>
-    <description
-  >Parses the PDF attached to a storefront and turn it into structured menu data.</description>
+    <activeVersionIdentifier>NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_5</activeVersionIdentifier>
+    <description>Parses the PDF attached to a storefront and turn it into structured menu data.</description>
     <developerName>Extract_Menu</developerName>
     <masterLabel>Extract Menu</masterLabel>
     <templateVersions>
@@ -46,11 +44,9 @@ Directly output the array as above.
                 <parameterName>relatedListName</parameterName>
                 <valueExpression>CombinedAttachments</valueExpression>
             </parameters>
-            <referenceName
-      >RelatedList:storefront.CombinedAttachments.Records</referenceName>
+            <referenceName>RelatedList:storefront.CombinedAttachments.Records</referenceName>
         </templateDataProviders>
-        <versionIdentifier
-    >NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_5</versionIdentifier>
+        <versionIdentifier>NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_5</versionIdentifier>
     </templateVersions>
     <type>einstein_gpt__flex</type>
     <visibility>Global</visibility>

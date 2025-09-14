@@ -15,10 +15,7 @@ describe("c-lds-utils", () => {
       const FULL_ERROR = {
         body: [{ message: "mockError1" }, { message: "mockError2" }]
       };
-      const REDUCED_ERROR = [
-        FULL_ERROR.body[0].message,
-        FULL_ERROR.body[1].message
-      ];
+      const REDUCED_ERROR = [FULL_ERROR.body[0].message, FULL_ERROR.body[1].message];
 
       const reduced = reduceErrors(FULL_ERROR);
 

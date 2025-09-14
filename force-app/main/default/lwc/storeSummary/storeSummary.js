@@ -1,11 +1,7 @@
 import { LightningElement, api, wire } from "lwc";
 import { getRecord, getFieldValue } from "lightning/uiRecordApi";
 import { NavigationMixin } from "lightning/navigation";
-import {
-  subscribe,
-  unsubscribe,
-  MessageContext
-} from "lightning/messageService";
+import { subscribe, unsubscribe, MessageContext } from "lightning/messageService";
 import STORE_SELECTED_MC from "@salesforce/messageChannel/StoreSelected__c";
 import getStoreOpeningHours from "@salesforce/apex/StoreController.getStoreOpeningHours";
 import getStoreMenus from "@salesforce/apex/StoreController.getStoreMenus";
@@ -53,13 +49,9 @@ export default class StoreSummary extends NavigationMixin(LightningElement) {
   }
 
   connectedCallback() {
-    this.subscription = subscribe(
-      this.messageContext,
-      STORE_SELECTED_MC,
-      (message) => {
-        this.handleStoreSelected(message);
-      }
-    );
+    this.subscription = subscribe(this.messageContext, STORE_SELECTED_MC, (message) => {
+      this.handleStoreSelected(message);
+    });
   }
 
   disconnectedCallback() {

@@ -10,8 +10,7 @@ export default class ReviewStars extends LightningElement {
 
   get stars() {
     const stars = [];
-    const reviewScore =
-      this.reviewScore === undefined ? 0 : Math.round(this.reviewScore);
+    const reviewScore = this.reviewScore === undefined ? 0 : Math.round(this.reviewScore);
     for (let i = 0; i < 5; i++) {
       stars.push({
         index: i,

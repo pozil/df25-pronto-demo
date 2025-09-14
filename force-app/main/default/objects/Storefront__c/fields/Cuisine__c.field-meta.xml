@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Cuisine__c</fullName>
-    <description
-  >If the location is a restaurant, they can categorize themselves by the type of cuisine.</description>
+    <description>If the location is a restaurant, they can categorize themselves by the type of cuisine.</description>
     <label>Cuisine</label>
     <required>false</required>
     <trackTrending>false</trackTrending>

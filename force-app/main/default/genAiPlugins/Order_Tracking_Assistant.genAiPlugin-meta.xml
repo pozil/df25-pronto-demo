@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<GenAiPlugin
-  xmlns="http://soap.sforce.com/2006/04/metadata"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
->
+<GenAiPlugin xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <canEscalate>false</canEscalate>
     <description>Help customers track orders</description>
     <developerName>Order_Tracking_Assistant</developerName>
@@ -10,8 +7,7 @@
         <functionName>Get_Delivery_Tracking</functionName>
     </genAiFunctions>
     <genAiPluginInstructions>
-        <description
-    >If not specified, use order ID &quot;12345&quot; as the default</description>
+        <description>If not specified, use order ID &quot;12345&quot; as the default</description>
         <developerName>instruction_ifnotspeci0</developerName>
         <language>en_US</language>
         <masterLabel>instruction_ifnotspeci0</masterLabel>

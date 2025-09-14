@@ -20,10 +20,7 @@
       ></c-paginator>
     </template>
     <template lwc:if={stores.error}>
-      <c-error-panel
-        friendly-message="Error retrieving data"
-        errors={stores.error}
-      ></c-error-panel>
+      <c-error-panel friendly-message="Error retrieving data" errors={stores.error}></c-error-panel>
     </template>
   </div>
 </template>

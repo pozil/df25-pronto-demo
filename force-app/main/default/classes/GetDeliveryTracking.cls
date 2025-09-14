@@ -1,11 +1,6 @@
 public with sharing class GetDeliveryTracking {
-  @InvocableMethod(
-    label='Get Delivery Tracking'
-    description='Get the delivery tracking information for an order'
-  )
-  public static List<DeliveryTrackingResponse> getDeliveryTracking(
-    List<DeliveryTrackingRequest> requests
-  ) {
+  @InvocableMethod(label='Get Delivery Tracking' description='Get the delivery tracking information for an order')
+  public static List<DeliveryTrackingResponse> getDeliveryTracking(List<DeliveryTrackingRequest> requests) {
     List<DeliveryTrackingResponse> responses = new List<DeliveryTrackingResponse>();
     for (DeliveryTrackingRequest request : requests) {
       DeliveryTrackingResponse response = new DeliveryTrackingResponse();
@@ -30,19 +25,12 @@ public with sharing class GetDeliveryTracking {
   }
 
   public class DeliveryTrackingRequest {
-    @InvocableVariable(
-      required=true
-      label='Order ID'
-      description='The ID of the order to track'
-    )
+    @InvocableVariable(required=true label='Order ID' description='The ID of the order to track')
     public String orderId;
   }
 
   public class DeliveryTrackingResponse {
-    @InvocableVariable(
-      label='Delivery Tracking'
-      description='The delivery tracking information'
-    )
+    @InvocableVariable(label='Delivery Tracking' description='The delivery tracking information')
     public DeliveryTracking deliveryTracking;
   }
 

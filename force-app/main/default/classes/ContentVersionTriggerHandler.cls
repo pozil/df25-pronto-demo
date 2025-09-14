@@ -6,9 +6,7 @@ public with sharing class ContentVersionTriggerHandler {
    * Checks if the ContentVersion is attached to a Storefront__c record and runs menu extraction
    * @param newContentVersions List of newly inserted ContentVersion records
    */
-  public static void handleAfterInsert(
-    List<ContentVersion> newContentVersions
-  ) {
+  public static void handleAfterInsert(List<ContentVersion> newContentVersions) {
     // Get ContentDocument IDs from the ContentVersion records
     Set<Id> contentDocumentIds = new Set<Id>();
     for (ContentVersion cv : newContentVersions) {
@@ -113,16 +111,10 @@ public with sharing class ContentVersionTriggerHandler {
    * @param promptResponse The response from the prompt template
    * @param storefrontRecord The Storefront__c record to insert the menu items into
    */
-  private static void parseAndInsertMenuItems(
-    String promptResponse,
-    Storefront__c storefrontRecord
-  ) {
+  private static void parseAndInsertMenuItems(String promptResponse, Storefront__c storefrontRecord) {
     List<Menu_Item__c> menuItems;
     try {
-      menuItems = (List<Menu_Item__c>) JSON.deserialize(
-        promptResponse,
-        List<Menu_Item__c>.class
-      );
+      menuItems = (List<Menu_Item__c>) JSON.deserialize(promptResponse, List<Menu_Item__c>.class);
     } catch (Exception e) {
       throw new MenuParsingException(
         'Error parsing menu items for storefront ' +

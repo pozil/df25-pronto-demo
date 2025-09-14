@@ -31,10 +31,7 @@ export default class DeliveryTracker extends LightningElement {
       this.leafletState = LEAFLET_LOADING;
 
       // Load resource files
-      await Promise.all([
-        loadScript(this, `${LEAFLET}/leaflet.js`),
-        loadStyle(this, `${LEAFLET}/leaflet.css`)
-      ]);
+      await Promise.all([loadScript(this, `${LEAFLET}/leaflet.js`), loadStyle(this, `${LEAFLET}/leaflet.css`)]);
 
       // Configure map
       const mapElement = this.template.querySelector(".map");

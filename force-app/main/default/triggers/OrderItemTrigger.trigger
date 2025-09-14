@@ -1,9 +1,4 @@
-trigger OrderItemTrigger on Order_Item__c(
-  after insert,
-  after update,
-  after delete,
-  after undelete
-) {
+trigger OrderItemTrigger on Order_Item__c(after insert, after update, after delete, after undelete) {
   // Handle after insert events
   if (Trigger.isAfter && Trigger.isInsert) {
     OrderTotalAmountTriggerHandler.handleAfterInsert(Trigger.new);

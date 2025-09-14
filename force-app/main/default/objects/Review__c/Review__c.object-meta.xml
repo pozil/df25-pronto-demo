@@ -162,12 +162,9 @@
     </nameField>
     <pluralLabel>Reviews</pluralLabel>
     <searchLayouts>
-        <searchResultsAdditionalFields
-    >Customer__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields
-    >Storefront__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields
-    >Comments__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Customer__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Storefront__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Comments__c</searchResultsAdditionalFields>
     </searchLayouts>
     <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>

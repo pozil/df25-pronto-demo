@@ -1,10 +1,5 @@
 import { LightningElement, wire } from "lwc";
-import {
-  publish,
-  subscribe,
-  unsubscribe,
-  MessageContext
-} from "lightning/messageService";
+import { publish, subscribe, unsubscribe, MessageContext } from "lightning/messageService";
 import FILTERS_CHANGE_MC from "@salesforce/messageChannel/FiltersChange__c";
 import STORE_SELECTED_MC from "@salesforce/messageChannel/StoreSelected__c";
 import getPagedStoreList from "@salesforce/apex/StoreController.getPagedStoreList";
@@ -34,13 +29,9 @@ export default class StoreList extends LightningElement {
   stores;
 
   connectedCallback() {
-    this.subscription = subscribe(
-      this.messageContext,
-      FILTERS_CHANGE_MC,
-      (message) => {
-        this.handleFilterChange(message);
-      }
-    );
+    this.subscription = subscribe(this.messageContext, FILTERS_CHANGE_MC, (message) => {
+      this.handleFilterChange(message);
+    });
   }
 
   disconnectedCallback() {

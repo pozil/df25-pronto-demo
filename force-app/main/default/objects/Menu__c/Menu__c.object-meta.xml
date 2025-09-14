@@ -128,8 +128,7 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <comment
-    >Action override created by Lightning App Builder during activation.</comment>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
         <content>Menu_Record_Page</content>
         <formFactor>Large</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
@@ -167,10 +166,8 @@
     </nameField>
     <pluralLabel>Menus</pluralLabel>
     <searchLayouts>
-        <searchResultsAdditionalFields
-    >Storefront__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields
-    >Menu_Display_Name__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Storefront__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Menu_Display_Name__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Active__c</searchResultsAdditionalFields>
     </searchLayouts>
     <sharingModel>ControlledByParent</sharingModel>

@@ -9,11 +9,7 @@ export default class Reviews extends LightningElement {
   @wire(getRelatedListRecords, {
     parentRecordId: "$storeId",
     relatedListId: "Reviews__r",
-    fields: [
-      "Review__c.Comments__c",
-      "Review__c.Rating__c",
-      "Review__c.Order_Date__c"
-    ],
+    fields: ["Review__c.Comments__c", "Review__c.Rating__c", "Review__c.Order_Date__c"],
     sortBy: ["Review__c.Order_Date__c"]
   })
   getReviews({ error, data }) {

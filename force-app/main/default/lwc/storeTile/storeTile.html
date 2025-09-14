@@ -1,12 +1,8 @@
 <template>
   <a onclick={handleStoreSelected} title={store.Name}>
     <div class="tile" style={backgroundImageStyle}>
-      <div
-        class="lower-third slds-var-p-horizontal_x-small slds-var-p-vertical_xx-small slds-text-color_inverse"
-      >
-        <h1 class="truncate slds-text-heading_small">
-          <strong>{store.Name} • </strong>{store.Address__City__s}
-        </h1>
+      <div class="lower-third slds-var-p-horizontal_x-small slds-var-p-vertical_xx-small slds-text-color_inverse">
+        <h1 class="truncate slds-text-heading_small"><strong>{store.Name} • </strong>{store.Address__City__s}</h1>
         <c-review-stars
           review-score={store.Average_Review_Score__c}
           number-of-reviews={store.Total_Reviews__c}

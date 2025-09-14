@@ -128,8 +128,7 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <comment
-    >Action override created by Lightning App Builder during activation.</comment>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
         <content>Storefront_Record_Page</content>
         <formFactor>Large</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
@@ -166,16 +165,11 @@
     </nameField>
     <pluralLabel>Storefronts</pluralLabel>
     <searchLayouts>
-        <searchResultsAdditionalFields
-    >Account__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields
-    >Description__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields
-    >Cuisine__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields
-    >Average_Review_Score__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields
-    >Menu_Count__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Account__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Description__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Cuisine__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Average_Review_Score__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Menu_Count__c</searchResultsAdditionalFields>
     </searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
     <visibility>Public</visibility>

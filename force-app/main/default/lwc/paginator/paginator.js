@@ -29,10 +29,7 @@ export default class Paginator extends LightningElement {
   }
 
   get isNotLastPage() {
-    return (
-      this.pageNumber < this.totalPages &&
-      this.pageNumber * this.pageSize < MAX_ITEM_OFFSET
-    );
+    return this.pageNumber < this.totalPages && this.pageNumber * this.pageSize < MAX_ITEM_OFFSET;
   }
 
   get totalPages() {

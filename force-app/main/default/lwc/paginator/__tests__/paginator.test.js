@@ -136,9 +136,7 @@ describe("c-paginator", () => {
     await flushPromises();
 
     // Check for next page button
-    const btnNextEl = element.shadowRoot.querySelector(
-      ".nav-next lightning-button-icon"
-    );
+    const btnNextEl = element.shadowRoot.querySelector(".nav-next lightning-button-icon");
     expect(btnNextEl).toBeNull();
   });
 

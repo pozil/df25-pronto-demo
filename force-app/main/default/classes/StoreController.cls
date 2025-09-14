@@ -29,9 +29,7 @@ public with sharing class StoreController {
     // Prepare filter conditions
     List<String> conditions = new List<String>();
     if (!String.isBlank(searchKey)) {
-      conditions.add(
-        '(Name LIKE :searchPattern OR Address__City__s LIKE :searchPattern)'
-      );
+      conditions.add('(Name LIKE :searchPattern OR Address__City__s LIKE :searchPattern)');
     }
     if (!String.isBlank(type)) {
       conditions.add('Type__c >= :type');
@@ -56,11 +54,7 @@ public with sharing class StoreController {
     if (conditions.size() > 0) {
       query += 'WHERE ' + String.join(conditions, ' AND ');
     }
-    query +=
-      ' WITH USER_MODE' +
-      ' ORDER BY Name' +
-      ' LIMIT :safePageSize' +
-      ' OFFSET :offset';
+    query += ' WITH USER_MODE' + ' ORDER BY Name' + ' LIMIT :safePageSize' + ' OFFSET :offset';
     List<Storefront__c> stores = Database.query(query);
 
     // Return paginated results
@@ -78,9 +72,7 @@ public with sharing class StoreController {
    * @return List of Storefront_Hours_of_Operation__c records containing day, opening time, and closing time
    */
   @AuraEnabled(cacheable=true)
-  public static List<Storefront_Hours_of_Operation__c> getStoreOpeningHours(
-    Id storeId
-  ) {
+  public static List<Storefront_Hours_of_Operation__c> getStoreOpeningHours(Id storeId) {
     if (String.isBlank(storeId)) {
       throw new AuraHandledException('Storefront ID is required');
     }
@@ -94,9 +86,7 @@ public with sharing class StoreController {
         ORDER BY Day_of_Week__c
       ];
     } catch (Exception e) {
-      throw new AuraHandledException(
-        'Error retrieving store opening hours: ' + e.getMessage()
-      );
+      throw new AuraHandledException('Error retrieving store opening hours: ' + e.getMessage());
     }
   }
 
@@ -120,9 +110,7 @@ public with sharing class StoreController {
         ORDER BY Menu_Display_Name__c
       ];
     } catch (Exception e) {
-      throw new AuraHandledException(
-        'Error retrieving store menus: ' + e.getMessage()
-      );
+      throw new AuraHandledException('Error retrieving store menus: ' + e.getMessage());
     }
   }
 }

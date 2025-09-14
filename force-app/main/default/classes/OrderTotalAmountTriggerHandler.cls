@@ -15,9 +15,7 @@ public class OrderTotalAmountTriggerHandler {
     Map<Id, Decimal> orderTotalMap = new Map<Id, Decimal>();
     for (Order_Item__c item : orderItems) {
       Id orderId = item.Order__c;
-      Decimal itemAmount = item.Total_Amount__c != null
-        ? item.Total_Amount__c
-        : 0;
+      Decimal itemAmount = item.Total_Amount__c != null ? item.Total_Amount__c : 0;
 
       if (orderTotalMap.containsKey(orderId)) {
         orderTotalMap.put(orderId, orderTotalMap.get(orderId) + itemAmount);
@@ -49,10 +47,7 @@ public class OrderTotalAmountTriggerHandler {
         update ordersToUpdate;
       } catch (Exception e) {
         // Log error and re-throw to maintain trigger behavior
-        System.debug(
-          LoggingLevel.ERROR,
-          'Error updating Order Total_Amount__c: ' + e.getMessage()
-        );
+        System.debug(LoggingLevel.ERROR, 'Error updating Order Total_Amount__c: ' + e.getMessage());
         throw e;
       }
     }
@@ -75,10 +70,7 @@ public class OrderTotalAmountTriggerHandler {
    * @param newOrderItems List of updated Order_Item__c records
    * @param oldOrderItems List of old Order_Item__c records
    */
-  public static void handleAfterUpdate(
-    List<Order_Item__c> newOrderItems,
-    List<Order_Item__c> oldOrderItems
-  ) {
+  public static void handleAfterUpdate(List<Order_Item__c> newOrderItems, List<Order_Item__c> oldOrderItems) {
     Set<Id> orderIds = new Set<Id>();
 
     for (Integer i = 0; i < newOrderItems.size(); i++) {
@@ -86,10 +78,7 @@ public class OrderTotalAmountTriggerHandler {
       Order_Item__c oldItem = oldOrderItems[i];
 
       // Check if Total_Amount__c changed or Order__c changed
-      if (
-        newItem.Total_Amount__c != oldItem.Total_Amount__c ||
-        newItem.Order__c != oldItem.Order__c
-      ) {
+      if (newItem.Total_Amount__c != oldItem.Total_Amount__c || newItem.Order__c != oldItem.Order__c) {
         orderIds.add(newItem.Order__c);
         if (oldItem.Order__c != newItem.Order__c) {
           orderIds.add(oldItem.Order__c);
