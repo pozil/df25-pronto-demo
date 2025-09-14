@@ -1,0 +1,105 @@
+<template>
+  <template lwc:if={isLoading}>
+    <div class="slds-is-relative">
+      <lightning-spinner alternative-text="Loading AI Job Run Items..." size="medium"></lightning-spinner>
+    </div>
+  </template>
+  <template lwc:else>
+    <template lwc:if={hasData}>
+      <lightning-datatable
+        key-field="Id"
+        data={aiJobRunItems}
+        columns={columns}
+        hide-checkbox-column="true"
+        default-sort-direction="desc"
+        sorted-direction="desc"
+        sorted-by="CreatedDate"
+        resize-column-disabled="false"
+      >
+      </lightning-datatable>
+
+      <!-- Pagination Controls -->
+      <div class="slds-var-p-top_medium slds-var-p-bottom_medium">
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+          <!-- Page Size Selector -->
+          <div class="slds-grid slds-grid_vertical-align-center slds-var-m-right_medium">
+            <label class="slds-form-element__label slds-var-m-right_x-small">Show:</label>
+            <div class="slds-form-element__control">
+              <select class="slds-select" onchange={handlePageSizeChange}>
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Page Info -->
+          <div class="slds-text-body_small slds-text-color_weak">{currentPageInfo}</div>
+
+          <!-- Pagination Buttons -->
+          <lightning-button-group>
+            <lightning-button
+              variant="neutral"
+              onclick={handleFirstPage}
+              disabled={isFirstPage}
+              title="First Page"
+              icon-name="utility:jump_to_left"
+              icon-size="x-small"
+            ></lightning-button>
+            <lightning-button
+              variant="neutral"
+              onclick={handlePreviousPage}
+              disabled={isFirstPage}
+              title="Previous Page"
+              icon-name="utility:chevronleft"
+              icon-size="x-small"
+            ></lightning-button>
+            <lightning-button
+              variant="neutral"
+              onclick={handleNextPage}
+              disabled={isLastPage}
+              title="Next Page"
+              icon-name="utility:chevronright"
+              icon-size="x-small"
+            ></lightning-button>
+            <lightning-button
+              variant="neutral"
+              onclick={handleLastPage}
+              disabled={isLastPage}
+              title="Last Page"
+              icon-name="utility:jump_to_right"
+              icon-size="x-small"
+            ></lightning-button>
+          </lightning-button-group>
+        </div>
+      </div>
+    </template>
+    <template lwc:else>
+      <div class="slds-var-p-vertical_large slds-var-p-horizontal_medium slds-text-align_center">
+        <lightning-icon icon-name="standard:ai" size="large" variant="inverse"></lightning-icon>
+        <h3 class="slds-text-heading_medium slds-var-m-top_small">No AI Job Run Items Found</h3>
+        <p class="slds-text-body_regular slds-var-m-top_x-small">
+          There are currently no AI Job Run Items to display for this job run.
+        </p>
+      </div>
+    </template>
+  </template>
+
+  <template lwc:if={hasError}>
+    <div
+      class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error slds-var-m-bottom_small"
+      role="alert"
+    >
+      <span class="slds-assistive-text">Error</span>
+      <span
+        class="slds-icon_container slds-icon-utility-error slds-var-m-right_x-small"
+        title="Description of icon when needed"
+      >
+        <lightning-icon icon-name="utility:error" size="x-small"></lightning-icon>
+      </span>
+      <h2>Error loading AI Job Run Items</h2>
+      <p>{error.body.message}</p>
+    </div>
+  </template>
+</template>
