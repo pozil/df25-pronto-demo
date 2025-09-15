@@ -1,7 +1,7 @@
 public with sharing class StoreReviewSummaryAiJob {
   public static final String PROMPT_TEMPLATE_NAME = 'Customer_Review_Summary_Flex';
 
-  public static void startJob() {
+  public static void startJob(Boolean forceRefresh) {
     // Create job draft
     AIJobRun jobRun = new AIJobRun(
       JobType = 'PromptTemplate',
@@ -10,26 +10,49 @@ public with sharing class StoreReviewSummaryAiJob {
     );
     insert jobRun;
 
-    // Get storefronts that have reviews
-    List<Storefront__c> storefronts = [
-      SELECT Id
-      FROM Storefront__c
-      WHERE Id IN (SELECT Storefront__c FROM Review__c)
-    ];
+    try {
+      // Get storefronts to process
+      List<Storefront__c> storefronts;
+      if (forceRefresh) {
+        // Get all storefronts
+        storefronts = [
+          SELECT Id
+          FROM Storefront__c
+          WHERE Id IN (SELECT Storefront__c FROM Review__c)
+        ];
+      } else {
+        // Exclude storefronts that already have a summary
+        List<Storefront__c> allStorefronts = [
+          SELECT Id, Review_Summary__c
+          FROM Storefront__c
+          WHERE Id IN (SELECT Storefront__c FROM Review__c)
+        ];
+        storefronts = new List<Storefront__c>();
+        for (Storefront__c storefront : allStorefronts) {
+          if (storefront.Review_Summary__c == null) {
+            storefronts.add(storefront);
+          }
+        }
+      }
 
-    // Create job run items only for storefronts that have reviews
-    List<AiJobRunItem> jobRunItems = new List<AiJobRunItem>();
-    for (Storefront__c storefront : storefronts) {
-      String promptInput = '{"Input:storefront": {"id":"' + storefront.Id + '"}}';
-      AiJobRunItem runItem = new AiJobRunItem(AiJobRunId = jobRun.Id, Status = 'Ready', Input = promptInput);
-      jobRunItems.add(runItem);
+      // Create job run items only for storefronts that have reviews
+      List<AiJobRunItem> jobRunItems = new List<AiJobRunItem>();
+      for (Storefront__c storefront : storefronts) {
+        String promptInput = '{"Input:storefront": {"id":"' + storefront.Id + '"}}';
+        AiJobRunItem runItem = new AiJobRunItem(AiJobRunId = jobRun.Id, Status = 'Ready', Input = promptInput);
+        jobRunItems.add(runItem);
+      }
+      insert jobRunItems;
+
+      // Start job
+      jobRun.Status = 'ReadyToStart';
+      update jobRun;
+      System.debug('Job started to summmarize ' + storefronts.size() + ' storefront reviews: ' + jobRun.Id);
+    } catch (Exception e) {
+      delete jobRun;
+      System.debug(LoggingLevel.ERROR, 'Error starting job: ' + e.getMessage());
+      throw new AuraHandledException(e.getMessage());
     }
-    insert jobRunItems;
-
-    // Start job
-    jobRun.Status = 'ReadyToStart';
-    update jobRun;
-    System.debug('Job started to summmarize ' + storefronts.size() + ' storefront reviews: ' + jobRun.Id);
   }
 
   public static void handleCompletedJob(Id jobRunId) {
