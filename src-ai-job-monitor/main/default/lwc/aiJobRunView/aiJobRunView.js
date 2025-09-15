@@ -9,7 +9,7 @@ const COLUMNS = [
   { label: "Status", fieldName: "Status" },
   { label: "Target", fieldName: "Target" },
   { label: "Created Date", fieldName: "CreatedDate" },
-  { label: "Created By", fieldName: "CreatedBy.Name" },
+  { label: "Created By", fieldName: "CreatedBy" },
   { label: "Start Time", fieldName: "StartTime" },
   { label: "End Time", fieldName: "EndTime" },
   { label: "Duration", fieldName: "Duration" },
@@ -59,6 +59,7 @@ export default class AiJobRunView extends LightningElement {
       this.aiJobRuns = data.records.map((record) => ({
         ...record,
         CreatedDate: this.formatDate(record.CreatedDate),
+        CreatedBy: record.CreatedBy.Name,
         StartTime: this.formatDate(record.StartTime),
         EndTime: this.formatDate(record.EndTime),
         Duration: this.calculateDuration(record.StartTime, record.EndTime)

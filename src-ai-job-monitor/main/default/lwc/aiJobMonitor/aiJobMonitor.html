@@ -1,7 +1,21 @@
 <template>
   <lightning-card title={title}>
     <div slot="actions" lwc:if={selectedJobRun}>
-      <lightning-button label="Back to Job Runs" variant="neutral" onclick={handleJobRunSelected}></lightning-button>
+      <lightning-button-group>
+        <lightning-button
+          label="Refresh"
+          onclick={handleRefreshClick}
+          title="Refresh"
+          variant="neutral"
+          icon-name="utility:refresh"
+        ></lightning-button>
+        <lightning-button
+          label="Back to Job Runs"
+          onclick={handleJobRunSelected}
+          variant="neutral"
+          icon-name="utility:back"
+        ></lightning-button>
+      </lightning-button-group>
     </div>
     <div class="slds-var-p-around_medium">
       <c-ai-job-run-item-view lwc:if={selectedJobRun} job-run={selectedJobRun}></c-ai-job-run-item-view>

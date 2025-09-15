@@ -9,7 +9,7 @@ public with sharing class AiJobMonitorController {
    * @param pageNumber Page number (1-based)
    * @return Map containing records and pagination info
    */
-  @AuraEnabled(cacheable=true)
+  @AuraEnabled
   public static Map<String, Object> getAiJobRunItems(String jobRunId, Integer pageSize, Integer pageNumber) {
     try {
       // Validate and set defaults
@@ -36,6 +36,24 @@ public with sharing class AiJobMonitorController {
         WITH USER_MODE
       ];
 
+      // Get status counts
+      List<AggregateResult> statusCounts = [
+        SELECT Status, COUNT(Id) itemCount
+        FROM AiJobRunItem
+        WHERE AiJobRunId = :jobRunId
+        WITH USER_MODE
+        GROUP BY Status
+        ORDER BY Status
+      ];
+
+      // Convert aggregate results to map
+      Map<String, Integer> statusCountMap = new Map<String, Integer>();
+      for (AggregateResult ar : statusCounts) {
+        String status = (String) ar.get('Status');
+        Integer count = (Integer) ar.get('itemCount');
+        statusCountMap.put(status, count);
+      }
+
       // Get paginated records
       List<AiJobRunItem> records = [
         SELECT Id, Status, ErrorCode, ErrorMessage, Input, PreprocessedInput, Response, LastModifiedDate
@@ -58,6 +76,7 @@ public with sharing class AiJobMonitorController {
       result.put('pageSize', pageSize);
       result.put('hasNextPage', pageNumber < totalPages);
       result.put('hasPreviousPage', pageNumber > 1);
+      result.put('statusCounts', statusCountMap);
 
       return result;
     } catch (Exception e) {

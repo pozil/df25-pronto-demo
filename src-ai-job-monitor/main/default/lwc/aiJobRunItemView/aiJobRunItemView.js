@@ -1,4 +1,4 @@
-import { LightningElement, wire, api } from "lwc";
+import { LightningElement, api } from "lwc";
 
 import getAiJobRunItems from "@salesforce/apex/AiJobMonitorController.getAiJobRunItems";
 
@@ -37,10 +37,87 @@ export default class AiJobRunItemView extends LightningElement {
 
   aiJobRunItems = [];
   paginationInfo = {};
+  statusCounts = {};
   error;
   isLoading = true;
   currentPage = 1;
   pageSize = 25;
+
+  connectedCallback() {
+    this.refresh();
+  }
+
+  @api
+  async refresh() {
+    this.isLoading = true;
+    try {
+      const data = await getAiJobRunItems({
+        jobRunId: this.jobRunId,
+        pageSize: this.pageSize,
+        pageNumber: this.currentPage
+      });
+      // Format the date fields for each record
+      this.aiJobRunItems = data.records.map((record) => ({
+        ...record,
+        LastModifiedDate: this.formatDate(record.LastModifiedDate)
+      }));
+      this.paginationInfo = {
+        totalRecords: data.totalRecords,
+        totalPages: data.totalPages,
+        currentPage: data.currentPage,
+        pageSize: data.pageSize,
+        hasNextPage: data.hasNextPage,
+        hasPreviousPage: data.hasPreviousPage
+      };
+      this.statusCounts = data.statusCounts || {};
+      this.error = undefined;
+    } catch (error) {
+      this.error = error;
+      this.aiJobRunItems = [];
+      this.paginationInfo = {};
+      console.error("Error fetching AI Job Run Items:", error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+  // Pagination methods
+  handleFirstPage() {
+    this.currentPage = 1;
+    this.refresh();
+  }
+
+  handlePreviousPage() {
+    if (this.paginationInfo.hasPreviousPage) {
+      this.currentPage = this.currentPage - 1;
+      this.refresh();
+    }
+  }
+
+  handleNextPage() {
+    if (this.paginationInfo.hasNextPage) {
+      this.currentPage = this.currentPage + 1;
+      this.refresh();
+    }
+  }
+
+  handleLastPage() {
+    this.currentPage = this.paginationInfo.totalPages;
+    this.refresh();
+  }
+
+  handlePageSizeChange(event) {
+    this.pageSize = parseInt(event.target.value, 10);
+    this.currentPage = 1; // Reset to first page when changing page size
+    this.refresh();
+  }
+
+  formatDate(dateValue) {
+    if (!dateValue) return "";
+    const dateTime = dateValue.split("T");
+    const date = dateTime[0]; // yyyy-mm-dd
+    const time = dateTime[1].split(".")[0]; // hh:mm:ss
+    return `${date} ${time}`;
+  }
 
   get jobRunId() {
     return this.jobRun ? this.jobRun.Id : null;
@@ -57,38 +134,19 @@ export default class AiJobRunItemView extends LightningElement {
     return `Showing ${start}-${end} of ${this.paginationInfo.totalRecords}`;
   }
 
-  @wire(getAiJobRunItems, { jobRunId: "$jobRunId", pageSize: "$pageSize", pageNumber: "$currentPage" })
-  wiredAiJobRunItems({ error, data }) {
-    this.isLoading = false;
-    if (data) {
-      // Format the date fields for each record
-      this.aiJobRunItems = data.records.map((record) => ({
-        ...record,
-        LastModifiedDate: this.formatDate(record.LastModifiedDate)
-      }));
-      this.paginationInfo = {
-        totalRecords: data.totalRecords,
-        totalPages: data.totalPages,
-        currentPage: data.currentPage,
-        pageSize: data.pageSize,
-        hasNextPage: data.hasNextPage,
-        hasPreviousPage: data.hasPreviousPage
-      };
-      this.error = undefined;
-    } else if (error) {
-      this.error = error;
-      this.aiJobRunItems = [];
-      this.paginationInfo = {};
-      console.error("Error fetching AI Job Run Items:", error);
+  get statusSummary() {
+    if (!this.statusCounts || Object.keys(this.statusCounts).length === 0) {
+      return [];
     }
+
+    return Object.entries(this.statusCounts).map(([status, count]) => ({
+      status: status,
+      count: count
+    }));
   }
 
-  formatDate(dateValue) {
-    if (!dateValue) return "";
-    const dateTime = dateValue.split("T");
-    const date = dateTime[0]; // yyyy-mm-dd
-    const time = dateTime[1].split(".")[0]; // hh:mm:ss
-    return `${date} ${time}`;
+  get hasStatusCounts() {
+    return this.statusSummary && this.statusSummary.length > 0;
   }
 
   get hasData() {
@@ -105,31 +163,5 @@ export default class AiJobRunItemView extends LightningElement {
 
   get isLastPage() {
     return this.currentPage === this.paginationInfo.totalPages;
-  }
-
-  // Pagination methods
-  handleFirstPage() {
-    this.currentPage = 1;
-  }
-
-  handlePreviousPage() {
-    if (this.paginationInfo.hasPreviousPage) {
-      this.currentPage = this.currentPage - 1;
-    }
-  }
-
-  handleNextPage() {
-    if (this.paginationInfo.hasNextPage) {
-      this.currentPage = this.currentPage + 1;
-    }
-  }
-
-  handleLastPage() {
-    this.currentPage = this.paginationInfo.totalPages;
-  }
-
-  handlePageSizeChange(event) {
-    this.pageSize = parseInt(event.target.value, 10);
-    this.currentPage = 1; // Reset to first page when changing page size
   }
 }

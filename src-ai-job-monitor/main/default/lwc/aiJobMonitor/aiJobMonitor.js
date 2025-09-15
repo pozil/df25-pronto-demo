@@ -8,11 +8,16 @@ export default class AiJobMonitor extends LightningElement {
       let title = "Run items for job ";
       if (this.selectedJobRun.Label) {
         title += `${this.selectedJobRun.Label} (${this.selectedJobRun.Name})`;
+      } else {
+        title += `${this.selectedJobRun.Name}`;
       }
-      title += `${this.selectedJobRun.Name}`;
       return title;
     }
     return "AI Job Runs";
+  }
+
+  handleRefreshClick() {
+    this.template.querySelector("c-ai-job-run-item-view").refresh();
   }
 
   handleJobRunSelected(event) {
