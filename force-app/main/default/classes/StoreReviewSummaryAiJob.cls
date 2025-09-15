@@ -11,32 +11,9 @@ public with sharing class StoreReviewSummaryAiJob {
     insert jobRun;
 
     try {
-      // Get storefronts to process
-      List<Storefront__c> storefronts;
-      if (forceRefresh) {
-        // Get all storefronts
-        storefronts = [
-          SELECT Id
-          FROM Storefront__c
-          WHERE Id IN (SELECT Storefront__c FROM Review__c)
-        ];
-      } else {
-        // Exclude storefronts that already have a summary
-        List<Storefront__c> allStorefronts = [
-          SELECT Id, Review_Summary__c
-          FROM Storefront__c
-          WHERE Id IN (SELECT Storefront__c FROM Review__c)
-        ];
-        storefronts = new List<Storefront__c>();
-        for (Storefront__c storefront : allStorefronts) {
-          if (storefront.Review_Summary__c == null) {
-            storefronts.add(storefront);
-          }
-        }
-      }
-
-      // Create job run items only for storefronts that have reviews
+      // Create job run items for storefronts
       List<AiJobRunItem> jobRunItems = new List<AiJobRunItem>();
+      List<Storefront__c> storefronts = getStorefrontsToProcess(forceRefresh);
       for (Storefront__c storefront : storefronts) {
         String promptInput = '{"Input:storefront": {"id":"' + storefront.Id + '"}}';
         AiJobRunItem runItem = new AiJobRunItem(AiJobRunId = jobRun.Id, Status = 'Ready', Input = promptInput);
@@ -105,5 +82,31 @@ public with sharing class StoreReviewSummaryAiJob {
     } catch (Exception e) {
       System.debug(LoggingLevel.ERROR, 'Error updating storefronts: ' + e.getMessage());
     }
+  }
+
+  private static List<Storefront__c> getStorefrontsToProcess(Boolean forceRefresh) {
+    List<Storefront__c> storefronts;
+    if (forceRefresh) {
+      // Get all storefronts
+      storefronts = [
+        SELECT Id
+        FROM Storefront__c
+        WHERE Id IN (SELECT Storefront__c FROM Review__c)
+      ];
+    } else {
+      // Exclude storefronts that already have a summary
+      List<Storefront__c> allStorefronts = [
+        SELECT Id, Review_Summary__c
+        FROM Storefront__c
+        WHERE Id IN (SELECT Storefront__c FROM Review__c)
+      ];
+      storefronts = new List<Storefront__c>();
+      for (Storefront__c storefront : allStorefronts) {
+        if (storefront.Review_Summary__c == null) {
+          storefronts.add(storefront);
+        }
+      }
+    }
+    return storefronts;
   }
 }
