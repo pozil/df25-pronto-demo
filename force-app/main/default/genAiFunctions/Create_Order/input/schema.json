@@ -1,0 +1,21 @@
+{
+  "required": ["customerId", "storefrontId"],
+  "unevaluatedProperties": false,
+  "properties": {
+    "customerId": {
+      "title": "Customer ID",
+      "description": "ID of the customer (Contact) to create the order for",
+      "lightning:type": "lightning__textType",
+      "lightning:isPII": false,
+      "copilotAction:isUserInput": false
+    },
+    "storefrontId": {
+      "title": "Storefront ID",
+      "description": "ID of the storefront to create the order for",
+      "lightning:type": "lightning__textType",
+      "lightning:isPII": false,
+      "copilotAction:isUserInput": true
+    }
+  },
+  "lightning:type": "lightning__objectType"
+}

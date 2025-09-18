@@ -1,34 +1,36 @@
 {
   "unevaluatedProperties": false,
   "properties": {
-    "isVerifiedCustomer": {
-      "title": "isVerifiedCustomer",
-      "description": "Whether the customer could be verified",
+    "isSuccess": {
+      "title": "Is Success",
+      "description": "Indicates whether the storefront was retrieved successfully",
       "lightning:type": "lightning__booleanType",
       "lightning:isPII": false,
       "copilotAction:isDisplayable": false,
       "copilotAction:isUsedByPlanner": true,
       "copilotAction:useHydratedPrompt": false
     },
-    "outputMessage": {
-      "title": "outputMessage",
-      "description": "A message that summarizes the action result",
+    "message": {
+      "title": "Message",
+      "description": "Success or error message",
       "lightning:type": "lightning__textType",
       "lightning:isPII": false,
       "copilotAction:isDisplayable": true,
       "copilotAction:isUsedByPlanner": true,
       "copilotAction:useHydratedPrompt": false
     },
-    "verifiedCustomerId": {
-      "title": "verifiedCustomerId",
-      "description": "The verified customer ID (Contact ID). This output parameter is not set if the customer cannot be verified.",
-      "lightning:type": "lightning__textType",
+    "storefront": {
+      "title": "Storefront",
+      "description": "The retrieved storefront record",
+      "lightning:type": "lightning__recordInfoType",
+      "lightning:sObjectInfo": {
+        "apiName": "Storefront__c"
+      },
       "lightning:isPII": false,
       "copilotAction:isDisplayable": false,
       "copilotAction:isUsedByPlanner": true,
       "copilotAction:useHydratedPrompt": false
     }
   },
-  "lightning:type": "lightning__objectType",
-  "lightning:textIndexed": true
+  "lightning:type": "lightning__objectType"
 }

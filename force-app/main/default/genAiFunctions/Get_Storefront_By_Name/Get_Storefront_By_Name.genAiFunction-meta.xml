@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Retrieves a storefront record by its name</description>
+    <developerName>Get_Storefront_By_Name</developerName>
+    <invocationTarget>GetStorefrontByNameAction</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+    <localDeveloperName>Get_Storefront_By_Name</localDeveloperName>
+    <masterLabel>Get Storefront By Name</masterLabel>
+    <progressIndicatorMessage>Retrieving storefront...</progressIndicatorMessage>
+</GenAiFunction>

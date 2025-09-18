@@ -12,6 +12,27 @@
     <genAiFunctions>
         <functionName>Cancel_Order</functionName>
     </genAiFunctions>
+    <genAiFunctions>
+        <functionName>Create_Order</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>Get_Storefront_By_Name</functionName>
+    </genAiFunctions>
+    <genAiPluginInstructions>
+        <description
+    >When creating an order, ask for a storefront name and use the &quot;Get Storefront By Name&quot; action to retrieve the storefront Id.</description>
+        <developerName>instructions_0_1758231874655</developerName>
+        <language>en_US</language>
+        <masterLabel>instructions_0_1758231874655</masterLabel>
+        <sortOrder>1</sortOrder>
+    </genAiPluginInstructions>
+    <genAiPluginInstructions>
+        <description>Do not display Order IDs or Storefront IDs.</description>
+        <developerName>instructions_0_1758232172295</developerName>
+        <language>en_US</language>
+        <masterLabel>instructions_0_1758232172295</masterLabel>
+        <sortOrder>2</sortOrder>
+    </genAiPluginInstructions>
     <language>en_US</language>
     <localDeveloperName>Order_Enquiries</localDeveloperName>
     <masterLabel>Order Enquiries</masterLabel>
