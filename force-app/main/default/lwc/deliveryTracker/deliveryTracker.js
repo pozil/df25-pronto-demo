@@ -16,8 +16,7 @@ export default class DeliveryTracker extends LightningElement {
   map;
   markerLayer;
 
-  @api
-  value;
+  @api mapMarkers;
 
   async renderedCallback() {
     if (this.leafletState === LEAFLET_NOT_LOADED) {
@@ -69,7 +68,7 @@ export default class DeliveryTracker extends LightningElement {
     }
 
     // Prepare markers
-    const markers = this.value.mapMarkers.map((item, index) => {
+    const markers = this.mapMarkers.map((item, index) => {
       const latLng = [item.latitude, item.longitude];
       const marker = L.marker(latLng, {
         icon: this.getMapIcon(ICON_NAMES[index])
@@ -92,23 +91,5 @@ export default class DeliveryTracker extends LightningElement {
       //shadowAnchor: [4, 62],  // the same for the shadow
       popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
     });
-  }
-
-  get title() {
-    return `Order #${this.value.orderId}`;
-  }
-
-  get deliveryTime() {
-    // Add fake delivery time in 10 minutes
-    const now = new Date();
-    const deliveryTime = new Date(now.getTime() + 10 * 60 * 1000); // 10 minutes from now
-
-    const timeString = deliveryTime.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true
-    });
-
-    return timeString;
   }
 }

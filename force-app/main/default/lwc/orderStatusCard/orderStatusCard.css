@@ -1,0 +1,46 @@
+:host {
+  --slds-c-card-sizing-border: 1px;
+  --slds-c-card-body-spacing-blockend: 0;
+  --slds-c-card-body-spacing-inline-end: 0;
+  --slds-c-card-body-spacing-blockstart: 0;
+}
+
+/* Order Status Card Styling */
+/*
+.order-status-card {
+  --slds-c-card-color-background: #ffffff;
+  --slds-c-card-color-border: #e5e5e5;
+  --slds-c-card-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+}
+*/
+
+/* Status-specific styling */
+.order-status-card .status-draft {
+  --slds-c-badge-color-background: #f3f3f3;
+  --slds-c-badge-text-color: #514f4d;
+}
+
+.order-status-card .status-confirmed {
+  --slds-c-badge-color-background: #4bca81;
+  --slds-c-badge-text-color: #ffffff;
+}
+
+.order-status-card .status-processed {
+  --slds-c-badge-color-background: #4bca81;
+  --slds-c-badge-text-color: #ffffff;
+}
+
+.order-status-card .status-out-for-delivery {
+  --slds-c-badge-color-background: #4bca81;
+  --slds-c-badge-text-color: #ffffff;
+}
+
+.order-status-card .status-delivered {
+  --slds-c-badge-color-background: #4bca81;
+  --slds-c-badge-text-color: #ffffff;
+}
+
+.order-status-card .status-canceled {
+  --slds-c-badge-color-background: #ea001e;
+  --slds-c-badge-text-color: #ffffff;
+}

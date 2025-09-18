@@ -1,0 +1,5 @@
+{
+  "title": "Delivery Tracking",
+  "description": "Delivery Tracking",
+  "lightning:type": "@apexClassType/c__GetOrderStatusAction$OrderStatus"
+}

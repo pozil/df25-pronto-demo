@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GenAiPlugin xmlns="http://soap.sforce.com/2006/04/metadata">
+    <canEscalate>false</canEscalate>
+    <description>Handle Pronto customer order enquiries</description>
+    <developerName>Order_Enquiries</developerName>
+    <genAiFunctions>
+        <functionName>Get_Order_Status</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>Get_Customer_Orders</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>Cancel_Order</functionName>
+    </genAiFunctions>
+    <language>en_US</language>
+    <localDeveloperName>Order_Enquiries</localDeveloperName>
+    <masterLabel>Order Enquiries</masterLabel>
+    <pluginType>Topic</pluginType>
+    <scope>Handle Pronto customer order enquiries</scope>
+</GenAiPlugin>
