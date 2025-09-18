@@ -1,0 +1,134 @@
+.hero-container {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  background-color: #f3f3f3;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: bottom;
+}
+
+/* Card Styles */
+.profile-card {
+  border-radius: 20px;
+  overflow: hidden; /* Ensures the hero image corners are rounded */
+}
+
+.card-content {
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+
+/* Partner Account Theme */
+.partner-account-theme .card-content {
+  background: linear-gradient(135deg, #417a97, #2d566a);
+}
+
+/* Customer Account Theme */
+.customer-account-theme .card-content {
+  background: linear-gradient(135deg, #ad343e, #7c252d);
+}
+
+/* Lead Theme */
+.default-theme .card-content {
+  background: linear-gradient(135deg, #417a97, #2d566a);
+}
+
+/* Headline Styles */
+.record-headline {
+  padding: 16px 16px 16px 0px;
+}
+
+.record-heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.record-headline > div:last-child {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+}
+
+/* Headline Adjustments */
+.account-headline {
+  margin-left: 82px;
+}
+
+.account-heading {
+  font-size: 26px;
+}
+
+/* Section Styles */
+.section-heading {
+  font-size: 14px;
+  width: 95%;
+  font-weight: 700;
+  color: white;
+  padding-bottom: 5px;
+}
+
+.insight-icon {
+  vertical-align: middle;
+  --sds-c-icon-color-foreground: white;
+  --sds-c-icon-color-background: transparent;
+  margin-right: 0.5rem;
+}
+
+/* White bottom border in each section */
+.slds-border_bottom {
+  padding-bottom: 10px;
+  margin-bottom: -10px;
+}
+
+/* Example Card Container */
+.homeowner-card {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* Field Container */
+.field-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-heading {
+  width: 5%;
+  margin-top: -10px;
+}
+
+/* Field Styles */
+.slds-form-element__label {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.slds-form-element__static {
+  font-weight: 400;
+}
+
+.slds-form-element__static > strong {
+  font-weight: 700;
+  color: white;
+}
+
+.font-color-white {
+  color: white !important;
+}
+
+.slds-var-p-around_small {
+  padding: 1rem;
+}
+
+.slds-p-bottom_x-small {
+  padding-bottom: 0.5rem;
+}

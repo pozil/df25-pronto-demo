@@ -1,0 +1,458 @@
+<!--
+  @description       : 
+  @author            : stephan.garcia@sfdc.com
+  @group             : 
+  @last modified on  : 07-22-2024
+  @last modified by  : stephan.garcia@sfdc.com
+-->
+<template>
+  <div class={themeClass}>
+    <!-- Hero Image -->
+    <div class="hero-container">
+      <img src={heroImageUrl} alt="Profile background" class="hero-image" />
+    </div>
+
+    <!-- Card Body -->
+    <div class="card-content">
+      <!-- Record Headline -->
+      <div class="slds-size_1-of-1 slds-var-p-bottom_small slds-var-p-left_small slds-var-p-right_small">
+        <div class="record-headline slds-border_bottom">
+          <div class="record-heading">
+            <strong>{displayName}</strong>
+          </div>
+          <div>{headlineSubtitle}</div>
+        </div>
+      </div>
+
+      <!-- Account States -->
+      <template if:true={isAccount}>
+        <!-- Partner Account -->
+        <template if:true={isPartnerAccount}>
+          <!-- Account Information -->
+          <div class="slds-size_1-of-1 slds-var-p-around_small">
+            <div class="slds-grid slds-wrap slds-border_bottom">
+              <div class="slds-size_1-of-1 slds-grid slds-wrap">
+                <div class="slds-align-middle icon-heading">
+                  <lightning-icon
+                    icon-name="utility:company"
+                    size="x-small"
+                    class="insight-icon slds-var-p-right_x-small"
+                    variant="inverse"
+                  ></lightning-icon>
+                </div>
+                <div class="slds-align-middle section-heading">
+                  <strong>Account Information</strong>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Record Type</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{accountRecordType}</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Account Number</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{accountNumber}</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Type</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{accountType}</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Employees</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{accountEmployees}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Insights -->
+          <div class="slds-size_1-of-1 slds-var-p-around_small">
+            <div class="slds-grid slds-wrap slds-border_bottom">
+              <div class="slds-size_1-of-1 slds-grid slds-wrap">
+                <div class="slds-align-middle icon-heading">
+                  <lightning-icon
+                    icon-name="utility:data_cloud"
+                    size="x-small"
+                    class="insight-icon slds-var-p-right_x-small"
+                    variant="inverse"
+                  ></lightning-icon>
+                </div>
+                <div class="slds-align-middle section-heading">
+                  <strong>Account Insights</strong>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Total Orders</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{accountTotalOrders}</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Annual Sales Total</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{accountAnnualSalesTotal}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Company Information -->
+          <div class="slds-size_1-of-1 slds-var-p-around_small">
+            <div class="slds-grid slds-wrap">
+              <div class="slds-size_1-of-1 slds-grid slds-wrap">
+                <div class="slds-align-middle icon-heading">
+                  <lightning-icon
+                    icon-name="utility:company"
+                    size="x-small"
+                    class="insight-icon slds-var-p-right_x-small"
+                    variant="inverse"
+                  ></lightning-icon>
+                </div>
+                <div class="slds-align-middle section-heading">
+                  <strong>Company Information</strong>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Annual Revenue</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{formattedAccountRevenue}</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Number of Locations</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{accountLocations}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Customer Account -->
+        <template if:true={isCustomerAccountType}>
+          <!-- Customer Information -->
+          <div class="slds-size_1-of-1 slds-var-p-around_small">
+            <div class="slds-grid slds-wrap">
+              <div class="slds-size_1-of-1 slds-grid slds-wrap">
+                <div class="slds-align-middle icon-heading">
+                  <lightning-icon
+                    icon-name="utility:home"
+                    size="x-small"
+                    class="insight-icon slds-var-p-right_x-small"
+                    variant="inverse"
+                  ></lightning-icon>
+                </div>
+                <div class="slds-align-middle section-heading">
+                  <strong>Customer Information</strong>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Type</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{accountType}</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Phone Number</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{accountPhone}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </template>
+
+      <!-- Contact States -->
+      <template if:true={isContact}>
+        <!-- Customer Contact -->
+        <template if:true={isCustomerContact}>
+          <!-- Contact Information -->
+          <div class="slds-size_1-of-1 slds-var-p-around_small">
+            <div class="slds-grid slds-wrap slds-border_bottom">
+              <div class="slds-size_1-of-1 slds-grid slds-wrap">
+                <div class="slds-align-middle icon-heading">
+                  <lightning-icon
+                    icon-name="utility:contact"
+                    size="x-small"
+                    class="insight-icon slds-var-p-right_x-small"
+                    variant="inverse"
+                  ></lightning-icon>
+                </div>
+                <div class="slds-align-middle section-heading">
+                  <strong>Contact Information</strong>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Contact Status</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{contactStatus}</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Favorite Cuisine</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{contactFavoriteCuisine}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Details -->
+          <div class="slds-size_1-of-1 slds-var-p-around_small">
+            <div class="slds-grid slds-wrap">
+              <div class="slds-size_1-of-1 slds-grid slds-wrap">
+                <div class="slds-align-middle icon-heading">
+                  <lightning-icon
+                    icon-name="utility:user"
+                    size="x-small"
+                    class="insight-icon slds-var-p-right_x-small"
+                    variant="inverse"
+                  ></lightning-icon>
+                </div>
+                <div class="slds-align-middle section-heading">
+                  <strong>Contact Details</strong>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Phone</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{contactPhone}</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Email</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{contactEmail}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Business Contact -->
+        <template if:true={isBusinessContact}>
+          <!-- Contact Information -->
+          <div class="slds-size_1-of-1 slds-var-p-around_small">
+            <div class="slds-grid slds-wrap slds-border_bottom">
+              <div class="slds-size_1-of-1 slds-grid slds-wrap">
+                <div class="slds-align-middle icon-heading">
+                  <lightning-icon
+                    icon-name="utility:contact"
+                    size="x-small"
+                    class="insight-icon slds-var-p-right_x-small"
+                    variant="inverse"
+                  ></lightning-icon>
+                </div>
+                <div class="slds-align-middle section-heading">
+                  <strong>Contact Information</strong>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Title</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{contactTitle}</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Record Type</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>Business Contact</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Contact Status</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{contactStatus}</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Lead Source</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{contactLeadSource}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Details -->
+          <div class="slds-size_1-of-1 slds-var-p-around_small">
+            <div class="slds-grid slds-wrap">
+              <div class="slds-size_1-of-1 slds-grid slds-wrap">
+                <div class="slds-align-middle icon-heading">
+                  <lightning-icon
+                    icon-name="utility:user"
+                    size="x-small"
+                    class="insight-icon slds-var-p-right_x-small"
+                    variant="inverse"
+                  ></lightning-icon>
+                </div>
+                <div class="slds-align-middle section-heading">
+                  <strong>Contact Details</strong>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Mobile</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{contactMobile}</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+                <span class="slds-form-element__label font-color-white">Email</span>
+                <div class="slds-form-element__control">
+                  <div class="slds-form-element__static font-color-white">
+                    <strong>{contactEmail}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </template>
+
+      <!-- Lead State -->
+      <template if:true={isLead}>
+        <!-- Company Information -->
+        <div class="slds-size_1-of-1 slds-var-p-around_small">
+          <div class="slds-grid slds-wrap slds-border_bottom">
+            <div class="slds-size_1-of-1 slds-grid slds-wrap">
+              <div class="slds-align-middle icon-heading">
+                <lightning-icon
+                  icon-name="utility:company"
+                  size="x-small"
+                  class="insight-icon slds-var-p-right_x-small"
+                  variant="inverse"
+                ></lightning-icon>
+              </div>
+              <div class="slds-align-middle section-heading">
+                <strong>Company Information</strong>
+              </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+              <span class="slds-form-element__label font-color-white">Company</span>
+              <div class="slds-form-element__control">
+                <div class="slds-form-element__static font-color-white">
+                  <strong>{leadCompany}</strong>
+                </div>
+              </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+              <span class="slds-form-element__label font-color-white">Status</span>
+              <div class="slds-form-element__control">
+                <div class="slds-form-element__static font-color-white">
+                  <strong>{leadStatus}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="slds-size_1-of-1 slds-var-p-around_small">
+          <div class="slds-grid slds-wrap slds-border_bottom">
+            <div class="slds-size_1-of-1 slds-grid slds-wrap">
+              <div class="slds-align-middle icon-heading">
+                <lightning-icon
+                  icon-name="utility:contact"
+                  size="x-small"
+                  class="insight-icon slds-var-p-right_x-small"
+                  variant="inverse"
+                ></lightning-icon>
+              </div>
+              <div class="slds-align-middle section-heading">
+                <strong>Contact Information</strong>
+              </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+              <span class="slds-form-element__label font-color-white">Phone</span>
+              <div class="slds-form-element__control">
+                <div class="slds-form-element__static font-color-white">
+                  <strong>{leadPhone}</strong>
+                </div>
+              </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+              <span class="slds-form-element__label font-color-white">Email</span>
+              <div class="slds-form-element__control">
+                <div class="slds-form-element__static font-color-white">
+                  <strong>{leadEmail}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lead Insights -->
+        <div class="slds-size_1-of-1 slds-var-p-around_small">
+          <div class="slds-grid slds-wrap">
+            <div class="slds-size_1-of-1 slds-grid slds-wrap">
+              <div class="slds-align-middle icon-heading">
+                <lightning-icon
+                  icon-name="utility:data_cloud"
+                  size="x-small"
+                  class="insight-icon slds-var-p-right_x-small"
+                  variant="inverse"
+                ></lightning-icon>
+              </div>
+              <div class="slds-align-middle section-heading">
+                <strong>Lead Insights</strong>
+              </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-var-p-bottom_small">
+              <span class="slds-form-element__label font-color-white">Lead Conversion Probability</span>
+              <div class="slds-form-element__control">
+                <div class="slds-form-element__static font-color-white">
+                  <strong>{leadConversionProbability}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>
