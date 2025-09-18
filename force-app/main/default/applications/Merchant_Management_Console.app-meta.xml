@@ -51,6 +51,7 @@
     <tabs>Gift_Certificate__c</tabs>
     <tabs>standard-report</tabs>
     <tabs>standard-Dashboard</tabs>
+    <tabs>Order__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Merchant_Management_UtilityBar</utilityBar>
     <workspaceConfig>
@@ -59,6 +60,9 @@
         </mappings>
         <mappings>
             <tab>Menu__c</tab>
+        </mappings>
+        <mappings>
+            <tab>Order__c</tab>
         </mappings>
         <mappings>
             <tab>Promotion__c</tab>
