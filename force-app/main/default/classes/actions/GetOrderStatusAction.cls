@@ -7,28 +7,17 @@ public with sharing class GetOrderStatusAction {
    * @param inputs List of GetOrderStatusInput parameters
    * @return List of GetOrderStatusOutput results
    */
-  @InvocableMethod(label='Get Order Status' description='Gets the status and details of an order by its ID')
+  @InvocableMethod(
+    label='Get Order Status'
+    description='Gets the status and details of an order by its ID'
+    category='Order Management'
+  )
   public static List<GetOrderStatusOutput> getOrderStatus(List<GetOrderStatusInput> inputs) {
     List<GetOrderStatusOutput> outputs = new List<GetOrderStatusOutput>();
 
     for (GetOrderStatusInput input : inputs) {
-      // Configure filter based on order ID format
-      String orderId = input.orderId;
-      String filter = 'Id = :orderId';
-      if (input.orderId.startsWith('O-')) {
-        filter = 'Name = :orderId';
-      }
-
-      // Query the order with the filter
-      String soqlQuery =
-        'SELECT Id, Name, Status__c, Customer__r.Name, Storefront__r.Name, Total_Amount__c, Order_Time__c, Delivery_Time__c FROM Order__c WHERE ' +
-        filter +
-        ' LIMIT 1';
-      List<Order__c> orders = Database.query(soqlQuery);
-      if (orders.isEmpty()) {
-        throw new OrderException('Order not found: ' + input.orderId);
-      }
-      Order__c order = orders[0];
+      // Use OrderService to get the order
+      Order__c order = OrderService.getOrderFromIdOrName(input.orderId);
 
       OrderStatus orderStatus = new OrderStatus();
       orderStatus.orderId = order.Id;
@@ -77,8 +66,5 @@ public with sharing class GetOrderStatusAction {
     public Decimal totalAmount;
     public Datetime orderTime;
     public Datetime deliveryTime;
-  }
-
-  public class OrderException extends Exception {
   }
 }

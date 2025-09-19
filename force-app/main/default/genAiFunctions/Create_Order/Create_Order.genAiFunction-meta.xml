@@ -7,6 +7,18 @@
     <isConfirmationRequired>false</isConfirmationRequired>
     <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
     <localDeveloperName>Create_Order</localDeveloperName>
+    <mappingAttributes>
+        <label>orderId</label>
+        <name>output_orderId</name>
+        <parameterName>orderId</parameterName>
+        <parameterType>output</parameterType>
+    </mappingAttributes>
+    <mappingAttributes>
+        <label>customerId</label>
+        <name>input_customerId</name>
+        <parameterName>customerId</parameterName>
+        <parameterType>input</parameterType>
+    </mappingAttributes>
     <masterLabel>Create Order</masterLabel>
     <progressIndicatorMessage>Creating order...</progressIndicatorMessage>
 </GenAiFunction>

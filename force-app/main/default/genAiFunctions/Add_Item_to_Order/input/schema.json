@@ -1,0 +1,28 @@
+{
+  "required": ["orderId", "orderItemName", "quantity"],
+  "unevaluatedProperties": false,
+  "properties": {
+    "orderId": {
+      "title": "Order ID",
+      "description": "The order ID or order number (Name) of the order to add items to",
+      "lightning:type": "lightning__textType",
+      "lightning:isPII": false,
+      "copilotAction:isUserInput": false
+    },
+    "orderItemName": {
+      "title": "Order Item Name",
+      "description": "The name of the menu item to add to the order",
+      "lightning:type": "lightning__textType",
+      "lightning:isPII": false,
+      "copilotAction:isUserInput": true
+    },
+    "quantity": {
+      "title": "Quantity",
+      "description": "The quantity of the item to add to the order",
+      "lightning:type": "lightning__numberType",
+      "lightning:isPII": false,
+      "copilotAction:isUserInput": true
+    }
+  },
+  "lightning:type": "lightning__objectType"
+}

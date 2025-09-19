@@ -35,7 +35,6 @@ public with sharing class GetStorefrontByNameAction {
           Review_Summary__c
         FROM Storefront__c
         WHERE Name LIKE :likeName
-        LIMIT 1
       ];
 
       Response response = new Response();

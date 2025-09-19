@@ -21,7 +21,7 @@
     },
     "success": {
       "title": "Success",
-      "description": "Whether the order was successfully cancelled",
+      "description": "Whether the order was successfully confirmed",
       "lightning:type": "lightning__booleanType",
       "lightning:isPII": false,
       "copilotAction:isDisplayable": false,

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Confirms an order by setting its status to Confirmed</description>
+    <developerName>Confirm_Order</developerName>
+    <invocationTarget>ConfirmOrderAction</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+    <localDeveloperName>Confirm_Order</localDeveloperName>
+    <masterLabel>Confirm Order</masterLabel>
+    <progressIndicatorMessage>Confirming order...</progressIndicatorMessage>
+</GenAiFunction>

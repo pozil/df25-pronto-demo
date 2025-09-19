@@ -1,7 +1,7 @@
 public with sharing class GetCustomerOrdersAction {
   private static List<String> statusValues;
 
-  @InvocableMethod(label='Get Customer Orders' description='Get orders from a customer')
+  @InvocableMethod(label='Get Customer Orders' description='Get orders from a customer' category='Order Management')
   public static List<OrderResponse> getOrders(List<OrderRequest> requests) {
     List<OrderResponse> responses = new List<OrderResponse>();
 

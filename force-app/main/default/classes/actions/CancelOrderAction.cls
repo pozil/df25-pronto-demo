@@ -18,20 +18,9 @@ public with sharing class CancelOrderAction {
     for (CancelOrderInput input : inputs) {
       CancelOrderOutput output = new CancelOrderOutput();
 
-      // Configure filter based on order ID format
-      String orderId = input.orderId;
-      String filter = 'Id = :orderId';
-      if (input.orderId.startsWith('O-')) {
-        filter = 'Name = :orderId';
-      }
-      // Query the order with the filter
-      String soqlQuery = 'SELECT Id, Name, Status__c FROM Order__c WHERE ' + filter + ' LIMIT 1';
-      List<Order__c> orders = Database.query(soqlQuery);
-      if (orders.isEmpty()) {
-        output.success = false;
-        output.message = 'Order not found: ' + input.orderId;
-      } else {
-        Order__c order = orders[0];
+      try {
+        // Use OrderService to get the order
+        Order__c order = OrderService.getOrderFromIdOrName(input.orderId);
         output.orderId = order.Id;
 
         // Check if order can be canceled
@@ -54,6 +43,9 @@ public with sharing class CancelOrderAction {
             order.Status__c +
             '.';
         }
+      } catch (OrderService.OrderException e) {
+        output.success = false;
+        output.message = e.getMessage();
       }
 
       outputs.add(output);
@@ -91,6 +83,6 @@ public with sharing class CancelOrderAction {
     public String message;
 
     @InvocableVariable(label='Order ID' description='The ID of the processed order')
-    public Id orderId;
+    public String orderId;
   }
 }

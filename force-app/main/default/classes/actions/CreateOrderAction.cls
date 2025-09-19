@@ -1,5 +1,5 @@
 public with sharing class CreateOrderAction {
-  @InvocableMethod(label='Create Order' description='Creates a draft order')
+  @InvocableMethod(label='Create Order' description='Creates a draft order' category='Order Management')
   public static List<Response> createOrder(List<Request> requests) {
     List<Response> responses = new List<Response>();
 

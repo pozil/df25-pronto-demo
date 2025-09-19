@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <GenAiPlugin xmlns="http://soap.sforce.com/2006/04/metadata">
     <canEscalate>false</canEscalate>
-    <description>This topics identifies the customer that is interacting with the agent.</description>
+    <description>Pronto - Identifies the customer that is interacting with the agent.</description>
     <developerName>Identify_Customer</developerName>
     <genAiFunctions>
         <functionName>Identify_Customer_By_Email</functionName>

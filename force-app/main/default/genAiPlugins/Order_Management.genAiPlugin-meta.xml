@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <GenAiPlugin xmlns="http://soap.sforce.com/2006/04/metadata">
     <canEscalate>false</canEscalate>
-    <description>Handle Pronto customer order enquiries</description>
-    <developerName>Order_Enquiries</developerName>
+    <description>Pronto - Help customers manage their orders</description>
+    <developerName>Order_Management</developerName>
     <genAiFunctions>
-        <functionName>Get_Order_Status</functionName>
-    </genAiFunctions>
-    <genAiFunctions>
-        <functionName>Get_Customer_Orders</functionName>
+        <functionName>Add_Item_to_Order</functionName>
     </genAiFunctions>
     <genAiFunctions>
         <functionName>Cancel_Order</functionName>
     </genAiFunctions>
     <genAiFunctions>
+        <functionName>Confirm_Order</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
         <functionName>Create_Order</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>Get_Customer_Orders</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>Get_Order_Status</functionName>
     </genAiFunctions>
     <genAiFunctions>
         <functionName>Get_Storefront_By_Name</functionName>
@@ -34,8 +40,8 @@
         <sortOrder>2</sortOrder>
     </genAiPluginInstructions>
     <language>en_US</language>
-    <localDeveloperName>Order_Enquiries</localDeveloperName>
-    <masterLabel>Order Enquiries</masterLabel>
+    <localDeveloperName>Order_Management</localDeveloperName>
+    <masterLabel>Order Management</masterLabel>
     <pluginType>Topic</pluginType>
-    <scope>Handle Pronto customer order enquiries</scope>
+    <scope>Help Pronto customers manage their orders</scope>
 </GenAiPlugin>

@@ -1,59 +1,324 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <attributeMappings>
-        <attributeName>Identify_Customer.Identify_Customer_By_Email.output_isVerifiedCustomer</attributeName>
+        <attributeName>Identify_Customer_16jWs000000N1WU.Identify_Customer_By_Email_179Ws000000GTsT.output_isVerifiedCustomer</attributeName>
         <attributeType>CustomPluginFunctionAttribute</attributeType>
         <mappingTargetName>isVerifiedCustomer</mappingTargetName>
         <mappingType>Variable</mappingType>
     </attributeMappings>
     <attributeMappings>
-        <attributeName>Identify_Customer.Identify_Customer_By_Email.output_verifiedCustomerId</attributeName>
+        <attributeName>Identify_Customer_16jWs000000N1WU.Identify_Customer_By_Email_179Ws000000GTsT.output_verifiedCustomerId</attributeName>
         <attributeType>CustomPluginFunctionAttribute</attributeType>
         <mappingTargetName>verifiedCustomerId</mappingTargetName>
         <mappingType>Variable</mappingType>
     </attributeMappings>
     <attributeMappings>
-        <attributeName>Account_Management.Update_Contact_Details.input_verifiedContactID</attributeName>
+        <attributeName>Account_Management_16jWs000000N1WU.Update_Contact_Details_179Ws000000GTsU.input_verifiedContactID</attributeName>
         <attributeType>CustomPluginFunctionAttribute</attributeType>
         <mappingTargetName>verifiedCustomerId</mappingTargetName>
         <mappingType>Variable</mappingType>
     </attributeMappings>
     <attributeMappings>
-        <attributeName>Order_Enquiries.Create_Order.output_orderId</attributeName>
+        <attributeName>Order_Management_16jWs000000N1WU.Confirm_Order_179Ws000000GTsV.input_orderId</attributeName>
         <attributeType>CustomPluginFunctionAttribute</attributeType>
         <mappingTargetName>orderId</mappingTargetName>
         <mappingType>Variable</mappingType>
     </attributeMappings>
     <attributeMappings>
-        <attributeName>Order_Enquiries.Create_Order.input_customerId</attributeName>
+        <attributeName>Order_Management_16jWs000000N1WU.Create_Order_179Ws000000GTsV.input_customerId</attributeName>
         <attributeType>CustomPluginFunctionAttribute</attributeType>
         <mappingTargetName>verifiedCustomerId</mappingTargetName>
         <mappingType>Variable</mappingType>
     </attributeMappings>
     <attributeMappings>
-        <attributeName>Order_Enquiries.Get_Customer_Orders.input_customerId</attributeName>
+        <attributeName>Order_Management_16jWs000000N1WU.Create_Order_179Ws000000GTsV.output_orderId</attributeName>
         <attributeType>CustomPluginFunctionAttribute</attributeType>
-        <mappingTargetName>verifiedCustomerId</mappingTargetName>
+        <mappingTargetName>orderId</mappingTargetName>
+        <mappingType>Variable</mappingType>
+    </attributeMappings>
+    <attributeMappings>
+        <attributeName>Order_Management_16jWs000000N1WU.Add_Item_to_Order_179Ws000000GTsV.input_orderId</attributeName>
+        <attributeType>CustomPluginFunctionAttribute</attributeType>
+        <mappingTargetName>orderId</mappingTargetName>
         <mappingType>Variable</mappingType>
     </attributeMappings>
     <description>The Merchant Support Agent is dedicated to ensuring seamless operations for Pronto&apos;s restaurant and merchant partners. This agent assists with menu updates, performance insights, logistical resolutions, and account management to foster strong and producti</description>
-    <genAiFunctions>
-        <genAiFunctionName>EmployeeCopilot__AnswerQuestionsWithKnowledge</genAiFunctionName>
-    </genAiFunctions>
-    <genAiPlugins>
-        <genAiPluginName>Account_Management</genAiPluginName>
-    </genAiPlugins>
-    <genAiPlugins>
-        <genAiPluginName>Identify_Customer</genAiPluginName>
-    </genAiPlugins>
-    <genAiPlugins>
-        <genAiPluginName>Order_Enquiries</genAiPluginName>
-    </genAiPlugins>
+    <localActionLinks>
+        <genAiFunctionName>AnswerQuestionsWithKnowledge_16jWs000000N1WU</genAiFunctionName>
+    </localActionLinks>
+    <localTopicLinks>
+        <genAiPluginName>Account_Management_16jWs000000N1WU</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Identify_Customer_16jWs000000N1WU</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Order_Management_16jWs000000N1WU</genAiPluginName>
+    </localTopicLinks>
+    <localTopics>
+        <fullName>Identify_Customer_16jWs000000N1WU</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Pronto - Identifies the customer that is interacting with the agent.</description>
+        <developerName>Identify_Customer_16jWs000000N1WU</developerName>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Identify_Customer_By_Email_179Ws000000GTsT</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Identify_Customer_By_Email_179Ws000000GTsT</fullName>
+            <description>Identifies a Pronto customer (Contact) thanks to their email</description>
+            <developerName>Identify_Customer_By_Email_179Ws000000GTsT</developerName>
+            <invocationTarget>Identify_Customer_By_Email</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Identify_Customer_By_Email</localDeveloperName>
+            <mappingAttributes>
+                <label>isVerifiedCustomer</label>
+                <name>output_isVerifiedCustomer</name>
+                <parameterName>isVerifiedCustomer</parameterName>
+                <parameterType>output</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>verifiedCustomerId</label>
+                <name>output_verifiedCustomerId</name>
+                <parameterName>verifiedCustomerId</parameterName>
+                <parameterType>output</parameterType>
+            </mappingAttributes>
+            <masterLabel>Identify Customer By Email</masterLabel>
+            <progressIndicatorMessage>Retrieving customer details...</progressIndicatorMessage>
+            <source>Identify_Customer_By_Email</source>
+        </localActions>
+        <localDeveloperName>Identify_Customer</localDeveloperName>
+        <masterLabel>Identify Customer</masterLabel>
+        <pluginType>Topic</pluginType>
+        <scope>Your role is to identify the customer that is interacting with you thanks to their email.</scope>
+        <source>Identify_Customer</source>
+    </localTopics>
+    <localTopics>
+        <fullName>Order_Management_16jWs000000N1WU</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Pronto - Help customers manage their orders</description>
+        <developerName>Order_Management_16jWs000000N1WU</developerName>
+        <genAiPluginInstructions>
+            <description>When creating an order, ask for a storefront name and use the &quot;Get Storefront By Name&quot; action to retrieve the storefront Id.</description>
+            <developerName>instructions_0_1758231874655</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>instructions_0_1758231874655</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Do not display Order IDs or Storefront IDs.</description>
+            <developerName>instructions_0_1758232172295</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>instructions_0_1758232172295</masterLabel>
+            <sortOrder>2</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Cancel_Order_179Ws000000GTsV</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Confirm_Order_179Ws000000GTsV</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Get_Order_Status_179Ws000000GTsV</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Get_Storefront_By_Name_179Ws000000GTsV</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Create_Order_179Ws000000GTsV</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Add_Item_to_Order_179Ws000000GTsV</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Get_Customer_Orders_179Ws000000GTsV</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Get_Storefront_By_Name_179Ws000000GTsV</fullName>
+            <description>Retrieves a storefront record by its name</description>
+            <developerName>Get_Storefront_By_Name_179Ws000000GTsV</developerName>
+            <invocationTarget>GetStorefrontByNameAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Get_Storefront_By_Name</localDeveloperName>
+            <masterLabel>Get Storefront By Name</masterLabel>
+            <progressIndicatorMessage>Retrieving storefront...</progressIndicatorMessage>
+            <source>Get_Storefront_By_Name</source>
+        </localActions>
+        <localActions>
+            <fullName>Get_Order_Status_179Ws000000GTsV</fullName>
+            <description>Gets the status and details of an order by its ID</description>
+            <developerName>Get_Order_Status_179Ws000000GTsV</developerName>
+            <invocationTarget>GetOrderStatusAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Get_Order_Status</localDeveloperName>
+            <masterLabel>Get Order Status</masterLabel>
+            <progressIndicatorMessage>Retrieving order status...</progressIndicatorMessage>
+            <source>Get_Order_Status</source>
+        </localActions>
+        <localActions>
+            <fullName>Add_Item_to_Order_179Ws000000GTsV</fullName>
+            <description>Adds a menu item to an existing order with specified quantity</description>
+            <developerName>Add_Item_to_Order_179Ws000000GTsV</developerName>
+            <invocationTarget>AddItemToOrderAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Add_Item_to_Order</localDeveloperName>
+            <mappingAttributes>
+                <label>orderId</label>
+                <name>input_orderId</name>
+                <parameterName>orderId</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <masterLabel>Add Item to Order</masterLabel>
+            <progressIndicatorMessage>Adding item to order...</progressIndicatorMessage>
+            <source>Add_Item_to_Order</source>
+        </localActions>
+        <localActions>
+            <fullName>Create_Order_179Ws000000GTsV</fullName>
+            <description>Creates a draft order</description>
+            <developerName>Create_Order_179Ws000000GTsV</developerName>
+            <invocationTarget>CreateOrderAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Create_Order</localDeveloperName>
+            <mappingAttributes>
+                <label>customerId</label>
+                <name>input_customerId</name>
+                <parameterName>customerId</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>orderId</label>
+                <name>output_orderId</name>
+                <parameterName>orderId</parameterName>
+                <parameterType>output</parameterType>
+            </mappingAttributes>
+            <masterLabel>Create Order</masterLabel>
+            <progressIndicatorMessage>Creating order...</progressIndicatorMessage>
+            <source>Create_Order</source>
+        </localActions>
+        <localActions>
+            <fullName>Get_Customer_Orders_179Ws000000GTsV</fullName>
+            <description>Get orders from a customer</description>
+            <developerName>Get_Customer_Orders_179Ws000000GTsV</developerName>
+            <invocationTarget>GetCustomerOrdersAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Get_Customer_Orders</localDeveloperName>
+            <masterLabel>Get Customer Orders</masterLabel>
+            <progressIndicatorMessage>Retrieving orders...</progressIndicatorMessage>
+            <source>Get_Customer_Orders</source>
+        </localActions>
+        <localActions>
+            <fullName>Confirm_Order_179Ws000000GTsV</fullName>
+            <description>Confirms an order by setting its status to Confirmed</description>
+            <developerName>Confirm_Order_179Ws000000GTsV</developerName>
+            <invocationTarget>ConfirmOrderAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Confirm_Order</localDeveloperName>
+            <mappingAttributes>
+                <label>orderId</label>
+                <name>input_orderId</name>
+                <parameterName>orderId</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <masterLabel>Confirm Order</masterLabel>
+            <progressIndicatorMessage>Confirming order...</progressIndicatorMessage>
+            <source>Confirm_Order</source>
+        </localActions>
+        <localActions>
+            <fullName>Cancel_Order_179Ws000000GTsV</fullName>
+            <description>Cancels an order if it is in Draft or Confirmed status</description>
+            <developerName>Cancel_Order_179Ws000000GTsV</developerName>
+            <invocationTarget>CancelOrderAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Cancel_Order</localDeveloperName>
+            <masterLabel>Cancel Order</masterLabel>
+            <progressIndicatorMessage>Canceling order...</progressIndicatorMessage>
+            <source>Cancel_Order</source>
+        </localActions>
+        <localDeveloperName>Order_Management</localDeveloperName>
+        <masterLabel>Order Management</masterLabel>
+        <pluginType>Topic</pluginType>
+        <scope>Help Pronto customers manage their orders</scope>
+        <source>Order_Management</source>
+    </localTopics>
+    <localTopics>
+        <fullName>Account_Management_16jWs000000N1WU</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Pronto - Help customers manage their account</description>
+        <developerName>Account_Management_16jWs000000N1WU</developerName>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Update_Contact_Details_179Ws000000GTsU</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Update_Contact_Details_179Ws000000GTsU</fullName>
+            <description>Updates a contact record (email, phone, address)</description>
+            <developerName>Update_Contact_Details_179Ws000000GTsU</developerName>
+            <invocationTarget>Update_Contact_Details</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Update_Contact_Details</localDeveloperName>
+            <mappingAttributes>
+                <label>verifiedContactID</label>
+                <name>input_verifiedContactID</name>
+                <parameterName>verifiedContactID</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <masterLabel>Update Contact Details</masterLabel>
+            <progressIndicatorMessage>Updating contact details...</progressIndicatorMessage>
+            <source>Update_Contact_Details</source>
+        </localActions>
+        <localDeveloperName>Account_Management</localDeveloperName>
+        <masterLabel>Account Management</masterLabel>
+        <pluginType>Topic</pluginType>
+        <scope>Help Pronto customers manage their account</scope>
+        <source>Account_Management</source>
+    </localTopics>
     <masterLabel>Merchant Support Agent</masterLabel>
+    <plannerActions>
+        <fullName>AnswerQuestionsWithKnowledge_16jWs000000N1WU</fullName>
+        <description>Answers questions about company policies and procedures, troubleshooting steps, or product information. For example: “What is your return policy?” “How do I fix an issue?” or “What features does a product have?”</description>
+        <developerName>AnswerQuestionsWithKnowledge_16jWs000000N1WU</developerName>
+        <invocationTarget>streamKnowledgeSearch</invocationTarget>
+        <invocationTargetType>standardInvocableAction</invocationTargetType>
+        <isConfirmationRequired>false</isConfirmationRequired>
+        <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+        <localDeveloperName>AnswerQuestionsWithKnowledge</localDeveloperName>
+        <masterLabel>Answer Questions with Knowledge</masterLabel>
+        <progressIndicatorMessage>Getting answers</progressIndicatorMessage>
+        <source>EmployeeCopilot__AnswerQuestionsWithKnowledge</source>
+    </plannerActions>
     <plannerType>AiCopilot__ReAct</plannerType>
     <ruleExpressionAssignments>
         <ruleExpressionName>Is_Verified_Customer</ruleExpressionName>
-        <targetName>Account_Management</targetName>
+        <targetName>Account_Management_16jWs000000N1WU</targetName>
+        <targetType>Plugin</targetType>
+    </ruleExpressionAssignments>
+    <ruleExpressionAssignments>
+        <ruleExpressionName>Is_Not_Verified_Customer</ruleExpressionName>
+        <targetName>Identify_Customer_16jWs000000N1WU</targetName>
+        <targetType>Plugin</targetType>
+    </ruleExpressionAssignments>
+    <ruleExpressionAssignments>
+        <ruleExpressionName>Is_Verified_Customer</ruleExpressionName>
+        <targetName>Order_Management_16jWs000000N1WU</targetName>
         <targetType>Plugin</targetType>
     </ruleExpressionAssignments>
     <ruleExpressions>
