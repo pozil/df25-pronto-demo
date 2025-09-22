@@ -42,12 +42,26 @@ public with sharing class GetStorefrontByNameAction {
         response.message = 'No storefront found with name: ' + request.storefrontName;
         response.isSuccess = false;
       } else if (storefronts.size() > 1) {
-        List<String> storefrontNames = new List<String>();
-        for (Storefront__c storefront : storefronts) {
-          storefrontNames.add(storefront.Name);
+        // If multiple storefronts are found check if name is exact match
+        Storefront__c foundStorefront;
+        for (Integer i = 0; foundStorefront == null && i < storefronts.size(); i++) {
+          if (storefronts[i].Name == request.storefrontName) {
+            foundStorefront = storefronts[i];
+          }
         }
-        response.message = 'Multiple storefronts found. Possible matches: ' + String.join(storefrontNames, ', ');
-        response.isSuccess = false;
+        if (foundStorefront == null) {
+          // If no exact match is found, return similar storefronts names
+          Set<String> storefrontNames = new Set<String>();
+          for (Storefront__c storefront : storefronts) {
+            storefrontNames.add(storefront.Name);
+          }
+          response.message = 'Multiple storefronts found. Possible matches: ' + String.join(storefrontNames, ', ');
+          response.isSuccess = false;
+        } else {
+          response.storefront = foundStorefront;
+          response.message = 'Storefront retrieved successfully';
+          response.isSuccess = true;
+        }
       } else {
         response.storefront = storefronts[0];
         response.message = 'Storefront retrieved successfully';
