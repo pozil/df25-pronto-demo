@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <attributeMappings>
+        <attributeName>Account_Management_16jWs000000N1WU.Update_Contact_Details_179Ws000000GTsU.input_verifiedContactID</attributeName>
+        <attributeType>CustomPluginFunctionAttribute</attributeType>
+        <mappingTargetName>verifiedCustomerId</mappingTargetName>
+        <mappingType>Variable</mappingType>
+    </attributeMappings>
+    <attributeMappings>
         <attributeName>Identify_Customer_16jWs000000N1WU.Identify_Customer_By_Email_179Ws000000GTsT.output_isVerifiedCustomer</attributeName>
         <attributeType>CustomPluginFunctionAttribute</attributeType>
         <mappingTargetName>isVerifiedCustomer</mappingTargetName>
@@ -8,12 +14,6 @@
     </attributeMappings>
     <attributeMappings>
         <attributeName>Identify_Customer_16jWs000000N1WU.Identify_Customer_By_Email_179Ws000000GTsT.output_verifiedCustomerId</attributeName>
-        <attributeType>CustomPluginFunctionAttribute</attributeType>
-        <mappingTargetName>verifiedCustomerId</mappingTargetName>
-        <mappingType>Variable</mappingType>
-    </attributeMappings>
-    <attributeMappings>
-        <attributeName>Account_Management_16jWs000000N1WU.Update_Contact_Details_179Ws000000GTsU.input_verifiedContactID</attributeName>
         <attributeType>CustomPluginFunctionAttribute</attributeType>
         <mappingTargetName>verifiedCustomerId</mappingTargetName>
         <mappingType>Variable</mappingType>
@@ -56,46 +56,6 @@
         <genAiPluginName>Order_Management_16jWs000000N1WU</genAiPluginName>
     </localTopicLinks>
     <localTopics>
-        <fullName>Identify_Customer_16jWs000000N1WU</fullName>
-        <canEscalate>false</canEscalate>
-        <description>Pronto - Identifies the customer that is interacting with the agent.</description>
-        <developerName>Identify_Customer_16jWs000000N1WU</developerName>
-        <language>en_US</language>
-        <localActionLinks>
-            <functionName>Identify_Customer_By_Email_179Ws000000GTsT</functionName>
-        </localActionLinks>
-        <localActions>
-            <fullName>Identify_Customer_By_Email_179Ws000000GTsT</fullName>
-            <description>Identifies a Pronto customer (Contact) thanks to their email</description>
-            <developerName>Identify_Customer_By_Email_179Ws000000GTsT</developerName>
-            <invocationTarget>Identify_Customer_By_Email</invocationTarget>
-            <invocationTargetType>flow</invocationTargetType>
-            <isConfirmationRequired>false</isConfirmationRequired>
-            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
-            <localDeveloperName>Identify_Customer_By_Email</localDeveloperName>
-            <mappingAttributes>
-                <label>isVerifiedCustomer</label>
-                <name>output_isVerifiedCustomer</name>
-                <parameterName>isVerifiedCustomer</parameterName>
-                <parameterType>output</parameterType>
-            </mappingAttributes>
-            <mappingAttributes>
-                <label>verifiedCustomerId</label>
-                <name>output_verifiedCustomerId</name>
-                <parameterName>verifiedCustomerId</parameterName>
-                <parameterType>output</parameterType>
-            </mappingAttributes>
-            <masterLabel>Identify Customer By Email</masterLabel>
-            <progressIndicatorMessage>Retrieving customer details...</progressIndicatorMessage>
-            <source>Identify_Customer_By_Email</source>
-        </localActions>
-        <localDeveloperName>Identify_Customer</localDeveloperName>
-        <masterLabel>Identify Customer</masterLabel>
-        <pluginType>Topic</pluginType>
-        <scope>Your role is to identify the customer that is interacting with you thanks to their email.</scope>
-        <source>Identify_Customer</source>
-    </localTopics>
-    <localTopics>
         <fullName>Order_Management_16jWs000000N1WU</fullName>
         <canEscalate>false</canEscalate>
         <description>Pronto - Help customers manage their orders</description>
@@ -113,6 +73,13 @@
             <language xsi:nil="true"/>
             <masterLabel>instructions_0_1758232172295</masterLabel>
             <sortOrder>2</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>When asked information about one order use the &quot;Get Order Status&quot; action. If asked about multiple orders, use the &quot;Get Customer Orders&quot; action.</description>
+            <developerName>instructions_0_1758527383494</developerName>
+            <language>en_US</language>
+            <masterLabel>instructions_0_1758527383494</masterLabel>
+            <sortOrder>3</sortOrder>
         </genAiPluginInstructions>
         <language>en_US</language>
         <localActionLinks>
@@ -256,6 +223,46 @@
         <pluginType>Topic</pluginType>
         <scope>Help Pronto customers manage their orders</scope>
         <source>Order_Management</source>
+    </localTopics>
+    <localTopics>
+        <fullName>Identify_Customer_16jWs000000N1WU</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Pronto - Identifies the customer that is interacting with the agent.</description>
+        <developerName>Identify_Customer_16jWs000000N1WU</developerName>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Identify_Customer_By_Email_179Ws000000GTsT</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Identify_Customer_By_Email_179Ws000000GTsT</fullName>
+            <description>Identifies a Pronto customer (Contact) thanks to their email</description>
+            <developerName>Identify_Customer_By_Email_179Ws000000GTsT</developerName>
+            <invocationTarget>Identify_Customer_By_Email</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Identify_Customer_By_Email</localDeveloperName>
+            <mappingAttributes>
+                <label>isVerifiedCustomer</label>
+                <name>output_isVerifiedCustomer</name>
+                <parameterName>isVerifiedCustomer</parameterName>
+                <parameterType>output</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>verifiedCustomerId</label>
+                <name>output_verifiedCustomerId</name>
+                <parameterName>verifiedCustomerId</parameterName>
+                <parameterType>output</parameterType>
+            </mappingAttributes>
+            <masterLabel>Identify Customer By Email</masterLabel>
+            <progressIndicatorMessage>Retrieving customer details...</progressIndicatorMessage>
+            <source>Identify_Customer_By_Email</source>
+        </localActions>
+        <localDeveloperName>Identify_Customer</localDeveloperName>
+        <masterLabel>Identify Customer</masterLabel>
+        <pluginType>Topic</pluginType>
+        <scope>Your role is to identify the customer that is interacting with you thanks to their email.</scope>
+        <source>Identify_Customer</source>
     </localTopics>
     <localTopics>
         <fullName>Account_Management_16jWs000000N1WU</fullName>

@@ -18,6 +18,15 @@ public with sharing class OrderService {
     return orders[0];
   }
 
+  public static List<Order_Item__c> getOrderItems(Id orderId) {
+    return [
+      SELECT Id, Item_Name__c, Quantity__c, Total_Amount__c
+      FROM Order_Item__c
+      WHERE Order__c = :orderId
+      ORDER BY Name
+    ];
+  }
+
   public class OrderException extends Exception {
   }
 }

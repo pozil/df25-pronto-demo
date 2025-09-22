@@ -28,6 +28,7 @@ public with sharing class GetOrderStatusAction {
       orderStatus.totalAmount = order.Total_Amount__c;
       orderStatus.orderTime = order.Order_Time__c;
       orderStatus.deliveryTime = order.Delivery_Time__c;
+      orderStatus.items = OrderService.getOrderItems(order.Id);
 
       GetOrderStatusOutput output = new GetOrderStatusOutput();
       output.orderStatus = orderStatus;
@@ -66,5 +67,6 @@ public with sharing class GetOrderStatusAction {
     public Decimal totalAmount;
     public Datetime orderTime;
     public Datetime deliveryTime;
+    public List<Order_Item__c> items;
   }
 }
