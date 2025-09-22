@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>Identifies a Pronto customer (Contact) thanks to their email</description>
+    <description>Confirms the identity of a Pronto customer thanks to their email</description>
     <developerName>Identify_Customer_By_Email</developerName>
     <invocationTarget>Identify_Customer_By_Email</invocationTarget>
     <invocationTargetType>flow</invocationTargetType>

@@ -30,18 +30,26 @@
         <developerName>instructions_0_1758231874655</developerName>
         <language>en_US</language>
         <masterLabel>instructions_0_1758231874655</masterLabel>
-        <sortOrder>1</sortOrder>
+        <sortOrder>0</sortOrder>
     </genAiPluginInstructions>
     <genAiPluginInstructions>
         <description>Do not display Order IDs or Storefront IDs.</description>
         <developerName>instructions_0_1758232172295</developerName>
         <language>en_US</language>
         <masterLabel>instructions_0_1758232172295</masterLabel>
-        <sortOrder>2</sortOrder>
+        <sortOrder>0</sortOrder>
+    </genAiPluginInstructions>
+    <genAiPluginInstructions>
+        <description
+    >When asked information about a single order, use the "Get Order Status" action and if asked about multiple orders, use the "Get Customer Orders" action.</description>
+        <developerName>instructions_0_1758232172296</developerName>
+        <language>en_US</language>
+        <masterLabel>instructions_0_1758232172296</masterLabel>
+        <sortOrder>0</sortOrder>
     </genAiPluginInstructions>
     <language>en_US</language>
     <localDeveloperName>Order_Management</localDeveloperName>
     <masterLabel>Order Management</masterLabel>
     <pluginType>Topic</pluginType>
-    <scope>Help Pronto customers manage their orders</scope>
+    <scope>Your role is to help customers place and manage their orders</scope>
 </GenAiPlugin>

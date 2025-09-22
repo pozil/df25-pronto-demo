@@ -42,7 +42,7 @@
         <mappingTargetName>orderId</mappingTargetName>
         <mappingType>Variable</mappingType>
     </attributeMappings>
-    <description>The Merchant Support Agent is dedicated to ensuring seamless operations for Pronto&apos;s restaurant and merchant partners. This agent assists with menu updates, performance insights, logistical resolutions, and account management to foster strong and producti</description>
+    <description>The Merchant Support Agent is dedicated to ensuring seamless operations for Pronto&apos;s restaurant and merchant partners. This agent assists with menu updates, performance insights, logistical resolutions, and account management to foster strong and productive partnerships. With intelligent automation and real-time support, the agent helps merchants stay focused on delivering excellent customer experiences</description>
     <localActionLinks>
         <genAiFunctionName>AnswerQuestionsWithKnowledge_16jWs000000N1WU</genAiFunctionName>
     </localActionLinks>
@@ -221,7 +221,7 @@
         <localDeveloperName>Order_Management</localDeveloperName>
         <masterLabel>Order Management</masterLabel>
         <pluginType>Topic</pluginType>
-        <scope>Help Pronto customers manage their orders</scope>
+        <scope>Help customers place and manage their orders.</scope>
         <source>Order_Management</source>
     </localTopics>
     <localTopics>
@@ -261,7 +261,8 @@
         <localDeveloperName>Identify_Customer</localDeveloperName>
         <masterLabel>Identify Customer</masterLabel>
         <pluginType>Topic</pluginType>
-        <scope>Your role is to identify the customer that is interacting with you thanks to their email.</scope>
+        <scope>Your role is to identify the customer that is interacting with you thanks to their email.
+Customers must be identified before they can take action like placing/managing orders or managing their account.</scope>
         <source>Identify_Customer</source>
     </localTopics>
     <localTopics>
@@ -295,7 +296,7 @@
         <localDeveloperName>Account_Management</localDeveloperName>
         <masterLabel>Account Management</masterLabel>
         <pluginType>Topic</pluginType>
-        <scope>Help Pronto customers manage their account</scope>
+        <scope>Help customers manage their account</scope>
         <source>Account_Management</source>
     </localTopics>
     <masterLabel>Merchant Support Agent</masterLabel>

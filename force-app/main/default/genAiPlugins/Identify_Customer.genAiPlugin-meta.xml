@@ -10,5 +10,5 @@
     <localDeveloperName>Identify_Customer</localDeveloperName>
     <masterLabel>Identify Customer</masterLabel>
     <pluginType>Topic</pluginType>
-    <scope>Your role is to identify the customer that is interacting with you thanks to their email.</scope>
+    <scope>Your role is to identify the customer. Do this before taking any other action.</scope>
 </GenAiPlugin>
