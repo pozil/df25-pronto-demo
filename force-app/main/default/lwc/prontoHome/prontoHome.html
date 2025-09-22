@@ -1,0 +1,175 @@
+<template>
+  <article class="slds-card">
+    <div>
+      <div class="slds-grid slds-wrap slds-grid--vertical-stretch">
+        <div class="slds-col slds-size_1-of-1 slds-border_left slds-p-around_medium">
+          <!-- BEGIN HOME SECTION -->
+          <template lwc:if={showHome}>
+            <!-- INTRO -->
+            <div class="slds-p-bottom_medium">
+              <h2 class="slds-text-heading_large slds-text-color_default slds-p-bottom_small">
+                <strong>Welcome to the Data Cloud Workshop</strong>
+              </h2>
+              <div class="slds-text-body_regular slds-text-color_default slds-p-bottom_small">
+                Welcome to your Data Cloud Customer 360 workshop hub—access session materials, monitor your progress,
+                and dive into hands-on exercises that teach data unification, identity resolution, and real-time
+                engagement with Salesforce.
+              </div>
+
+              <div class="slds-text-heading_medium slds-text-color_default slds-p-bottom_small">Workshop Overview</div>
+              <div
+                class="slds-text-body_regular slds-text-color_default slds-p-bottom_small slds-border_bottom slds-m-bottom_small"
+              >
+                Data Cloud is transforming businesses by bringing together every data source into one real-time customer
+                profile. In this free, hands-on workshop, you'll learn to connect, harmonize, and activate data across
+                your organization. Guided by Data Cloud experts, you'll configure data streams, apply identity
+                resolution, and leverage unified profiles to power predictive scoring, automated flows, and personalized
+                experiences across the Salesforce Platform.
+              </div>
+
+              <div class="slds-media slds-media_center slds-p-bottom_small">
+                <div class="slds-media__body">
+                  <div class="slds-text-heading_medium slds-text-color_default slds-p-bottom_small">About Pronto</div>
+                  <div class="slds-text-body_regular slds-text-color_default slds-p-bottom_small">
+                    Pronto is a reference food-delivery app that demonstrates Data Cloud Customer 360 in action. It
+                    shows how an AI-driven service can unify CRM, order history, ad analytics, and support data to
+                    automate lead scoring, streamline onboarding, and surface real-time insights.
+                  </div>
+                  <lightning-button
+                    label="Open Pronto Website"
+                    data-type="url"
+                    data-url={prontoAppUrl}
+                    icon-name="utility:new_window"
+                    icon-position="right"
+                    onclick={view}
+                    name="pronto"
+                    variant="brand"
+                  ></lightning-button>
+                </div>
+              </div>
+
+              <div class="slds-border_bottom slds-m-bottom_small"></div>
+
+              <div class="slds-media slds-media_center slds-p-bottom_small">
+                <div class="slds-media__body">
+                  <div class="slds-text-heading_medium slds-text-color_default slds-p-bottom_small">
+                    API Callout Tool
+                  </div>
+                  <div class="slds-text-body_regular slds-text-color_default slds-p-bottom_small">
+                    Querying Real-time Data Graphs via API is currently the only way for us to retrieve data from the
+                    real-time layer in Data Cloud.
+                  </div>
+                  <lightning-button
+                    label="Launch API Callout Tool"
+                    onclick={launchCalloutModal}
+                    name="apiCallout"
+                    variant="brand"
+                  ></lightning-button>
+                </div>
+              </div>
+
+              <div class="slds-border_bottom slds-m-bottom_small"></div>
+              <!-- Credentials -->
+              <div class="slds-text-heading_medium slds-text-color_default slds-p-bottom_small">Credentials</div>
+              <div class="slds-text-body_regular slds-text-color_default slds-p-bottom_small">
+                Ensure that you write down your username and password as they are not available to retrieve after the
+                event or if you misplace them during the workshop.
+              </div>
+              <div class="slds-grid slds-wrap slds-p-bottom_small slds-border_bottom">
+                <div class="slds-size_1-of-1 slds-p-bottom_x-small">
+                  <div class="slds-grid slds-wrap">
+                    <div class="slds-size_1-of-2 slds-align-bottom">
+                      <div class="slds-grid slds-wrap">
+                        <div class="slds-size_1-of-2 slds-align-bottom">
+                          <lightning-input type="email" label="Username" value={username} disabled="true">
+                          </lightning-input>
+                        </div>
+                        <div class="slds-size_1-of-2 slds-align-bottom">
+                          <lightning-button-icon
+                            class="slds-m-left_x-small"
+                            data-content={username}
+                            icon-name="utility:copy"
+                            onclick={handleCopy}
+                          ></lightning-button-icon>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="slds-size_1-of-1">
+                  <div class="slds-grid slds-wrap">
+                    <div class="slds-size_1-of-2 slds-align-bottom">
+                      <div class="slds-grid slds-wrap">
+                        <div class="slds-size_1-of-2 slds-align-bottom">
+                          <lightning-input type="text" label="Default Password" value="orgfarm1234" disabled="true">
+                          </lightning-input>
+                        </div>
+                        <div class="slds-size_1-of-2 slds-align-bottom">
+                          <lightning-button-icon
+                            class="slds-m-left_x-small"
+                            data-content="orgfarm1234"
+                            icon-name="utility:copy"
+                            onclick={handleCopy}
+                          ></lightning-button-icon>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARDS -->
+            <div class="slds-grid slds-grid_vertical-stretch slds-gutters">
+              <!-- CARD: DOCUMENTATION -->
+              <div class="slds-col slds-size_1-of-2 slds-grid slds-grid_vertical-stretch">
+                <div class="slds-col slds-box slds-box_small slds-text-align_center box-shadow">
+                  <div class="slds-p-bottom_small">
+                    <lightning-icon size="large" icon-name="standard:knowledge"></lightning-icon>
+                  </div>
+                  <p class="slds-text-color_default"><strong>Workshop Documentation</strong></p>
+                  <p class="slds-text-color_default slds-p-bottom_small">
+                    Access the complete workshop guide and resources
+                  </p>
+                  <lightning-button
+                    label="View"
+                    data-type="url"
+                    data-url="https://developer.salesforce.com/data-cloud-workshop"
+                    icon-name="utility:chevronright"
+                    icon-position="right"
+                    onclick={view}
+                    name="guide"
+                    variant="brand"
+                  ></lightning-button>
+                </div>
+              </div>
+              <!-- CARD: DATA CLOUD -->
+              <div class="slds-col slds-size_1-of-2 slds-grid slds-grid_vertical-stretch">
+                <div class="slds-col slds-box slds-box_small slds-text-align_center box-shadow">
+                  <div class="slds-p-bottom_small">
+                    <lightning-icon size="large" icon-name="standard:data_cloud"></lightning-icon>
+                  </div>
+                  <p class="slds-text-color_default"><strong>Data Cloud Resources</strong></p>
+                  <p class="slds-text-color_default slds-p-bottom_small">
+                    Learn more about Salesforce Data Cloud capabilities
+                  </p>
+                  <lightning-button
+                    label="View"
+                    data-type="url"
+                    data-url="https://help.salesforce.com/s/articleView?id=sf.c360_a_overview.htm"
+                    icon-name="utility:chevronright"
+                    icon-position="right"
+                    onclick={view}
+                    name="guide"
+                    variant="brand"
+                  ></lightning-button>
+                </div>
+              </div>
+            </div>
+          </template>
+          <!-- END HOME SECTION -->
+        </div>
+      </div>
+    </div>
+  </article>
+</template>
