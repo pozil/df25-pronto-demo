@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<BotVersion xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>v1</fullName>
+    <articleAnswersGPTEnabled>false</articleAnswersGPTEnabled>
+    <botDialogs>
+        <botSteps>
+            <botMessages>
+                <message>Hi, I&apos;m the Pronto customer assistant. How can I help you?</message>
+                <messageIdentifier>05b25c3c-7c61-42f9-a1a3-554dbfc80a84</messageIdentifier>
+            </botMessages>
+            <stepIdentifier>8db0a7aa-636c-4607-8524-b47f812c8ce5</stepIdentifier>
+            <type>Message</type>
+        </botSteps>
+        <botSteps>
+            <stepIdentifier>94704e77-e5a2-47cc-96e9-fb00a3d21d7d</stepIdentifier>
+            <type>Wait</type>
+        </botSteps>
+        <developerName>Welcome</developerName>
+        <isPlaceholderDialog>false</isPlaceholderDialog>
+        <label>Hi! I&apos;m your helpful bot.</label>
+        <showInFooterMenu>false</showInFooterMenu>
+    </botDialogs>
+    <botDialogs>
+        <botSteps>
+            <botMessages>
+                <message>Sorry, it looks like something has gone wrong.</message>
+                <messageIdentifier>013bac54-8899-4587-9ce1-3bd95949a1c5</messageIdentifier>
+            </botMessages>
+            <stepIdentifier>7d2406ed-f599-4ffb-8df6-f78a81e730dc</stepIdentifier>
+            <type>Message</type>
+        </botSteps>
+        <botSteps>
+            <stepIdentifier>7a922858-50af-4259-b88d-2f6991655826</stepIdentifier>
+            <type>Wait</type>
+        </botSteps>
+        <developerName>Error_Handling</developerName>
+        <isPlaceholderDialog>false</isPlaceholderDialog>
+        <label>Unfortunately, a system error occurred. Let us start again.</label>
+        <showInFooterMenu>false</showInFooterMenu>
+    </botDialogs>
+    <botDialogs>
+        <botSteps>
+            <botMessages>
+                <message>One moment while I connect you to the next available service representative.</message>
+                <messageIdentifier>a9d6aafe-b9a1-4427-9eed-ce244f52c14c</messageIdentifier>
+            </botMessages>
+            <stepIdentifier>9b83c1c6-ff06-44d7-a6b0-accaa28c02b7</stepIdentifier>
+            <type>Message</type>
+        </botSteps>
+        <botSteps>
+            <conversationSystemMessage>
+                <type>Transfer</type>
+            </conversationSystemMessage>
+            <stepIdentifier>33cd9851-42ec-4c38-bc8f-c5f5960600ed</stepIdentifier>
+            <type>SystemMessage</type>
+        </botSteps>
+        <developerName>Transfer_To_Agent</developerName>
+        <isPlaceholderDialog>false</isPlaceholderDialog>
+        <label>Transfer To Agent</label>
+        <showInFooterMenu>false</showInFooterMenu>
+    </botDialogs>
+    <citationsEnabled>false</citationsEnabled>
+    <company
+  >Pronto specializes in delivering food from it&apos;s partners to customers. I handles customer orders and tracks deliveries.</company>
+    <conversationDefinitionPlanners>
+        <genAiPlannerName>Merchant_Support_Agent</genAiPlannerName>
+    </conversationDefinitionPlanners>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>Indicates whether the customer is verified</description>
+        <developerName>isVerifiedCustomer</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Is Verified Customer</label>
+        <visibility>External</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>The ID of the current customer order</description>
+        <developerName>orderId</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Order ID</label>
+        <visibility>External</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>The verified Contact ID for the customer</description>
+        <developerName>verifiedCustomerId</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Verified Customer ID</label>
+        <visibility>External</visibility>
+    </conversationVariables>
+    <entryDialog>Welcome</entryDialog>
+    <intentDisambiguationEnabled>false</intentDisambiguationEnabled>
+    <intentV3Enabled>false</intentV3Enabled>
+    <knowledgeActionEnabled>false</knowledgeActionEnabled>
+    <knowledgeFallbackEnabled>false</knowledgeFallbackEnabled>
+    <role>You are an assistant that helps customers with order creation, order management, account management.</role>
+    <smallTalkEnabled>false</smallTalkEnabled>
+    <stopRecPrompts>false</stopRecPrompts>
+    <stopWelcomePrompts>false</stopWelcomePrompts>
+    <surfacesEnabled>false</surfacesEnabled>
+    <toneType>Casual</toneType>
+</BotVersion>
