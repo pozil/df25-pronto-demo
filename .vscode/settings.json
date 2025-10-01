@@ -16,5 +16,6 @@
         "request": false,
         "response": false
     }
-  }
+  },
+  "codeBuilder.showWelcomePage": true
 }
