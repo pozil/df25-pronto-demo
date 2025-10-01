@@ -1,0 +1,15 @@
+Open my default org
+
+How many storefronts are registered in my org?
+
+Create a latestOrderCard LWC that displays the details of the latest confirmed customer order for a given storefront.
+The LWC should go on the Storefront record page and grab the record ID from there.
+Create an OrderController.getLatestOrder Apex method that the LWC can use and write the related Apex test.
+
+Deploy the metadata and run the Apex tests
+
+Add a button that opens the order record page
+
+Move the button to the "action" section of the card.
+
+Switch the order view to use a record form LWC using two columns display mode.
