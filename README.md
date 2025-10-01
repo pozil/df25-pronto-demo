@@ -4,10 +4,12 @@
 
 Customizes the Pronto reference for Agentforce demos at DF25.
 
-Features:
+Adds the following features:
 
 - Storefront Explorer Lightning page
 - Menu PDF importer via Prompt Template
+- Agents with their actions
+- AI Job monitor
 
 ## Setup instructions
 
