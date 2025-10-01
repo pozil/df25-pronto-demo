@@ -13,7 +13,7 @@ Adds the following features:
 
 ## Setup instructions
 
-Run the setup script:
+Run the setup script on an existing Pronto org:
 
 ```sh
 ./bin/install.sh
