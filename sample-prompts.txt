@@ -1,15 +1,22 @@
-Open my default org
-
 How many storefronts are registered in my org?
 
-Create a latestOrderCard LWC that displays the details of the latest confirmed customer order for a given storefront.
-The LWC should go on the Storefront record page and grab the record ID from there.
-Create an OrderController.getLatestOrder Apex method that the LWC can use and write the related Apex test.
 
-Deploy the metadata and run the Apex tests
+Create a latestOrderCard LWC that displays the latest confirmed customer order for a given storefront.
+Create an OrderController.getLatestOrder AuraEnabled Apex method that takes the Storefront record ID and fetches these Order fields: name, status, total amount, order time.
+The LWC should go on the Storefront record page and grab the record ID from there. Use a wire to call getLatestOrder with the record ID.
+Write the related Apex test.
+
+
+Deploy the metadata and run the OrderController Apex tests.
+
+
+Run Code Analyzer on the OrderController class.
+
 
 Add a button that opens the order record page
 
-Move the button to the "action" section of the card.
 
-Switch the order view to use a record form LWC using two columns display mode.
+Use the standard:order_item icon for the card amd move the button to the "action" section of the card.
+
+
+Rewrite the LWC to use a lightning record form using two columns display mode. Import individual field names from @salesforce/schema.
