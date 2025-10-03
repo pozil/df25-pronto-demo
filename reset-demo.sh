@@ -2,6 +2,9 @@
 SCRIPT_PATH=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd $SCRIPT_PATH
 
+echo "Resetting demo..."
+rm -rf force-app/main/default/classes
+rm -rf force-app/main/default/lwc
 git reset --hard HEAD
 sf project deploy start -c -g
 
