@@ -1,6 +1,8 @@
 public with sharing class ContentVersionTriggerHandler {
   private static Map<String, Menu_Category__c> menuCategoriesByName;
 
+  private static final String EXCLUDE_STOREFRONT_NAME_PATTERN = 'Fusion';
+
   /**
    * Handles after insert events for ContentVersion records
    * Checks if the ContentVersion is attached to a Storefront__c record and runs menu extraction
@@ -59,9 +61,12 @@ public with sharing class ContentVersionTriggerHandler {
 
     // Process each storefront for menu extraction
     for (Storefront__c storefront : storefronts) {
-      String promptResponse = callExtractMenuPrompt(storefront);
-      System.debug('Prompt Response: ' + promptResponse);
-      parseAndInsertMenuItems(promptResponse, storefront);
+      // Only process storefronts that do not match the exclude pattern
+      if (!storefront.Name.contains(EXCLUDE_STOREFRONT_NAME_PATTERN)) {
+        String promptResponse = callExtractMenuPrompt(storefront);
+        System.debug('Prompt Response: ' + promptResponse);
+        parseAndInsertMenuItems(promptResponse, storefront);
+      }
     }
   }
 
@@ -126,22 +131,42 @@ public with sharing class ContentVersionTriggerHandler {
       );
     }
 
-    // Create a menu
-    Menu__c menu = new Menu__c(
-      Menu_Display_Name__c = 'Standard Menu',
-      Description__c = 'Standard menu imported from a PDF file',
-      Storefront__c = storefrontRecord.Id,
-      Active__c = true
-    );
-    insert menu;
+    // Retrieve or create a menu
+    Menu__c menu = getMenuFromStorefrontAndName(storefrontRecord, 'Standard Menu');
+    if (menu == null) {
+      // Create a menu
+      menu = new Menu__c(
+        Menu_Display_Name__c = 'Standard Menu',
+        Description__c = 'Standard menu imported from a PDF file',
+        Storefront__c = storefrontRecord.Id,
+        Active__c = true
+      );
+      insert menu;
+    } else {
+      // Delete existing menu items
+      delete [SELECT Id FROM Menu_Item__c WHERE Menu__c = :menu.Id];
+    }
 
-    // Add extra info to the menu items
+    // Add menu items
     for (Menu_Item__c menuItem : menuItems) {
       menuItem.Menu__c = menu.Id;
       menuItem.Available__c = true;
       menuItem.Menu_Category__c = getMenuCategoryId(menuItem.Menu_Category__c);
     }
     insert menuItems;
+  }
+
+  // Get menu from storefront and menu name
+  private static Menu__c getMenuFromStorefrontAndName(Storefront__c storefront, String menuName) {
+    List<Menu__c> menus = [
+      SELECT Id
+      FROM Menu__c
+      WHERE Storefront__c = :storefront.Id AND Menu_Display_Name__c = :menuName
+    ];
+    if (menus.isEmpty()) {
+      return null;
+    }
+    return menus[0];
   }
 
   private static Id getMenuCategoryId(String categoryName) {
