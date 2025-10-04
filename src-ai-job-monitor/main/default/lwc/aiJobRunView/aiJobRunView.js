@@ -24,7 +24,7 @@ const COLUMNS = [
     label: "Action",
     type: "button",
     typeAttributes: {
-      label: "View Items",
+      label: "View",
       name: "view_items",
       variant: "brand",
       title: "View Job Run Items"
