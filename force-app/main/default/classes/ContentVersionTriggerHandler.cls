@@ -63,11 +63,31 @@ public with sharing class ContentVersionTriggerHandler {
     for (Storefront__c storefront : storefronts) {
       // Only process storefronts that do not match the exclude pattern
       if (!storefront.Name.contains(EXCLUDE_STOREFRONT_NAME_PATTERN)) {
-        String promptResponse = callExtractMenuPrompt(storefront);
-        System.debug('Prompt Response: ' + promptResponse);
-        parseAndInsertMenuItems(promptResponse, storefront);
+        processStorefront(storefront.Id);
       }
     }
+  }
+
+  @future
+  private static void processStorefront(Id storefrontId) {
+    Storefront__c storefront = [SELECT Id, Name FROM Storefront__c WHERE Id = :storefrontId];
+    String promptResponse = callExtractMenuPrompt(storefront);
+    System.debug('Prompt Response: ' + promptResponse);
+    parseAndInsertMenuItems(promptResponse, storefront);
+    deleteAttachments(storefrontId);
+  }
+
+  private static void deleteAttachments(Id storefrontId) {
+    List<ContentDocumentLink> attachments = [
+      SELECT Id, ContentDocumentId
+      FROM ContentDocumentLink
+      WHERE LinkedEntityId = :storefrontId
+    ];
+    Set<Id> contentDocumentIds = new Set<Id>();
+    for (ContentDocumentLink cdl : attachments) {
+      contentDocumentIds.add(cdl.ContentDocumentId);
+    }
+    delete [SELECT Id FROM ContentDocument WHERE Id IN :contentDocumentIds];
   }
 
   /**
