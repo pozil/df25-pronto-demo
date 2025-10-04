@@ -60,6 +60,9 @@ public with sharing class ContentVersionTriggerHandler {
       return;
     }
 
+    // Schedule the cleanup job
+    ImportedMenuCleanupJob.scheduleCleanup();
+
     // Process each storefront for menu extraction
     for (Storefront__c storefront : storefronts) {
       // Only process storefronts that do not match the exclude pattern
