@@ -2,6 +2,7 @@ public with sharing class ContentVersionTriggerHandler {
   private static Map<String, Menu_Category__c> menuCategoriesByName;
 
   private static final String EXCLUDE_STOREFRONT_NAME_PATTERN = 'Fusion';
+  private static final String IMPORTED_MENU_NAME = 'Imported Menu';
 
   /**
    * Handles after insert events for ContentVersion records
@@ -152,11 +153,11 @@ public with sharing class ContentVersionTriggerHandler {
     }
 
     // Retrieve or create a menu
-    Menu__c menu = getMenuFromStorefrontAndName(storefrontRecord, 'Standard Menu');
+    Menu__c menu = getMenuFromStorefrontAndName(storefrontRecord, IMPORTED_MENU_NAME);
     if (menu == null) {
       // Create a menu
       menu = new Menu__c(
-        Menu_Display_Name__c = 'Standard Menu',
+        Menu_Display_Name__c = IMPORTED_MENU_NAME,
         Description__c = 'Standard menu imported from a PDF file',
         Storefront__c = storefrontRecord.Id,
         Active__c = true
