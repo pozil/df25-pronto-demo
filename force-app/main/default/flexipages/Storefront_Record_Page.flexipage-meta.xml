@@ -506,13 +506,13 @@
                     <name>relatedListFieldAliases</name>
                     <valueList>
                         <valueListItems>
+                            <value>NAME</value>
+                        </valueListItems>
+                        <valueListItems>
                             <value>Menu_Display_Name__c</value>
                         </valueListItems>
                         <valueListItems>
                             <value>Description__c</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>NAME</value>
                         </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
