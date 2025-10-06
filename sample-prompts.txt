@@ -5,9 +5,10 @@ Create a latestOrderCard LWC that displays the latest confirmed customer order f
 Create an OrderController.getLatestOrder AuraEnabled Apex method that takes the Storefront record ID and fetches these Order fields: name, status, total amount, order time.
 The LWC should go on the Storefront record page but don't modify the flexipage.
 Grab the record ID from the current page and use a wire to call getLatestOrder with the record ID.
+Skip tests for now.
+
+
 Write the related Apex test, skip the LWC tests.
-
-
 Deploy the metadata and run the OrderController Apex tests.
 
 

@@ -17,5 +17,6 @@
         "response": false
     }
   },
-  "codeBuilder.showWelcomePage": true
+  "codeBuilder.showWelcomePage": true,
+  "xml.preferences.showSchemaDocumentationType": "none"
 }
