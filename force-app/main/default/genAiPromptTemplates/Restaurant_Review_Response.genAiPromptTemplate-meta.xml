@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>3udHfnHwkZdf7lymZfZlYR1SM2CVO0AToCxB7U1zTYg=_1</activeVersionIdentifier>
+    <developerName>Restaurant_Review_Response</developerName>
+    <masterLabel>Restaurant Review Response</masterLabel>
+    <templateVersions>
+        <content>You are a Restaurant Manager providing personalized responses to customer restaurant reviews.
+
+&gt;&gt;Instructions&lt;&lt;
+1. Analyze the Review: {!$Input:Reviews.Comments__c} and identify its key points.
+2. Determine if the review is Positive or Negative: {!$Input:Reviews.Positive_or_Negative__c}
+3. Tone: Keep the response informal and formatted in a single paragraph.
+4. Acknowledge and Personalize: Begin the response by thanking the customer for their feedback. Use the reviewer&apos;s name {!$Input:Reviews.Customer__r.Name} and specifically mention something they liked or disliked to show you&apos;ve read the review carefully.
+5. Address the Customer&apos;s feedback:
+    - For positive reviews: Echo the customer&apos;s praise. Mention the specific dish, server, or aspect of the experience they highlighted. This reinforces their positive feedback.
+    - For negative reviews: Acknowledge the specific issue(s) raised (e.g., slow service, cold food, a mistake with an order). Briefly explain that the feedback is being taken seriously and that the restaurant is working to resolve the issue. Do not make excuses.
+6. End with a Call to Action:
+    - For positive reviews: Invite them back for another great experience. You might also suggest another menu item they&apos;d enjoy using the restaurant&apos;s menu items for reference {!$RelatedList:Reviews.Storefront__r.Menus__r.Records}.
+    - For negative reviews: A friendly and sincere invitation to give the restaurant another chance to provide a better experience in the future.
+
+
+</content>
+        <inputs>
+            <apiName>Reviews</apiName>
+            <definition>SOBJECT://Review__c</definition>
+            <masterLabel>Reviews</masterLabel>
+            <referenceName>Input:Reviews</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <templateDataProviders>
+            <definition>invocable://getRelatedList</definition>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>true</isRequired>
+                <parameterName>parentRecordId</parameterName>
+                <valueExpression>{!$Input:Reviews.Storefront__r.Id}</valueExpression>
+            </parameters>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>true</isRequired>
+                <parameterName>relatedListName</parameterName>
+                <valueExpression>Menus__r</valueExpression>
+            </parameters>
+            <referenceName>RelatedList:Reviews.Storefront__r.Menus__r.Records</referenceName>
+        </templateDataProviders>
+        <versionIdentifier>3udHfnHwkZdf7lymZfZlYR1SM2CVO0AToCxB7U1zTYg=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>
