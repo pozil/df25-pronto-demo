@@ -85,13 +85,20 @@ public with sharing class AiJobMonitorController {
   }
 
   /**
-   * Retrieves AI Job Run records with pagination
+   * Retrieves AI Job Run records with pagination and filtering
    * @param pageSize Number of records per page
    * @param pageNumber Page number (1-based)
+   * @param jobTypeFilter Optional filter for job type
+   * @param targetFilter Optional filter for target
    * @return Map containing records and pagination info
    */
   @AuraEnabled(cacheable=true)
-  public static Map<String, Object> getAiJobRuns(Integer pageSize, Integer pageNumber) {
+  public static Map<String, Object> getAiJobRuns(
+    Integer pageSize,
+    Integer pageNumber,
+    String jobTypeFilter,
+    String targetFilter
+  ) {
     try {
       // Validate and set defaults
       if (pageSize == null || pageSize <= 0) {
@@ -106,34 +113,32 @@ public with sharing class AiJobMonitorController {
 
       Integer offset = (pageNumber - 1) * pageSize;
 
-      // Get total count
-      Integer totalRecords = [
-        SELECT COUNT()
-        FROM AiJobRun
-        WITH USER_MODE
-      ];
+      // Build dynamic WHERE clause based on filters
+      String whereClause = '';
+      List<String> conditions = new List<String>();
 
-      // Get paginated records
-      List<AiJobRun> records = [
-        SELECT
-          Id,
-          JobType,
-          Target,
-          Status,
-          CreatedDate,
-          CreatedBy.Name,
-          EndTime,
-          ErrorCode,
-          ErrorMessage,
-          Label,
-          Name,
-          StartTime
-        FROM AiJobRun
-        WITH USER_MODE
-        ORDER BY CreatedDate DESC
-        LIMIT :pageSize
-        OFFSET :offset
-      ];
+      if (String.isNotBlank(jobTypeFilter)) {
+        conditions.add('JobType = :jobTypeFilter');
+      }
+
+      if (String.isNotBlank(targetFilter)) {
+        conditions.add('Target = :targetFilter');
+      }
+
+      if (!conditions.isEmpty()) {
+        whereClause = 'WHERE ' + String.join(conditions, ' AND ');
+      }
+
+      // Get total count with filters
+      String countQuery = 'SELECT COUNT() FROM AiJobRun ' + whereClause + ' WITH USER_MODE';
+      Integer totalRecords = Database.countQuery(countQuery);
+
+      // Get paginated records with filters
+      String recordsQuery =
+        'SELECT Id, JobType, Target, Status, CreatedDate, CreatedBy.Name, EndTime, ErrorCode, ErrorMessage, Label, Name, StartTime FROM AiJobRun ' +
+        whereClause +
+        ' WITH USER_MODE ORDER BY CreatedDate DESC LIMIT :pageSize OFFSET :offset';
+      List<AiJobRun> records = Database.query(recordsQuery);
 
       // Calculate pagination info
       Integer totalPages = (Integer) Math.ceil((Decimal) totalRecords / pageSize);
@@ -150,6 +155,60 @@ public with sharing class AiJobMonitorController {
       return result;
     } catch (Exception e) {
       throw new AuraHandledException('Error retrieving AI Job Runs: ' + e.getMessage());
+    }
+  }
+
+  /**
+   * Retrieves unique job types for filter options
+   * @return List of unique job types
+   */
+  @AuraEnabled(cacheable=true)
+  public static List<String> getJobTypes() {
+    try {
+      List<AggregateResult> results = [
+        SELECT JobType
+        FROM AiJobRun
+        WHERE JobType != NULL
+        WITH USER_MODE
+        GROUP BY JobType
+        ORDER BY JobType
+      ];
+
+      List<String> jobTypes = new List<String>();
+      for (AggregateResult ar : results) {
+        jobTypes.add((String) ar.get('JobType'));
+      }
+
+      return jobTypes;
+    } catch (Exception e) {
+      throw new AuraHandledException('Error retrieving job types: ' + e.getMessage());
+    }
+  }
+
+  /**
+   * Retrieves unique targets for filter options
+   * @return List of unique targets
+   */
+  @AuraEnabled(cacheable=true)
+  public static List<String> getTargets() {
+    try {
+      List<AggregateResult> results = [
+        SELECT Target
+        FROM AiJobRun
+        WHERE Target != NULL
+        WITH USER_MODE
+        GROUP BY Target
+        ORDER BY Target
+      ];
+
+      List<String> targets = new List<String>();
+      for (AggregateResult ar : results) {
+        targets.add((String) ar.get('Target'));
+      }
+
+      return targets;
+    } catch (Exception e) {
+      throw new AuraHandledException('Error retrieving targets: ' + e.getMessage());
     }
   }
 }

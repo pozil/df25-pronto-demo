@@ -5,6 +5,50 @@
     </div>
   </template>
   <template lwc:else>
+    <!-- Filter Section -->
+    <div class="slds-var-p-bottom_medium">
+      <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+        <div class="slds-grid slds-grid_vertical-align-center slds-gutters">
+          <!-- Job Type Filter -->
+          <div class="slds-col slds-var-m-right_medium">
+            <lightning-combobox
+              name="jobTypeFilter"
+              label="Job Type"
+              placeholder="All Job Types"
+              options={jobTypeOptions}
+              value={jobTypeFilter}
+              onchange={handleJobTypeFilterChange}
+            >
+            </lightning-combobox>
+          </div>
+
+          <!-- Target Filter -->
+          <div class="slds-col slds-var-m-right_medium">
+            <lightning-combobox
+              name="targetFilter"
+              label="Target"
+              placeholder="All Targets"
+              options={targetOptions}
+              value={targetFilter}
+              onchange={handleTargetFilterChange}
+            >
+            </lightning-combobox>
+          </div>
+
+          <!-- Clear Filters Button -->
+          <div class="slds-col">
+            <lightning-button
+              variant="neutral"
+              label="Clear Filters"
+              onclick={handleClearFilters}
+              disabled={hasNoActiveFilters}
+            >
+            </lightning-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <template lwc:if={hasData}>
       <lightning-datatable
         key-field="Id"

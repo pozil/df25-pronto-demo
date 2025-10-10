@@ -1,9 +1,20 @@
 import { LightningElement, wire } from "lwc";
 
 import getAiJobRuns from "@salesforce/apex/AiJobMonitorController.getAiJobRuns";
+import getJobTypes from "@salesforce/apex/AiJobMonitorController.getJobTypes";
+import getTargets from "@salesforce/apex/AiJobMonitorController.getTargets";
 
 const COLUMNS = [
-  { label: "Name", fieldName: "Name" },
+  {
+    label: "Name",
+    type: "button",
+    typeAttributes: {
+      label: { fieldName: "Name" },
+      name: "view_items",
+      variant: "base",
+      title: "View Job Run Items"
+    }
+  },
   { label: "Label", fieldName: "Label" },
   { label: "Job Type", fieldName: "JobType" },
   { label: "Status", fieldName: "Status" },
@@ -19,16 +30,6 @@ const COLUMNS = [
     fieldName: "ErrorMessage",
     type: "text",
     wrapText: true
-  },
-  {
-    label: "Action",
-    type: "button",
-    typeAttributes: {
-      label: "View",
-      name: "view_items",
-      variant: "brand",
-      title: "View Job Run Items"
-    }
   }
 ];
 
@@ -39,6 +40,10 @@ export default class AiJobRunView extends LightningElement {
   isLoading = true;
   currentPage = 1;
   pageSize = 25;
+  jobTypeFilter = "";
+  targetFilter = "";
+  jobTypeOptions = [];
+  targetOptions = [];
 
   get columns() {
     return COLUMNS;
@@ -51,7 +56,12 @@ export default class AiJobRunView extends LightningElement {
     return `Showing ${start}-${end} of ${this.paginationInfo.totalRecords}`;
   }
 
-  @wire(getAiJobRuns, { pageSize: "$pageSize", pageNumber: "$currentPage" })
+  @wire(getAiJobRuns, {
+    pageSize: "$pageSize",
+    pageNumber: "$currentPage",
+    jobTypeFilter: "$jobTypeFilter",
+    targetFilter: "$targetFilter"
+  })
   wiredAiJobRuns({ error, data }) {
     this.isLoading = false;
     if (data) {
@@ -79,6 +89,54 @@ export default class AiJobRunView extends LightningElement {
       this.paginationInfo = {};
       console.error("Error fetching AI Job Runs:", error);
     }
+  }
+
+  @wire(getJobTypes)
+  wiredJobTypes({ error, data }) {
+    if (data) {
+      this.jobTypeOptions = data.map((jobType) => ({
+        label: jobType,
+        value: jobType
+      }));
+    } else if (error) {
+      console.error("Error fetching job types:", error);
+    }
+  }
+
+  @wire(getTargets)
+  wiredTargets({ error, data }) {
+    if (data) {
+      this.targetOptions = data.map((target) => ({
+        label: target,
+        value: target
+      }));
+    } else if (error) {
+      console.error("Error fetching targets:", error);
+    }
+  }
+
+  get hasActiveFilters() {
+    return this.jobTypeFilter !== "" || this.targetFilter !== "";
+  }
+
+  get hasNoActiveFilters() {
+    return this.jobTypeFilter === "" && this.targetFilter === "";
+  }
+
+  handleJobTypeFilterChange(event) {
+    this.jobTypeFilter = event.target.value;
+    this.currentPage = 1; // Reset to first page when filtering
+  }
+
+  handleTargetFilterChange(event) {
+    this.targetFilter = event.target.value;
+    this.currentPage = 1; // Reset to first page when filtering
+  }
+
+  handleClearFilters() {
+    this.jobTypeFilter = "";
+    this.targetFilter = "";
+    this.currentPage = 1; // Reset to first page when clearing filters
   }
 
   formatDate(dateValue) {
