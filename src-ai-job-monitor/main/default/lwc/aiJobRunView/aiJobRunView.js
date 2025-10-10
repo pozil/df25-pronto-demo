@@ -3,6 +3,7 @@ import { LightningElement, wire } from "lwc";
 import getAiJobRuns from "@salesforce/apex/AiJobMonitorController.getAiJobRuns";
 import getJobTypes from "@salesforce/apex/AiJobMonitorController.getJobTypes";
 import getTargets from "@salesforce/apex/AiJobMonitorController.getTargets";
+import getStatuses from "@salesforce/apex/AiJobMonitorController.getStatuses";
 
 const COLUMNS = [
   {
@@ -17,8 +18,8 @@ const COLUMNS = [
   },
   { label: "Label", fieldName: "Label" },
   { label: "Job Type", fieldName: "JobType" },
-  { label: "Status", fieldName: "Status" },
   { label: "Target", fieldName: "Target" },
+  { label: "Status", fieldName: "Status" },
   { label: "Created Date", fieldName: "CreatedDate" },
   { label: "Created By", fieldName: "CreatedBy" },
   { label: "Start Time", fieldName: "StartTime" },
@@ -40,27 +41,21 @@ export default class AiJobRunView extends LightningElement {
   isLoading = true;
   currentPage = 1;
   pageSize = 25;
+
+  // Filters
   jobTypeFilter = "";
   targetFilter = "";
+  statusFilter = "";
   jobTypeOptions = [];
   targetOptions = [];
-
-  get columns() {
-    return COLUMNS;
-  }
-
-  get currentPageInfo() {
-    if (!this.paginationInfo.totalRecords) return "";
-    const start = (this.currentPage - 1) * this.pageSize + 1;
-    const end = Math.min(this.currentPage * this.pageSize, this.paginationInfo.totalRecords);
-    return `Showing ${start}-${end} of ${this.paginationInfo.totalRecords}`;
-  }
+  statusOptions = [];
 
   @wire(getAiJobRuns, {
     pageSize: "$pageSize",
     pageNumber: "$currentPage",
     jobTypeFilter: "$jobTypeFilter",
-    targetFilter: "$targetFilter"
+    targetFilter: "$targetFilter",
+    statusFilter: "$statusFilter"
   })
   wiredAiJobRuns({ error, data }) {
     this.isLoading = false;
@@ -115,27 +110,56 @@ export default class AiJobRunView extends LightningElement {
     }
   }
 
+  @wire(getStatuses)
+  wiredStatuses({ error, data }) {
+    if (data) {
+      this.statusOptions = data.map((status) => ({
+        label: status,
+        value: status
+      }));
+    } else if (error) {
+      console.error("Error fetching statuses:", error);
+    }
+  }
+
+  get columns() {
+    return COLUMNS;
+  }
+
+  get currentPageInfo() {
+    if (!this.paginationInfo.totalRecords) return "";
+    const start = (this.currentPage - 1) * this.pageSize + 1;
+    const end = Math.min(this.currentPage * this.pageSize, this.paginationInfo.totalRecords);
+    return `Showing ${start}-${end} of ${this.paginationInfo.totalRecords}`;
+  }
+
   get hasActiveFilters() {
-    return this.jobTypeFilter !== "" || this.targetFilter !== "";
+    return this.jobTypeFilter !== "" || this.targetFilter !== "" || this.statusFilter !== "";
   }
 
   get hasNoActiveFilters() {
-    return this.jobTypeFilter === "" && this.targetFilter === "";
+    return this.jobTypeFilter === "" && this.targetFilter === "" && this.statusFilter === "";
   }
 
   handleJobTypeFilterChange(event) {
-    this.jobTypeFilter = event.target.value;
+    this.jobTypeFilter = event.detail.value;
     this.currentPage = 1; // Reset to first page when filtering
   }
 
   handleTargetFilterChange(event) {
-    this.targetFilter = event.target.value;
+    this.targetFilter = event.detail.value;
+    this.currentPage = 1; // Reset to first page when filtering
+  }
+
+  handleStatusFilterChange(event) {
+    this.statusFilter = event.detail.value;
     this.currentPage = 1; // Reset to first page when filtering
   }
 
   handleClearFilters() {
     this.jobTypeFilter = "";
     this.targetFilter = "";
+    this.statusFilter = "";
     this.currentPage = 1; // Reset to first page when clearing filters
   }
 

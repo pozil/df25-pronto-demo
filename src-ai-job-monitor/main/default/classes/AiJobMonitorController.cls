@@ -90,6 +90,7 @@ public with sharing class AiJobMonitorController {
    * @param pageNumber Page number (1-based)
    * @param jobTypeFilter Optional filter for job type
    * @param targetFilter Optional filter for target
+   * @param statusFilter Optional filter for status
    * @return Map containing records and pagination info
    */
   @AuraEnabled(cacheable=true)
@@ -97,7 +98,8 @@ public with sharing class AiJobMonitorController {
     Integer pageSize,
     Integer pageNumber,
     String jobTypeFilter,
-    String targetFilter
+    String targetFilter,
+    String statusFilter
   ) {
     try {
       // Validate and set defaults
@@ -123,6 +125,10 @@ public with sharing class AiJobMonitorController {
 
       if (String.isNotBlank(targetFilter)) {
         conditions.add('Target = :targetFilter');
+      }
+
+      if (String.isNotBlank(statusFilter)) {
+        conditions.add('Status = :statusFilter');
       }
 
       if (!conditions.isEmpty()) {
@@ -209,6 +215,33 @@ public with sharing class AiJobMonitorController {
       return targets;
     } catch (Exception e) {
       throw new AuraHandledException('Error retrieving targets: ' + e.getMessage());
+    }
+  }
+
+  /**
+   * Retrieves unique statuses for filter options
+   * @return List of unique statuses
+   */
+  @AuraEnabled(cacheable=true)
+  public static List<String> getStatuses() {
+    try {
+      List<AggregateResult> results = [
+        SELECT Status
+        FROM AiJobRun
+        WHERE Status != NULL
+        WITH USER_MODE
+        GROUP BY Status
+        ORDER BY Status
+      ];
+
+      List<String> statuses = new List<String>();
+      for (AggregateResult ar : results) {
+        statuses.add((String) ar.get('Status'));
+      }
+
+      return statuses;
+    } catch (Exception e) {
+      throw new AuraHandledException('Error retrieving statuses: ' + e.getMessage());
     }
   }
 }

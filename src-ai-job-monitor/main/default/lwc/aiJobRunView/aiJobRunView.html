@@ -35,6 +35,19 @@
             </lightning-combobox>
           </div>
 
+          <!-- Status Filter -->
+          <div class="slds-col slds-var-m-right_medium">
+            <lightning-combobox
+              name="statusFilter"
+              label="Status"
+              placeholder="All Statuses"
+              options={statusOptions}
+              value={statusFilter}
+              onchange={handleStatusFilterChange}
+            >
+            </lightning-combobox>
+          </div>
+
           <!-- Clear Filters Button -->
           <div class="slds-col">
             <lightning-button
