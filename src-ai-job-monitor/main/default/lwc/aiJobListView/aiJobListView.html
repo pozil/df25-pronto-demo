@@ -48,6 +48,30 @@
             </lightning-combobox>
           </div>
 
+          <!-- Start Time Filter -->
+          <div class="slds-col slds-var-m-right_medium">
+            <lightning-input
+              name="startTimeFilter"
+              label="Start Time After"
+              type="datetime-local"
+              value={startTimeFilter}
+              onchange={handleStartTimeFilterChange}
+            >
+            </lightning-input>
+          </div>
+
+          <!-- End Time Filter -->
+          <div class="slds-col slds-var-m-right_medium">
+            <lightning-input
+              name="endTimeFilter"
+              label="End Time Before"
+              type="datetime-local"
+              value={endTimeFilter}
+              onchange={handleEndTimeFilterChange}
+            >
+            </lightning-input>
+          </div>
+
           <!-- Clear Filters Button -->
           <div class="slds-col slds-var-m-right_medium">
             <lightning-button

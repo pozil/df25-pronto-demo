@@ -56,6 +56,8 @@ export default class AiJobListView extends LightningElement {
   jobTypeFilter = "";
   targetFilter = "";
   statusFilter = "";
+  startTimeFilter = "";
+  endTimeFilter = "";
   jobTypeOptions = [];
   targetOptions = [];
   statusOptions = [];
@@ -65,7 +67,9 @@ export default class AiJobListView extends LightningElement {
     pageNumber: "$currentPage",
     jobTypeFilter: "$jobTypeFilter",
     targetFilter: "$targetFilter",
-    statusFilter: "$statusFilter"
+    statusFilter: "$statusFilter",
+    startTimeFilter: "$startTimeFilter",
+    endTimeFilter: "$endTimeFilter"
   })
   wiredAiJobRuns({ error, data }) {
     this.isLoading = false;
@@ -175,11 +179,23 @@ export default class AiJobListView extends LightningElement {
   }
 
   get hasActiveFilters() {
-    return this.jobTypeFilter !== "" || this.targetFilter !== "" || this.statusFilter !== "";
+    return (
+      this.jobTypeFilter !== "" ||
+      this.targetFilter !== "" ||
+      this.statusFilter !== "" ||
+      this.startTimeFilter !== "" ||
+      this.endTimeFilter !== ""
+    );
   }
 
   get hasNoActiveFilters() {
-    return this.jobTypeFilter === "" && this.targetFilter === "" && this.statusFilter === "";
+    return (
+      this.jobTypeFilter === "" &&
+      this.targetFilter === "" &&
+      this.statusFilter === "" &&
+      this.startTimeFilter === "" &&
+      this.endTimeFilter === ""
+    );
   }
 
   handleJobTypeFilterChange(event) {
@@ -197,10 +213,22 @@ export default class AiJobListView extends LightningElement {
     this.currentPage = 1; // Reset to first page when filtering
   }
 
+  handleStartTimeFilterChange(event) {
+    this.startTimeFilter = event.detail.value;
+    this.currentPage = 1; // Reset to first page when filtering
+  }
+
+  handleEndTimeFilterChange(event) {
+    this.endTimeFilter = event.detail.value;
+    this.currentPage = 1; // Reset to first page when filtering
+  }
+
   handleClearFilters() {
     this.jobTypeFilter = "";
     this.targetFilter = "";
     this.statusFilter = "";
+    this.startTimeFilter = "";
+    this.endTimeFilter = "";
     this.currentPage = 1; // Reset to first page when clearing filters
   }
 

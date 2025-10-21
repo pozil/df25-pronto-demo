@@ -91,6 +91,8 @@ public with sharing class AiJobMonitorController {
    * @param jobTypeFilter Optional filter for job type
    * @param targetFilter Optional filter for target
    * @param statusFilter Optional filter for status
+   * @param startTimeFilter Optional filter for start time (after this time)
+   * @param endTimeFilter Optional filter for end time (before this time)
    * @return Map containing records and pagination info
    */
   @AuraEnabled(cacheable=true)
@@ -99,9 +101,14 @@ public with sharing class AiJobMonitorController {
     Integer pageNumber,
     String jobTypeFilter,
     String targetFilter,
-    String statusFilter
+    String statusFilter,
+    String startTimeFilter,
+    String endTimeFilter
   ) {
     try {
+      DateTime startTime;
+      DateTime endTime;
+
       // Validate and set defaults
       if (pageSize == null || pageSize <= 0) {
         pageSize = DEFAULT_PAGE_SIZE;
@@ -129,6 +136,16 @@ public with sharing class AiJobMonitorController {
 
       if (String.isNotBlank(statusFilter)) {
         conditions.add('Status = :statusFilter');
+      }
+
+      if (String.isNotBlank(startTimeFilter)) {
+        startTime = (DateTime) JSON.deserialize('"' + startTimeFilter + '"', DateTime.class);
+        conditions.add('StartTime >= :startTime');
+      }
+
+      if (String.isNotBlank(endTimeFilter)) {
+        endTime = (DateTime) JSON.deserialize('"' + endTimeFilter + '"', DateTime.class);
+        conditions.add('EndTime <= :endTime');
       }
 
       if (!conditions.isEmpty()) {
