@@ -179,4 +179,16 @@ export default class AiJobItemListView extends LightningElement {
   get errorMessage() {
     return this.error ? this.error.body?.message : null;
   }
+
+  get completionPercentage() {
+    if (!this.statusCounts || Object.keys(this.statusCounts).length === 0) {
+      return 0;
+    }
+
+    const totalItems = Object.values(this.statusCounts).reduce((sum, count) => sum + count, 0);
+    if (totalItems === 0) return 0;
+
+    const completedItems = this.statusCounts?.Completed || 0;
+    return Math.round((completedItems / totalItems) * 100);
+  }
 }
