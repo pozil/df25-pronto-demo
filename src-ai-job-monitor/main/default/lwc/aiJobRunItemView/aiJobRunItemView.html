@@ -33,7 +33,9 @@
           <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
             <dl class="slds-list_horizontal slds-wrap">
               <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Target">Target:</dt>
-              <dd class="slds-item_detail slds-truncate">{jobRun.Target}</dd>
+              <dd class="slds-item_detail slds-truncate">
+                <a href="#" data-target={jobRun.Target} onclick={handleTargetClick}>{jobRun.Target}</a>
+              </dd>
             </dl>
           </div>
 

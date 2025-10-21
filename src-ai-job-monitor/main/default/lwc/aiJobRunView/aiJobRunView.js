@@ -18,7 +18,16 @@ const COLUMNS = [
   },
   { label: "Label", fieldName: "Label" },
   { label: "Job Type", fieldName: "JobType" },
-  { label: "Target", fieldName: "Target" },
+  {
+    label: "Target",
+    type: "button",
+    typeAttributes: {
+      label: { fieldName: "Target" },
+      name: "view_target",
+      variant: "base",
+      title: "View Target"
+    }
+  },
   { label: "Status", fieldName: "Status" },
   { label: "Created Date", fieldName: "CreatedDate" },
   { label: "Created By", fieldName: "CreatedBy" },
@@ -245,6 +254,13 @@ export default class AiJobRunView extends LightningElement {
         bubbles: true
       });
       this.dispatchEvent(jobRunSelectedEvent);
+    } else if (actionName === "view_target") {
+      // Dispatch custom event to parent component with target
+      const targetSelectedEvent = new CustomEvent("targetselected", {
+        detail: { target: row.Target },
+        bubbles: true
+      });
+      this.dispatchEvent(targetSelectedEvent);
     }
   }
 }

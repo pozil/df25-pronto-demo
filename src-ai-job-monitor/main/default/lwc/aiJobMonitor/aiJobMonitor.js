@@ -1,6 +1,7 @@
 import { LightningElement } from "lwc";
+import { NavigationMixin } from "lightning/navigation";
 
-export default class AiJobMonitor extends LightningElement {
+export default class AiJobMonitor extends NavigationMixin(LightningElement) {
   selectedJobRun;
 
   get title() {
@@ -21,12 +22,24 @@ export default class AiJobMonitor extends LightningElement {
   }
 
   handleJobRunSelected(event) {
-    if (event.detail && event.detail.jobRun) {
+    if (event?.detail?.jobRun) {
       // Event from child component (aiJobRunView)
       this.selectedJobRun = event.detail.jobRun;
     } else {
       // Event from back button - clear selection
       this.selectedJobRun = null;
+    }
+  }
+
+  handleTargetSelected(event) {
+    if (event?.detail?.target) {
+      // Navigate to prompt builder, we're not using the prompt name (target) because Apex can't access it.
+      this[NavigationMixin.Navigate]({
+        type: "standard__webPage",
+        attributes: {
+          url: "/lightning/setup/EinsteinPromptStudio/home"
+        }
+      });
     }
   }
 }

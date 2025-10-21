@@ -89,6 +89,16 @@ export default class AiJobRunItemView extends LightningElement {
     return `${date} ${time}`;
   }
 
+  handleTargetClick(event) {
+    event.preventDefault();
+    const target = event.target.dataset.target;
+    const targetSelectedEvent = new CustomEvent("targetselected", {
+      detail: { target },
+      bubbles: true
+    });
+    this.dispatchEvent(targetSelectedEvent);
+  }
+
   // Pagination methods
   handleFirstPage() {
     this.currentPage = 1;
