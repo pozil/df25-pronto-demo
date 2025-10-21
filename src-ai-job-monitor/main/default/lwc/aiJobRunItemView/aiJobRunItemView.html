@@ -1,4 +1,113 @@
 <template>
+  <!-- Job Run Details -->
+  <template lwc:if={jobRun}>
+    <div class="slds-var-m-bottom_large">
+      <div class="slds-box slds-theme_shade slds-var-p-around_medium">
+        <h2 class="slds-text-heading_medium slds-var-m-bottom_small">Job Details</h2>
+        <div class="slds-grid slds-wrap slds-gutters">
+          <!-- Name -->
+          <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+            <dl class="slds-list_horizontal slds-wrap">
+              <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Name">Name:</dt>
+              <dd class="slds-item_detail slds-truncate">{jobRun.Name}</dd>
+            </dl>
+          </div>
+
+          <!-- Label -->
+          <div lwc:if={jobRun.Label} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+            <dl class="slds-list_horizontal slds-wrap">
+              <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Label">Label:</dt>
+              <dd class="slds-item_detail slds-truncate">{jobRun.Label}</dd>
+            </dl>
+          </div>
+
+          <!-- Job Type -->
+          <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+            <dl class="slds-list_horizontal slds-wrap">
+              <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Job Type">Job Type:</dt>
+              <dd class="slds-item_detail slds-truncate">{jobRun.JobType}</dd>
+            </dl>
+          </div>
+
+          <!-- Target -->
+          <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+            <dl class="slds-list_horizontal slds-wrap">
+              <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Target">Target:</dt>
+              <dd class="slds-item_detail slds-truncate">{jobRun.Target}</dd>
+            </dl>
+          </div>
+
+          <!-- Status -->
+          <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+            <dl class="slds-list_horizontal slds-wrap">
+              <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Status">Status:</dt>
+              <dd class="slds-item_detail slds-truncate">{jobRun.Status}</dd>
+            </dl>
+          </div>
+
+          <!-- Created Date -->
+          <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+            <dl class="slds-list_horizontal slds-wrap">
+              <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Created Date">Created Date:</dt>
+              <dd class="slds-item_detail slds-truncate">{jobRun.CreatedDate}</dd>
+            </dl>
+          </div>
+
+          <!-- Created By -->
+          <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+            <dl class="slds-list_horizontal slds-wrap">
+              <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Created By">Created By:</dt>
+              <dd class="slds-item_detail slds-truncate">{jobRun.CreatedBy}</dd>
+            </dl>
+          </div>
+
+          <!-- Start Time -->
+          <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+            <dl class="slds-list_horizontal slds-wrap">
+              <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Start Time">Start Time:</dt>
+              <dd class="slds-item_detail slds-truncate">{jobRun.StartTime}</dd>
+            </dl>
+          </div>
+
+          <!-- End Time -->
+          <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+            <dl class="slds-list_horizontal slds-wrap">
+              <dt class="slds-item_label slds-text-color_weak slds-truncate" title="End Time">End Time:</dt>
+              <dd class="slds-item_detail slds-truncate">{jobRun.EndTime}</dd>
+            </dl>
+          </div>
+
+          <!-- Duration -->
+          <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+            <dl class="slds-list_horizontal slds-wrap">
+              <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Duration">Duration:</dt>
+              <dd class="slds-item_detail slds-truncate">{jobRun.Duration}</dd>
+            </dl>
+          </div>
+
+          <!-- Error Code -->
+          <div
+            lwc:if={jobRun.ErrorCode}
+            class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3"
+          >
+            <dl class="slds-list_horizontal slds-wrap">
+              <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Error Code">Error Code:</dt>
+              <dd class="slds-item_detail slds-truncate">{jobRun.ErrorCode}</dd>
+            </dl>
+          </div>
+
+          <!-- Error Message -->
+          <div lwc:if={jobRun.ErrorMessage} class="slds-col slds-size_1-of-1">
+            <dl class="slds-list_horizontal slds-wrap">
+              <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Error Message">Error Message:</dt>
+              <dd class="slds-item_detail slds-truncate">{jobRun.ErrorMessage}</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
   <template lwc:if={isLoading}>
     <div class="slds-is-relative">
       <lightning-spinner alternative-text="Loading AI Job Run Items..." size="medium"></lightning-spinner>
@@ -10,7 +119,7 @@
       <template lwc:if={hasStatusCounts}>
         <div class="slds-var-m-bottom_medium">
           <div class="slds-box slds-theme_shade slds-var-p-around_small">
-            <h3 class="slds-text-heading_small slds-var-m-bottom_x-small">Status Summary</h3>
+            <h3 class="slds-text-heading_medium slds-var-m-bottom_small">Job Item Statuses</h3>
             <div class="slds-grid slds-wrap slds-gutters_small">
               <template for:each={statusSummary} for:item="statusItem">
                 <div
@@ -120,7 +229,7 @@
         <lightning-icon icon-name="utility:error" size="x-small"></lightning-icon>
       </span>
       <h2>Error loading AI Job Run Items</h2>
-      <p>{error.body.message}</p>
+      <p>{errorMessage}</p>
     </div>
   </template>
 </template>

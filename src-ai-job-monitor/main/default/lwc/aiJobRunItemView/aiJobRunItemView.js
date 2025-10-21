@@ -75,11 +75,20 @@ export default class AiJobRunItemView extends LightningElement {
       this.error = error;
       this.aiJobRunItems = [];
       this.paginationInfo = {};
-      console.error("Error fetching AI Job Run Items:", error);
+      console.error("Error fetching AI Job Run Items:", JSON.stringify(error));
     } finally {
       this.isLoading = false;
     }
   }
+
+  formatDate(dateValue) {
+    if (!dateValue) return "";
+    const dateTime = dateValue.split("T");
+    const date = dateTime[0]; // yyyy-mm-dd
+    const time = dateTime[1].split(".")[0]; // hh:mm:ss
+    return `${date} ${time}`;
+  }
+
   // Pagination methods
   handleFirstPage() {
     this.currentPage = 1;
@@ -109,14 +118,6 @@ export default class AiJobRunItemView extends LightningElement {
     this.pageSize = parseInt(event.target.value, 10);
     this.currentPage = 1; // Reset to first page when changing page size
     this.refresh();
-  }
-
-  formatDate(dateValue) {
-    if (!dateValue) return "";
-    const dateTime = dateValue.split("T");
-    const date = dateTime[0]; // yyyy-mm-dd
-    const time = dateTime[1].split(".")[0]; // hh:mm:ss
-    return `${date} ${time}`;
   }
 
   get jobRunId() {
@@ -163,5 +164,9 @@ export default class AiJobRunItemView extends LightningElement {
 
   get isLastPage() {
     return this.currentPage === this.paginationInfo.totalPages;
+  }
+
+  get errorMessage() {
+    return this.error ? this.error.body?.message : null;
   }
 }
