@@ -18,7 +18,7 @@ export default class AiJobMonitor extends NavigationMixin(LightningElement) {
   }
 
   handleRefreshClick() {
-    this.template.querySelector("c-ai-job-run-item-view").refresh();
+    this.template.querySelector("c-ai-job-item-list-view").refresh();
   }
 
   handleJobRunSelected(event) {
