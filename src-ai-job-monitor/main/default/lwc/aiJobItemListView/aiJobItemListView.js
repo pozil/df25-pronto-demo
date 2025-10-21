@@ -32,7 +32,7 @@ const COLUMNS = [
   }
 ];
 
-export default class AiJobRunItemView extends LightningElement {
+export default class AiJobItemListView extends LightningElement {
   @api jobRun;
 
   aiJobRunItems = [];

@@ -43,7 +43,7 @@ const COLUMNS = [
   }
 ];
 
-export default class AiJobRunView extends LightningElement {
+export default class AiJobListView extends LightningElement {
   aiJobRuns = [];
   paginationInfo = {};
   error;

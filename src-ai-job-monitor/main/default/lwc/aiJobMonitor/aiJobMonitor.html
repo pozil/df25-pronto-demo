@@ -18,16 +18,16 @@
       </lightning-button-group>
     </div>
     <div class="slds-var-p-around_medium">
-      <c-ai-job-run-item-view
+      <c-ai-job-item-list-view
         lwc:if={selectedJobRun}
         job-run={selectedJobRun}
         ontargetselected={handleTargetSelected}
-      ></c-ai-job-run-item-view>
-      <c-ai-job-run-view
+      ></c-ai-job-item-list-view>
+      <c-ai-job-list-view
         lwc:else
         onjobrunselected={handleJobRunSelected}
         ontargetselected={handleTargetSelected}
-      ></c-ai-job-run-view>
+      ></c-ai-job-list-view>
     </div>
   </lightning-card>
 </template>
