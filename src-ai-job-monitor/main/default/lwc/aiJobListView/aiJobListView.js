@@ -1,4 +1,4 @@
-import { LightningElement, wire } from "lwc";
+import { LightningElement, wire, track } from "lwc";
 
 import getAiJobRuns from "@salesforce/apex/AiJobMonitorController.getAiJobRuns";
 import getJobTypes from "@salesforce/apex/AiJobMonitorController.getJobTypes";
@@ -45,6 +45,7 @@ const COLUMNS = [
 
 export default class AiJobListView extends LightningElement {
   aiJobRuns = [];
+  @track columnVisibility = {};
   paginationInfo = {};
   error;
   isLoading = true;
@@ -131,8 +132,39 @@ export default class AiJobListView extends LightningElement {
     }
   }
 
-  get columns() {
-    return COLUMNS;
+  connectedCallback() {
+    // Set all columns to visible by default
+    this.columnVisibility = {};
+    COLUMNS.forEach((column) => {
+      const fieldName = this.getFieldNameFromColumn(column);
+      this.columnVisibility[fieldName] = true;
+    });
+  }
+  getFieldNameFromColumn(column) {
+    if (column.type === "button") {
+      return column.typeAttributes.label.fieldName;
+    }
+    return column.fieldName;
+  }
+
+  get visibleColumns() {
+    return COLUMNS.filter((column) => {
+      const fieldName = this.getFieldNameFromColumn(column);
+      return this.columnVisibility[fieldName];
+    });
+  }
+
+  get columnOptions() {
+    const cols = COLUMNS.map((column) => {
+      const fieldName = this.getFieldNameFromColumn(column);
+      return {
+        label: column.label,
+        value: fieldName,
+        checked: this.columnVisibility[fieldName]
+      };
+    });
+    // Remove Name column from options
+    return cols.filter((option) => option.value !== "Name");
   }
 
   get currentPageInfo() {
@@ -170,6 +202,11 @@ export default class AiJobListView extends LightningElement {
     this.targetFilter = "";
     this.statusFilter = "";
     this.currentPage = 1; // Reset to first page when clearing filters
+  }
+
+  handleColumnMenuSelect(event) {
+    const selectedValue = event.detail.value;
+    this.columnVisibility[selectedValue] = !this.columnVisibility[selectedValue];
   }
 
   formatDate(dateValue) {

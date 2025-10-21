@@ -49,7 +49,7 @@
           </div>
 
           <!-- Clear Filters Button -->
-          <div class="slds-col">
+          <div class="slds-col slds-var-m-right_medium">
             <lightning-button
               variant="neutral"
               label="Clear Filters"
@@ -59,6 +59,25 @@
             </lightning-button>
           </div>
         </div>
+
+        <!-- Column Visibility Menu -->
+        <div class="slds-col">
+          <lightning-button-menu
+            alternative-text="Column Visibility"
+            icon-name="utility:table"
+            menu-alignment="right"
+            onselect={handleColumnMenuSelect}
+          >
+            <template for:each={columnOptions} for:item="item">
+              <lightning-menu-item
+                key={item.value}
+                value={item.value}
+                label={item.label}
+                checked={item.checked}
+              ></lightning-menu-item>
+            </template>
+          </lightning-button-menu>
+        </div>
       </div>
     </div>
 
@@ -66,7 +85,7 @@
       <lightning-datatable
         key-field="Id"
         data={aiJobRuns}
-        columns={columns}
+        columns={visibleColumns}
         hide-checkbox-column="true"
         default-sort-direction="desc"
         sorted-direction="desc"
