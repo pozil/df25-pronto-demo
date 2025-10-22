@@ -1,8 +1,0 @@
-.status-header-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.status-progress-bar-container {
-  flex-grow: 1;
-}

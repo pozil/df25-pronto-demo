@@ -3,10 +3,6 @@
     {
       "path": "force-app",
       "default": true
-    },
-    {
-      "path": "src-ai-job-monitor",
-      "default": false
     }
   ],
   "name": "tdx25-af-for-devs",
