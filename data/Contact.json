@@ -1596,7 +1596,7 @@
       "MailingCity": "Dallas",
       "MailingCountry": "United States",
       "MailingPostalCode": "75204",
-      "MailingState": "TX",
+      "MailingState": "Texas",
       "MailingStreet": "3227 McKinney Avenue"
     },
     {
@@ -2898,9 +2898,9 @@
       "LastName": "Hernandez",
       "Email": "carlos.hernandez@gmail.com",
       "MailingCity": "Dallas",
-      "MailingCountry": "USA",
+      "MailingCountry": "United States",
       "MailingPostalCode": "75219",
-      "MailingState": "TX",
+      "MailingState": "Texas",
       "MailingStreet": "2401 Victory Avenue"
     },
     {
@@ -2914,7 +2914,7 @@
       "MailingCity": "Dallas",
       "MailingCountry": "United States",
       "MailingPostalCode": "75204",
-      "MailingState": "TX",
+      "MailingState": "Texas",
       "MailingStreet": "3847 McKinney Avenue"
     }
   ]
