@@ -1,0 +1,130 @@
+system:
+    instructions: "You are an AI assistant for Pronto, helping customer manage their food orders."
+
+    messages:
+        welcome: "Hi, I'm the Pronto customer service assistant. How can I help you?"
+        error: "Sorry, it looks like something has gone wrong."
+
+config:
+    agent_label: "Pronto Customer Service Assistant"
+    agent_name: "Pronto_Customer_Service_Assistant"
+    description: "You are an AI assistant for Pronto, helping customer manage their food orders."
+    default_agent_user: "pronto_customer_service_assistant@00dam00001zrggt456580088.ext"
+
+variables:
+    RoutableId: linked string
+        source: @MessagingSession.Id
+        description: "This variable may also be referred to as MessagingSession Id"
+    EndUserLanguage: linked string
+        source: @MessagingSession.EndUserLanguage
+        description: "This variable may also be referred to as MessagingSession EndUserLanguage"
+    actionOutputMessage: mutable string = ""
+        description: "Holds the output message of an action"
+    isVerifiedCustomer: mutable boolean = False
+        description: "Whether the user is a verified customer or not"
+    verifiedCustomerId: mutable string = ""
+        description: "The contact ID for the current user when they are a verified customer"
+    orderStatus: mutable object
+        description: "The status of the order"
+
+start_agent topic_selector:
+    description: "Welcome the customer and ask them about their intent"
+
+    before_reasoning:
+        if @variables.isVerifiedCustomer == False:
+            transition to @topic.identify_customer
+        else:
+            transition to @topic.manage_orders
+
+    reasoning:
+        instructions: ->
+            | Greet the user and ask them about their intent.
+
+        actions:
+            transition_to_manage_orders: @utils.transition to @topic.manage_orders
+                description: "Call this when the user wants to manage their orders"
+                available when @variables.isVerifiedCustomer == True     
+
+            transition_to_identify_customer: @utils.transition to @topic.identify_customer
+                description: "Call this to identify a customer"
+                available when @variables.isVerifiedCustomer == False
+
+topic identify_customer:
+    description: "Identify the customer"
+
+    reasoning:
+        instructions: ->
+            | Ask the user for their email address then call {!@actions.verifyCustomer}.
+        actions:
+            verifyCustomer: @actions.identifyCustomerByEmail
+                with emailAddress=...
+                set @variables.isVerifiedCustomer=@outputs.isVerifiedCustomer
+                set @variables.verifiedCustomerId=@outputs.verifiedCustomerId
+                set @variables.actionOutputMessage=@outputs.outputMessage
+    
+    after_reasoning:
+        if @variables.isVerifiedCustomer == True:
+            transition to @topic.manage_orders
+
+    actions:
+        identifyCustomerByEmail:
+          description: "Confirms the identity of a customer (Contact) thanks to their email"
+          inputs:
+            emailAddress: string
+              description: "Stores the email address provided by the customer."
+              label: "Email Address"
+              is_required: True
+              is_user_input: False
+          outputs:
+            isVerifiedCustomer: boolean
+              label: "Is Verified Customer"
+              filter_from_agent: False
+              is_used_by_planner: True
+              is_displayable: False
+            verifiedCustomerId: string
+              label: "Verified Customer ID"
+              filter_from_agent: False
+              is_used_by_planner: True
+              is_displayable: False
+            outputMessage: string
+              label: "Output Message"
+              filter_from_agent: False
+              is_used_by_planner: True
+              is_displayable: True
+          target: "flow://Identify_Customer_By_Email"
+          label: "Identify Customer By Email"
+          require_user_confirmation: False
+          include_in_progress_indicator: True
+          progress_indicator_message: "Identifying customer..."
+
+topic manage_orders:
+    description: "Manage orders"
+
+    reasoning:
+        instructions: ->
+            | Call {!@actions.getOrderStatus} when the user inquires about a specific order.
+        actions:
+            getOrderStatus: @actions.getOrderStatus
+                with orderId=...
+                set @variables.orderStatus=@outputs.orderStatus
+    actions:
+        getOrderStatus:
+          description: "Gets the status and details of an order by its ID"
+          inputs:
+            orderId: string
+              description: "The order ID or order number (Name) of the order to get status for."
+              label: "Order ID"
+              is_required: True
+              is_user_input: False
+          outputs:
+            orderStatus: string
+              label: "Order Status"
+              filter_from_agent: False
+              is_used_by_planner: True
+              is_displayable: True
+          target: "apex://GetOrderStatusAction"
+          label: "Get Order Status"
+          require_user_confirmation: False
+          include_in_progress_indicator: True
+          progress_indicator_message: "Retrieving order status..."
+
