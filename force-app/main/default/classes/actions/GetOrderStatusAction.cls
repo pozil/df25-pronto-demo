@@ -31,7 +31,7 @@ public with sharing class GetOrderStatusAction {
       orderStatus.items = OrderService.getOrderItems(order.Id);
 
       GetOrderStatusOutput output = new GetOrderStatusOutput();
-      output.orderStatus = orderStatus;
+      output.orderStatus = JSON.serialize(orderStatus);
       outputs.add(output);
     }
 
@@ -55,7 +55,7 @@ public with sharing class GetOrderStatusAction {
    */
   public class GetOrderStatusOutput {
     @InvocableVariable(label='Order Status' description='The status of the order')
-    public OrderStatus orderStatus;
+    public String orderStatus;
   }
 
   public class OrderStatus {
