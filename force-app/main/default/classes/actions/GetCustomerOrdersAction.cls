@@ -25,7 +25,7 @@ public with sharing class GetCustomerOrdersAction {
 
       // Query orders
       OrderResponse response = new OrderResponse();
-      response.orders = Database.query(soqlQuery);
+      response.orders = JSON.serialize(Database.query(soqlQuery));
       responses.add(response);
     }
 
@@ -70,7 +70,7 @@ public with sharing class GetCustomerOrdersAction {
   // Output wrapper for the invocable action
   public class OrderResponse {
     @InvocableVariable(label='Orders' description='List of customer orders')
-    public List<Order__c> orders;
+    public String orders;
   }
 
   public class OrderException extends Exception {
