@@ -10,6 +10,7 @@ public with sharing class ContentVersionTriggerHandler {
    * @param newContentVersions List of newly inserted ContentVersion records
    */
   public static void handleAfterInsert(List<ContentVersion> newContentVersions) {
+    System.debug('Processing: ' + newContentVersions.size() + ' new ContentVersion records');
     // Get ContentDocument IDs from the ContentVersion records
     Set<Id> contentDocumentIds = new Set<Id>();
     for (ContentVersion cv : newContentVersions) {
@@ -17,7 +18,6 @@ public with sharing class ContentVersionTriggerHandler {
         contentDocumentIds.add(cv.ContentDocumentId);
       }
     }
-
     if (contentDocumentIds.isEmpty()) {
       return;
     }
@@ -37,7 +37,6 @@ public with sharing class ContentVersionTriggerHandler {
         storefrontLinks.add(cdl);
       }
     }
-
     if (storefrontLinks.isEmpty()) {
       return;
     }
@@ -55,10 +54,10 @@ public with sharing class ContentVersionTriggerHandler {
       WHERE Id IN :storefrontIds
       WITH USER_MODE
     ];
-
     if (storefronts.isEmpty()) {
       return;
     }
+    System.debug('Processing documents added to the following Storefronts: ' + JSON.serialize(storefronts));
 
     // Schedule the cleanup job
     ImportedMenuCleanupJob.scheduleCleanup();
@@ -74,6 +73,7 @@ public with sharing class ContentVersionTriggerHandler {
 
   @future
   private static void processStorefront(Id storefrontId) {
+    System.debug('Processing menu extraction for storefront: ' + storefrontId);
     Storefront__c storefront = [SELECT Id, Name FROM Storefront__c WHERE Id = :storefrontId];
     String promptResponse = callExtractMenuPrompt(storefront);
     System.debug('Prompt Response: ' + promptResponse);
@@ -143,7 +143,8 @@ public with sharing class ContentVersionTriggerHandler {
   private static void parseAndInsertMenuItems(String promptResponse, Storefront__c storefrontRecord) {
     List<Menu_Item__c> menuItems;
     try {
-      menuItems = (List<Menu_Item__c>) JSON.deserialize(promptResponse, List<Menu_Item__c>.class);
+      MenuContent menuContent = (MenuContent) JSON.deserializeStrict(promptResponse, MenuContent.class);
+      menuItems = menuContent.Menu_Items;
     } catch (Exception e) {
       throw new MenuParsingException(
         'Error parsing menu items for storefront ' +
@@ -220,6 +221,10 @@ public with sharing class ContentVersionTriggerHandler {
     menuCategoriesByName.put(normalizedCategoryName, newCategory);
 
     return newCategory.Id;
+  }
+
+  private class MenuContent {
+    public List<Menu_Item__c> Menu_Items;
   }
 
   public class MenuParsingException extends Exception {

@@ -11,12 +11,14 @@ public without sharing class ImportedMenuCleanupJob implements Schedulable {
    */
   public void execute(SchedulableContext sc) {
     // Delete the imported menus
-    delete [
+    List<Menu__c> importedMenus = [
       SELECT Id, Menu_Display_Name__c, Storefront__c
       FROM Menu__c
       WHERE Menu_Display_Name__c = :IMPORTED_MENU_NAME
       WITH SYSTEM_MODE
     ];
+    System.debug('Deleting ' + importedMenus.size() + ' imported menus');
+    delete importedMenus;
 
     // Run only once
     Id chonTriggerId = sc.getTriggerId();
