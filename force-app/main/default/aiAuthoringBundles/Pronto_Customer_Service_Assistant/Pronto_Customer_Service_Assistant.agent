@@ -9,7 +9,8 @@ config:
     agent_label: "Pronto Customer Service Assistant"
     agent_name: "Pronto_Customer_Service_Assistant"
     description: "You are an AI assistant for Pronto, helping customer manage their food orders."
-    default_agent_user: "pronto_customer_service_assistant@00dws00000n1nf3616723487.ext"
+    default_agent_user: "pronto_customer_service_assistant@00dws00000n6fmb942932915.ext"
+    enable_enhanced_event_logs: True
 
 variables:
     RoutableId: linked string
@@ -56,9 +57,9 @@ topic identify_customer:
 
     reasoning:
         instructions: ->
-            | Ask the user for their email address then call {!@actions.verifyCustomer}.
+            | Ask the user for their email address then call {!@actions.identifyCustomer}.
         actions:
-            verifyCustomer: @actions.identifyCustomerByEmail
+            identifyCustomer: @actions.identifyCustomer
                 with emailAddress=...
                 set @variables.isVerifiedCustomer=@outputs.isVerifiedCustomer
                 set @variables.verifiedCustomerId=@outputs.verifiedCustomerId
@@ -69,7 +70,7 @@ topic identify_customer:
             transition to @topic.manage_orders
 
     actions:
-        identifyCustomerByEmail:
+        identifyCustomer:
           description: "Confirms the identity of a customer (Contact) thanks to their email"
           inputs:
             emailAddress: string
