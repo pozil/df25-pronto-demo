@@ -9,7 +9,7 @@ config:
     agent_label: "Pronto Customer Service Assistant"
     agent_name: "Pronto_Customer_Service_Assistant"
     description: "You are an AI assistant for Pronto, helping customer manage their food orders."
-    default_agent_user: "pronto_customer_service_assistant@00dam00001zrggt456580088.ext"
+    default_agent_user: "pronto_customer_service_assistant@00dws00000n1nf3616723487.ext"
 
 variables:
     RoutableId: linked string
@@ -24,8 +24,10 @@ variables:
         description: "Whether the user is a verified customer or not"
     verifiedCustomerId: mutable string = ""
         description: "The contact ID for the current user when they are a verified customer"
-    orderStatus: mutable object
+    orderStatus: mutable string
         description: "The status of the order"
+    orders: mutable string
+        description: "The customer's orders"
 
 start_agent topic_selector:
     description: "Welcome the customer and ask them about their intent"
@@ -78,20 +80,11 @@ topic identify_customer:
           outputs:
             isVerifiedCustomer: boolean
               label: "Is Verified Customer"
-              filter_from_agent: False
-              is_used_by_planner: True
-              is_displayable: False
             verifiedCustomerId: string
               label: "Verified Customer ID"
-              filter_from_agent: False
-              is_used_by_planner: True
-              is_displayable: False
             outputMessage: string
               label: "Output Message"
-              filter_from_agent: False
-              is_used_by_planner: True
-              is_displayable: True
-          target: "flow://Identify_Customer_By_Email"
+          target: "flow://Identify_Customer"
           label: "Identify Customer By Email"
           require_user_confirmation: False
           include_in_progress_indicator: True
@@ -102,8 +95,12 @@ topic manage_orders:
 
     reasoning:
         instructions: ->
+            | Call {!@actions.getOrders} to retrieve the customer's orders
             | Call {!@actions.getOrderStatus} when the user inquires about a specific order.
         actions:
+            getOrders: @actions.getOrders
+                with customerId=@variables.verifiedCustomerId
+                set @variables.orders=@outputs.orders
             getOrderStatus: @actions.getOrderStatus
                 with orderId=...
                 set @variables.orderStatus=@outputs.orderStatus
@@ -115,16 +112,28 @@ topic manage_orders:
               description: "The order ID or order number (Name) of the order to get status for."
               label: "Order ID"
               is_required: True
-              is_user_input: False
           outputs:
             orderStatus: string
               label: "Order Status"
-              filter_from_agent: False
-              is_used_by_planner: True
-              is_displayable: True
           target: "apex://GetOrderStatusAction"
           label: "Get Order Status"
           require_user_confirmation: False
           include_in_progress_indicator: True
           progress_indicator_message: "Retrieving order status..."
+
+        getOrders:
+          description: "Gets the customer orders"
+          inputs:
+            customerId: string
+              description: "Customer ID to retrieve orders from."
+              label: "Customer ID"
+              is_required: True
+          outputs:
+            orders: string
+              label: "Orders"
+          target: "apex://GetCustomerOrdersAction"
+          label: "Get Orders"
+          require_user_confirmation: False
+          include_in_progress_indicator: True
+          progress_indicator_message: "Retrieving orders..."
 

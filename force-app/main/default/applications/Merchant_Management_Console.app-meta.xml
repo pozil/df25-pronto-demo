@@ -22,24 +22,6 @@
     <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
     <label>Merchant Management</label>
     <navType>Console</navType>
-    <profileActionOverrides>
-        <actionName>View</actionName>
-        <content>Business_Account_Record_Page</content>
-        <formFactor>Small</formFactor>
-        <pageOrSobjectType>Account</pageOrSobjectType>
-        <recordType>Account.Partner_Account</recordType>
-        <type>Flexipage</type>
-        <profile>Admin</profile>
-    </profileActionOverrides>
-    <profileActionOverrides>
-        <actionName>View</actionName>
-        <content>Business_Account_Record_Page</content>
-        <formFactor>Large</formFactor>
-        <pageOrSobjectType>Account</pageOrSobjectType>
-        <recordType>Account.Partner_Account</recordType>
-        <type>Flexipage</type>
-        <profile>Admin</profile>
-    </profileActionOverrides>
     <tabs>Storefront_Explorer</tabs>
     <tabs>Storefront__c</tabs>
     <tabs>standard-Lead</tabs>
@@ -47,8 +29,6 @@
     <tabs>standard-Contact</tabs>
     <tabs>Menu__c</tabs>
     <tabs>Review__c</tabs>
-    <tabs>Promotion__c</tabs>
-    <tabs>Gift_Certificate__c</tabs>
     <tabs>standard-report</tabs>
     <tabs>standard-Dashboard</tabs>
     <tabs>Order__c</tabs>
@@ -56,16 +36,10 @@
     <utilityBar>Merchant_Management_UtilityBar</utilityBar>
     <workspaceConfig>
         <mappings>
-            <tab>Gift_Certificate__c</tab>
-        </mappings>
-        <mappings>
             <tab>Menu__c</tab>
         </mappings>
         <mappings>
             <tab>Order__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Promotion__c</tab>
         </mappings>
         <mappings>
             <tab>Review__c</tab>

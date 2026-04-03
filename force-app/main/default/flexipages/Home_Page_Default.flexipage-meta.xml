@@ -42,12 +42,6 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentName>prontoHome</componentName>
-                <identifier>c_prontoHome</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
                 <componentName>setup_cdp:cdpEducationalGuidance</componentName>
                 <identifier>setup_cdp_cdpEducationalGuidance</identifier>
             </componentInstance>
