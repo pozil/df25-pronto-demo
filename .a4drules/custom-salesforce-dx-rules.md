@@ -11,6 +11,7 @@
 - When creating an Apex class don't forget to include the metadata `.cls-meta.xml` file.
 - When creating a LWC component don't forget to include the metadata `.js-meta.xml` file.
 - When deleting metadata, use the `sf project deploy start --post-destructive-changes=destructive-package.xml` command and follow these instructions to write the `destructive-package.xml` file: https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_deploy_deleting_files.htm
+- When calling `deploy_metadata` tool, do not use an `@example.com` username, use a real username retrieved with the `get_username` tool.
 
 ## LWC Rules
 
