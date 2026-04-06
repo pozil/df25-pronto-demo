@@ -8,10 +8,5 @@
     <columns>CONTACT.TITLE</columns>
     <columns>CORE.USERS.ALIAS</columns>
     <filterScope>Everything</filterScope>
-    <filters>
-        <field>CONTACT.RECORDTYPE</field>
-        <operation>equals</operation>
-        <value>Contact.Customer_Contact</value>
-    </filters>
     <label>All Customers</label>
 </ListView>

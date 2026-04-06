@@ -166,7 +166,6 @@
     <pluralLabel>Storefronts</pluralLabel>
     <searchLayouts>
         <excludedStandardButtons>MassAssignRecordLabel</excludedStandardButtons>
-        <excludedStandardButtons>OmniChannelMassRouteWork</excludedStandardButtons>
         <listViewButtons>Refresh_Storefront_Review_Summaries</listViewButtons>
         <searchResultsAdditionalFields>Account__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Description__c</searchResultsAdditionalFields>
