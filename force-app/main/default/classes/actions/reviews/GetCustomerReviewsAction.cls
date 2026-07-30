@@ -1,0 +1,66 @@
+/**
+ * Invocable Action for retrieving customer reviews for a given storefront
+ */
+public with sharing class GetCustomerReviewsAction {
+  /**
+   * Invocable action to retrieve customer reviews for a storefront
+   * @param requests List of request objects containing storefront ID
+   * @return List of response objects containing the reviews and metadata
+   */
+  @InvocableMethod(
+    label='Get Customer Reviews'
+    description='Retrieves customer reviews for a specific storefront'
+    category='Customer Reviews Management'
+  )
+  public static List<Output> getCustomerReviews(List<Input> requests) {
+    List<Output> responses = new List<Output>();
+
+    for (Input request : requests) {
+      Output response = new Output();
+      try {
+        // Retrieve reviews via the service layer
+        List<Review__c> reviews = ReviewService.getReviewsForStorefront(request.storefrontId);
+
+        // Format the response
+        response.isSuccess = true;
+        response.reviews = reviews;
+        response.message = 'Successfully retrieved ' + reviews.size() + ' reviews';
+      } catch (Exception e) {
+        response.isSuccess = false;
+        response.message = 'Error retrieving customer reviews: ' + e.getMessage();
+        response.reviews = null;
+        System.debug(LoggingLevel.ERROR, 'Error in GetCustomerReviewsAction: ' + e.getMessage());
+      }
+
+      responses.add(response);
+    }
+
+    return responses;
+  }
+
+  /**
+   * Input parameters for the invocable action
+   */
+  public class Input {
+    @InvocableVariable(
+      label='Storefront ID'
+      description='The ID of the storefront to retrieve reviews for'
+      required=true
+    )
+    public String storefrontId;
+  }
+
+  /**
+   * Response from the invocable action
+   */
+  public class Output {
+    @InvocableVariable(label='Success' description='Whether the operation was successful')
+    public Boolean isSuccess;
+
+    @InvocableVariable(label='Message' description='Success or error message')
+    public String message;
+
+    @InvocableVariable(label='Reviews' description='List of customer reviews')
+    public List<Review__c> reviews;
+  }
+}

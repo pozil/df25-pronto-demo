@@ -9,7 +9,6 @@ config:
     agent_label: "Pronto Customer Service Assistant"
     agent_name: "Pronto_Customer_Service_Assistant"
     description: "You are an AI assistant for Pronto, helping customer manage their food orders."
-    default_agent_user: "pronto_customer_service_assistant@00dws00000n6fmb942932915.ext"
     enable_enhanced_event_logs: True
 
 variables:
@@ -30,29 +29,29 @@ variables:
     orders: mutable string
         description: "The customer's orders"
 
-start_agent topic_selector:
+start_agent agent_router:
     description: "Welcome the customer and ask them about their intent"
 
     before_reasoning:
         if @variables.isVerifiedCustomer == False:
-            transition to @topic.identify_customer
+            transition to @subagent.identify_customer
         else:
-            transition to @topic.manage_orders
+            transition to @subagent.manage_orders
 
     reasoning:
         instructions: ->
             | Greet the user and ask them about their intent.
 
         actions:
-            transition_to_manage_orders: @utils.transition to @topic.manage_orders
+            transition_to_manage_orders: @utils.transition to @subagent.manage_orders
                 description: "Call this when the user wants to manage their orders"
                 available when @variables.isVerifiedCustomer == True     
 
-            transition_to_identify_customer: @utils.transition to @topic.identify_customer
+            transition_to_identify_customer: @utils.transition to @subagent.identify_customer
                 description: "Call this to identify a customer"
                 available when @variables.isVerifiedCustomer == False
 
-topic identify_customer:
+subagent identify_customer:
     description: "Identify the customer"
 
     reasoning:
@@ -67,7 +66,7 @@ topic identify_customer:
     
     after_reasoning:
         if @variables.isVerifiedCustomer == True:
-            transition to @topic.manage_orders
+            transition to @subagent.manage_orders
 
     actions:
         identifyCustomer:
@@ -85,13 +84,13 @@ topic identify_customer:
               label: "Verified Customer ID"
             outputMessage: string
               label: "Output Message"
-          target: "flow://Identify_Customer"
+          target: "flow://Identify_Customer_By_Email"
           label: "Identify Customer By Email"
           require_user_confirmation: False
           include_in_progress_indicator: True
           progress_indicator_message: "Identifying customer..."
 
-topic manage_orders:
+subagent manage_orders:
     description: "Manage orders"
 
     reasoning:
@@ -132,7 +131,7 @@ topic manage_orders:
           outputs:
             orders: string
               label: "Orders"
-          target: "apex://GetCustomerOrdersAction"
+          target: "apex://GetOrdersAction"
           label: "Get Orders"
           require_user_confirmation: False
           include_in_progress_indicator: True

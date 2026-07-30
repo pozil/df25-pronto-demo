@@ -1,10 +1,9 @@
 import { LightningElement, api, wire } from "lwc";
 import { getRecord, getFieldValue } from "lightning/uiRecordApi";
+import { gql, graphql } from "lightning/graphql";
 import { NavigationMixin } from "lightning/navigation";
 import { subscribe, unsubscribe, MessageContext } from "lightning/messageService";
 import STORE_SELECTED_MC from "@salesforce/messageChannel/StoreSelected__c";
-import getStoreOpeningHours from "@salesforce/apex/StoreController.getStoreOpeningHours";
-import getStoreMenus from "@salesforce/apex/StoreController.getStoreMenus";
 
 // Storefront fields
 import NAME_FIELD from "@salesforce/schema/Storefront__c.Name";
@@ -19,6 +18,10 @@ export default class StoreSummary extends NavigationMixin(LightningElement) {
   storeId;
   storeFormFields = [TYPE_FIELD, CUISINE_FIELD, DESCRIPTION_FIELD];
   subscription = null;
+  openingHoursError;
+  openingHours = [];
+  menus = [];
+  menusError;
 
   @wire(MessageContext)
   messageContext;
@@ -29,15 +32,91 @@ export default class StoreSummary extends NavigationMixin(LightningElement) {
   })
   store;
 
-  @wire(getStoreOpeningHours, {
-    storeId: "$storeId"
+  @wire(graphql, {
+    query: gql`
+      query getStoreOpeningHours($storeId: ID) {
+        uiapi {
+          query {
+            Storefront_Hours_of_Operation__c(
+              where: { Storefront__c: { eq: $storeId } }
+              orderBy: { Day_of_Week__c: { order: ASC } }
+            ) {
+              edges {
+                node {
+                  Id
+                  Day_of_Week__c {
+                    value
+                  }
+                  Opening_Time__c {
+                    value
+                  }
+                  Closing_Time__c {
+                    value
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: "$openingHoursVariables"
   })
-  openingHours;
+  wiredOpeningHours({ data, errors }) {
+    if (data) {
+      this.openingHours = data.uiapi.query.Storefront_Hours_of_Operation__c.edges.map((edge) => ({
+        id: edge.node.Id,
+        dayOfWeek: edge.node.Day_of_Week__c.value,
+        openingTime: edge.node.Opening_Time__c.value,
+        closingTime: edge.node.Closing_Time__c.value
+      }));
+      this.openingHoursError = undefined;
+    } else if (errors) {
+      this.openingHours = [];
+      this.openingHoursError = errors;
+    }
+  }
 
-  @wire(getStoreMenus, {
-    storeId: "$storeId"
+  @wire(graphql, {
+    query: gql`
+      query getStoreMenus($storeId: ID) {
+        uiapi {
+          query {
+            Menu__c(
+              where: { and: [{ Storefront__c: { eq: $storeId } }, { Active__c: { eq: true } }] }
+              orderBy: { Menu_Display_Name__c: { order: ASC } }
+            ) {
+              edges {
+                node {
+                  Id
+                  Menu_Display_Name__c {
+                    value
+                  }
+                  Description__c {
+                    value
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: "$menusVariables"
   })
-  menus;
+  wiredMenus({ data, errors }) {
+    if (data) {
+      this.menus = data.uiapi.query.Menu__c.edges.map((edge) => ({
+        id: edge.node.Id,
+        displayName: edge.node.Menu_Display_Name__c.value,
+        description: edge.node.Description__c.value
+      }));
+      this.menusError = undefined;
+    } else if (errors) {
+      this.menus = [];
+      this.menusError = errors;
+    }
+  }
 
   @api
   get recordId() {
@@ -86,12 +165,20 @@ export default class StoreSummary extends NavigationMixin(LightningElement) {
     });
   }
 
+  get openingHoursVariables() {
+    return { storeId: this.storeId };
+  }
+
+  get menusVariables() {
+    return { storeId: this.storeId };
+  }
+
   get hasOpeningHours() {
-    return this.openingHours.data && this.openingHours.data.length > 0;
+    return this.openingHours.length > 0;
   }
 
   get hasMenus() {
-    return this.menus.data && this.menus.data.length > 0;
+    return this.menus.length > 0;
   }
 
   get hasNoStoreId() {

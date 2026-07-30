@@ -25,12 +25,12 @@
         <template lwc:if={hasMenus}>
           <h3 class="slds-text-heading_medium slds-var-m-bottom_small">Menus</h3>
           <div class="slds-grid slds-wrap slds-gutters slds-var-m-bottom_medium">
-            <template for:each={menus.data} for:item="menu">
-              <div key={menu.Id} class="slds-col slds-no-flex">
+            <template for:each={menus} for:item="menu">
+              <div key={menu.id} class="slds-col slds-no-flex">
                 <lightning-button
                   variant="brand-outline"
-                  label={menu.Menu_Display_Name__c}
-                  data-menu-id={menu.Id}
+                  label={menu.displayName}
+                  data-menu-id={menu.id}
                   onclick={handleMenuClick}
                 ></lightning-button>
               </div>
@@ -41,11 +41,11 @@
         <template lwc:if={hasOpeningHours}>
           <h3 class="slds-text-heading_medium slds-var-m-bottom_small">Opening hours</h3>
           <table class="slds-var-m-horizontal_small">
-            <template for:each={openingHours.data} for:item="openingHour">
-              <tr key={openingHour.Day_of_Week__c}>
-                <td>{openingHour.Day_of_Week__c}</td>
-                <td>{openingHour.Opening_Time__c}</td>
-                <td>{openingHour.Closing_Time__c}</td>
+            <template for:each={openingHours} for:item="openingHour">
+              <tr key={openingHour.id}>
+                <td>{openingHour.dayOfWeek}</td>
+                <td>{openingHour.openingTime}</td>
+                <td>{openingHour.closingTime}</td>
               </tr>
             </template>
           </table>

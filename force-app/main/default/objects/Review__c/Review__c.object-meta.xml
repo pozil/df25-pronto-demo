@@ -170,7 +170,6 @@
         <excludedStandardButtons>MassChangeOwner</excludedStandardButtons>
         <excludedStandardButtons>PrintableListView</excludedStandardButtons>
         <excludedStandardButtons>MassAssignRecordLabel</excludedStandardButtons>
-        <listViewButtons>Demo_Reset</listViewButtons>
         <searchResultsAdditionalFields>Customer__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Storefront__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Comments__c</searchResultsAdditionalFields>

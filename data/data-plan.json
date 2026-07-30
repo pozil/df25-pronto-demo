@@ -18,5 +18,13 @@
   {
     "sobject": "Review__c",
     "files": ["Review__c.json"]
+  },
+  {
+    "sobject": "Order__c",
+    "files": ["Order__c.json"]
+  },
+  {
+    "sobject": "Order_Item__c",
+    "files": ["Order_Item__c.json"]
   }
 ]
