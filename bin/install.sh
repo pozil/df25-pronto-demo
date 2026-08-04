@@ -17,12 +17,20 @@ echo "Creating scratch org..." && \
 sf org create scratch -f config/project-scratch-def.json -a $ORG_ALIAS -d -y 30 && \
 echo "" && \
 
+echo "Creating agent user for service agent..." && \
+agent_user=$(node bin/setup-service-agent.js --agent-file "force-app/main/default/aiAuthoringBundles/Pronto_Customer_Service_Assistant/Pronto_Customer_Service_Assistant.agent") && \
+echo "" && \
+
 echo "Pushing source..." && \
 sf project deploy start && \
 echo "" && \
 
-echo "Assigning permission sets..." && \
+echo "Assigning user permission set..." && \
 sf org assign permset -n Merchant_Management_App && \
+echo "" && \
+
+echo "Assigning agent permission set..." && \
+sf org assign permset -n Agent_Script_Recipes_Data --on-behalf-of "$agent_user" && \
 echo "" && \
 
 echo "Importing sample data..." && \

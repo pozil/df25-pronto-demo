@@ -25,6 +25,7 @@ public with sharing class OrderService {
         Cancelation_Reason__c
       FROM Order__c
       WHERE Id = :orderId
+      WITH USER_MODE
       LIMIT 1
     ];
     if (orders.isEmpty()) {
@@ -53,6 +54,7 @@ public with sharing class OrderService {
         Cancelation_Reason__c
       FROM Order__c
       WHERE Name = :orderName
+      WITH USER_MODE
       LIMIT 1
     ];
     if (orders.isEmpty()) {
@@ -70,7 +72,7 @@ public with sharing class OrderService {
    * @throws OrderException If the order is not found or cannot be canceled in its current status.
    */
   public static Order__c cancelOrder(Id orderId, String cancelationReason) {
-    List<Order__c> orders = [SELECT Id, Name, Status__c FROM Order__c WHERE Id = :orderId LIMIT 1];
+    List<Order__c> orders = [SELECT Id, Name, Status__c FROM Order__c WHERE Id = :orderId WITH USER_MODE LIMIT 1];
     if (orders.isEmpty()) {
       throw new OrderException('No order found with ID: ' + orderId);
     }
@@ -86,7 +88,7 @@ public with sharing class OrderService {
     // Update order status to Canceled
     order.Status__c = 'Canceled';
     order.Cancelation_Reason__c = cancelationReason;
-    update new Order__c(
+    update as user new Order__c(
       Id = order.Id,
       Status__c = order.Status__c,
       Cancelation_Reason__c = order.Cancelation_Reason__c
@@ -102,7 +104,7 @@ public with sharing class OrderService {
    * @throws OrderException If the order is not found or is not in `Draft` status.
    */
   public static Order__c confirmOrder(Id orderId) {
-    List<Order__c> orders = [SELECT Id, Name, Status__c FROM Order__c WHERE Id = :orderId LIMIT 1];
+    List<Order__c> orders = [SELECT Id, Name, Status__c FROM Order__c WHERE Id = :orderId WITH USER_MODE LIMIT 1];
     if (orders.isEmpty()) {
       throw new OrderException('No order found with ID: ' + orderId);
     }
@@ -122,7 +124,7 @@ public with sharing class OrderService {
     // Update order status to Confirmed
     order.Order_Time__c = System.now();
     order.Status__c = 'Confirmed';
-    update new Order__c(Id = order.Id, Order_Time__c = order.Order_Time__c, Status__c = order.Status__c);
+    update as user new Order__c(Id = order.Id, Order_Time__c = order.Order_Time__c, Status__c = order.Status__c);
     return order;
   }
 
@@ -139,6 +141,7 @@ public with sharing class OrderService {
       SELECT Id, MailingAddress, MailingStreet, MailingCity, MailingState, MailingPostalCode, MailingCountry
       FROM Contact
       WHERE Id = :customerId
+      WITH USER_MODE
       LIMIT 1
     ];
 
@@ -152,10 +155,10 @@ public with sharing class OrderService {
     newOrder.Delivery_Address__StateCode__s = customer.MailingState;
     newOrder.Delivery_Address__PostalCode__s = customer.MailingPostalCode;
     newOrder.Delivery_Address__CountryCode__s = customer.MailingCountry;
-    insert newOrder;
+    insert as user newOrder;
 
     // Return the inserted order with its generated Name
-    return [SELECT Id, Name FROM Order__c WHERE Id = :newOrder.Id LIMIT 1];
+    return [SELECT Id, Name FROM Order__c WHERE Id = :newOrder.Id WITH USER_MODE LIMIT 1];
   }
 
   /**
@@ -173,7 +176,7 @@ public with sharing class OrderService {
     }
 
     // Get the order
-    List<Order__c> orders = [SELECT Id, Name, Status__c FROM Order__c WHERE Id = :orderId LIMIT 1];
+    List<Order__c> orders = [SELECT Id, Name, Status__c FROM Order__c WHERE Id = :orderId WITH USER_MODE LIMIT 1];
     if (orders.isEmpty()) {
       throw new OrderException('No order found with ID: ' + orderId);
     }
@@ -192,7 +195,13 @@ public with sharing class OrderService {
 
     // Find the menu item by name
     String menuItemSearch = '%' + orderItemName + '%';
-    List<Menu_Item__c> menuItems = [SELECT Id, Name FROM Menu_Item__c WHERE Name LIKE :menuItemSearch LIMIT 1];
+    List<Menu_Item__c> menuItems = [
+      SELECT Id, Name
+      FROM Menu_Item__c
+      WHERE Name LIKE :menuItemSearch
+      WITH USER_MODE
+      LIMIT 1
+    ];
     if (menuItems.isEmpty()) {
       throw new OrderException('Menu item "' + orderItemName + '" not found.');
     }
@@ -203,7 +212,7 @@ public with sharing class OrderService {
       Menu_Item__c = menuItems[0].Id,
       Quantity__c = quantity
     );
-    insert orderItem;
+    insert as user orderItem;
     return orderItem;
   }
 
@@ -229,7 +238,7 @@ public with sharing class OrderService {
     }
     soqlQuery += ' ORDER BY Order_Time__c DESC LIMIT 10';
 
-    return Database.query(soqlQuery);
+    return Database.query(soqlQuery, AccessLevel.USER_MODE);
   }
 
   /**
@@ -242,6 +251,7 @@ public with sharing class OrderService {
       SELECT Id, Item_Name__c, Quantity__c, Total_Amount__c
       FROM Order_Item__c
       WHERE Order__c = :orderId
+      WITH USER_MODE
       ORDER BY Name
     ];
   }

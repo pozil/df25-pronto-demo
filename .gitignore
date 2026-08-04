@@ -6,6 +6,7 @@
 .claude
 .cursor
 .vscode
+.mcp.json
 
 # Salesforce cache
 .sf/

@@ -1,4 +1,6 @@
 public with sharing class StorefrontService {
+  private static final Integer DEFAULT_STOREFRONT_LIMIT = 10;
+
   public static Storefront__c getStorefrontFromName(String storefrontName) {
     if (String.isBlank(storefrontName)) {
       throw new StorefrontException('A storefront name must be provided.');
@@ -53,7 +55,31 @@ public with sharing class StorefrontService {
     );
   }
 
-  public static List<Storefront_Hours_of_Operation__c> getHoursByStorefrontId(Id storefrontId) {
+  public static List<Storefront__c> getStorefronts(Integer recordLimit) {
+    Integer resolvedLimit = (recordLimit == null || recordLimit <= 0) ? DEFAULT_STOREFRONT_LIMIT : recordLimit;
+
+    return [
+      SELECT
+        Id,
+        Name,
+        Description__c,
+        Cuisine__c,
+        Address__c,
+        Phone__c,
+        Thumbnail__c,
+        Status__c,
+        Type__c,
+        Average_Review_Score__c,
+        Total_Reviews__c,
+        Review_Summary__c
+      FROM Storefront__c
+      WITH USER_MODE
+      ORDER BY Name
+      LIMIT :resolvedLimit
+    ];
+  }
+
+  public static List<Storefront_Hours_of_Operation__c> getStorefrontHours(Id storefrontId) {
     if (storefrontId == null) {
       return new List<Storefront_Hours_of_Operation__c>();
     }

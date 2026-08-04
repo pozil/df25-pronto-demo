@@ -20,7 +20,7 @@ public with sharing class GetStorefrontHoursAction {
     for (Input request : requests) {
       Output response = new Output();
       try {
-        List<Storefront_Hours_of_Operation__c> hours = StorefrontService.getHoursByStorefrontId(request.storefrontId);
+        List<Storefront_Hours_of_Operation__c> hours = StorefrontService.getStorefrontHours(request.storefrontId);
         if (hours.isEmpty()) {
           response.hours = hours;
           response.isSuccess = false;

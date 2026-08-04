@@ -1,5 +1,5 @@
 system:
-    instructions: "You are an AI assistant for Pronto, helping customer manage their food orders."
+    instructions: "You are an AI assistant for Pronto, helping customer browse storefronts (restaurants) and manage their food orders (Order__c custom object)."
 
     messages:
         welcome: "Hi, I'm the Pronto customer service assistant. How can I help you?"
@@ -7,9 +7,13 @@ system:
 
 config:
     agent_label: "Pronto Customer Service Assistant"
-    agent_name: "Pronto_Customer_Service_Assistant"
-    description: "You are an AI assistant for Pronto, helping customer manage their food orders."
+    developer_name: "Pronto_Customer_Service_Assistant"
+    agent_type: "AgentforceServiceAgent"
+    description: "You are an AI assistant for Pronto, helping customers browse storefronts and manage their food orders."
     enable_enhanced_event_logs: True
+
+access:
+    default_agent_user: "__AGENT_USER_PLACEHOLDER__"
 
 variables:
     RoutableId: linked string
@@ -18,34 +22,48 @@ variables:
     EndUserLanguage: linked string
         source: @MessagingSession.EndUserLanguage
         description: "This variable may also be referred to as MessagingSession EndUserLanguage"
+    lockForInputForm: mutable string = ""
+        description: "Prevents the agent from navigating away while waiting for user input on the given form"
     actionOutputMessage: mutable string = ""
         description: "Holds the output message of an action"
     isVerifiedCustomer: mutable boolean = False
         description: "Whether the user is a verified customer or not"
     verifiedCustomerId: mutable string = ""
         description: "The contact ID for the current user when they are a verified customer"
-    orderStatus: mutable string
+    orderStatus: mutable string = ""
         description: "The status of the order"
-    orders: mutable string
+    orders: mutable list[object]
         description: "The customer's orders"
+    storefronts: mutable list[object]
+        description: "The list of available storefronts"
+    storefrontDetails: mutable string = ""
+        description: "Details of a specific storefront"
+    storefrontHours: mutable list[object]
+        description: "The operating hours of a storefront"
 
 start_agent agent_router:
     description: "Welcome the customer and ask them about their intent"
 
     before_reasoning:
-        if @variables.isVerifiedCustomer == False:
+        if @variables.lockForInputForm == "identify_customer":
             transition to @subagent.identify_customer
-        else:
-            transition to @subagent.manage_orders
 
     reasoning:
         instructions: ->
             | Greet the user and ask them about their intent.
+            if @variables.isVerifiedCustomer == False:
+                | Call {!@actions.transition_to_identify_customer} when the user inquires about orders.
+            else:
+                | Call {!@actions.transition_to_manage_orders} when the user inquires about orders.
+            | Call {!@actions.transition_to_browse_storefronts} when the user wants to browse storefronts, look up a storefront, or check a storefront's opening hours, transition to the browse storefront subagent.        actions:
 
         actions:
             transition_to_manage_orders: @utils.transition to @subagent.manage_orders
                 description: "Call this when the user wants to manage their orders"
-                available when @variables.isVerifiedCustomer == True     
+                available when @variables.isVerifiedCustomer == True
+
+            transition_to_browse_storefronts: @utils.transition to @subagent.browse_storefronts
+                description: "Call this when the user wants to browse storefronts"
 
             transition_to_identify_customer: @utils.transition to @subagent.identify_customer
                 description: "Call this to identify a customer"
@@ -53,6 +71,9 @@ start_agent agent_router:
 
 subagent identify_customer:
     description: "Identify the customer"
+
+    before_reasoning:
+        set @variables.lockForInputForm="identify_customer"
 
     reasoning:
         instructions: ->
@@ -66,29 +87,30 @@ subagent identify_customer:
     
     after_reasoning:
         if @variables.isVerifiedCustomer == True:
+            set @variables.lockForInputForm=""
             transition to @subagent.manage_orders
 
     actions:
         identifyCustomer:
-          description: "Confirms the identity of a customer (Contact) thanks to their email"
-          inputs:
-            emailAddress: string
-              description: "Stores the email address provided by the customer."
-              label: "Email Address"
-              is_required: True
-              is_user_input: False
-          outputs:
-            isVerifiedCustomer: boolean
-              label: "Is Verified Customer"
-            verifiedCustomerId: string
-              label: "Verified Customer ID"
-            outputMessage: string
-              label: "Output Message"
-          target: "flow://Identify_Customer_By_Email"
-          label: "Identify Customer By Email"
-          require_user_confirmation: False
-          include_in_progress_indicator: True
-          progress_indicator_message: "Identifying customer..."
+            description: "Confirms the identity of a customer (Contact) thanks to their email"
+            inputs:
+                emailAddress: string
+                    description: "Stores the email address provided by the customer."
+                    label: "Email Address"
+                    is_required: True
+                    is_user_input: False
+            outputs:
+                isVerifiedCustomer: boolean
+                    label: "Is Verified Customer"
+                verifiedCustomerId: string
+                    label: "Verified Customer ID"
+                outputMessage: string
+                    label: "Output Message"
+            target: "flow://Identify_Customer_By_Email"
+            label: "Identify Customer By Email"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Identifying customer..."
 
 subagent manage_orders:
     description: "Manage orders"
@@ -96,7 +118,8 @@ subagent manage_orders:
     reasoning:
         instructions: ->
             | Call {!@actions.getOrders} to retrieve the customer's orders
-            | Call {!@actions.getOrderStatus} when the user inquires about a specific order.
+            | Call {!@actions.getOrderStatus} when the user inquires about a specific order. Identify the order the customer refers to (for example by its order number) and pass that order's record ID from the {!@actions.getOrders} results as the orderId input. Do NOT ask the customer for a record ID.
+            | If the user wants to browse storefronts, look up a storefront, or check a storefront's opening hours, transition to the browse storefront subagent.
         actions:
             getOrders: @actions.getOrders
                 with customerId=@variables.verifiedCustomerId
@@ -104,36 +127,114 @@ subagent manage_orders:
             getOrderStatus: @actions.getOrderStatus
                 with orderId=...
                 set @variables.orderStatus=@outputs.orderStatus
+            transition_to_browse_storefronts: @utils.transition to @subagent.browse_storefronts
+                description: "Call this when the user wants to browse storefronts, find a storefront by name, or check a storefront's operating hours"
     actions:
         getOrderStatus:
-          description: "Gets the status and details of an order by its ID"
-          inputs:
-            orderId: string
-              description: "The order ID or order number (Name) of the order to get status for."
-              label: "Order ID"
-              is_required: True
-          outputs:
-            orderStatus: string
-              label: "Order Status"
-          target: "apex://GetOrderStatusAction"
-          label: "Get Order Status"
-          require_user_confirmation: False
-          include_in_progress_indicator: True
-          progress_indicator_message: "Retrieving order status..."
+            description: "Gets the status and details of an order by its ID"
+            inputs:
+                orderId: id
+                    description: "The Salesforce record ID of the order to get status for. Obtain this ID from the results of the getOrders action; do not ask the customer to provide a record ID."
+                    label: "Order ID"
+                    is_required: True
+            outputs:
+                orderStatus: string
+                    label: "Order Status"
+            target: "apex://GetOrderStatusAction"
+            label: "Get Order Status"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving order status..."
 
         getOrders:
-          description: "Gets the customer orders"
-          inputs:
-            customerId: string
-              description: "Customer ID to retrieve orders from."
-              label: "Customer ID"
-              is_required: True
-          outputs:
-            orders: string
-              label: "Orders"
-          target: "apex://GetOrdersAction"
-          label: "Get Orders"
-          require_user_confirmation: False
-          include_in_progress_indicator: True
-          progress_indicator_message: "Retrieving orders..."
+            description: "Gets the customer orders"
+            inputs:
+                customerId: string
+                    description: "Customer ID to retrieve orders from."
+                    label: "Customer ID"
+                    is_required: True
+            outputs:
+                orders: list[object]
+                    label: "Orders"
+                    complex_data_type_name: "lightning__recordInfoType"
+            target: "apex://GetOrdersAction"
+            label: "Get Orders"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving orders..."
+
+subagent browse_storefronts:
+    description: "Browse storefronts, look one up by name, and check its operating hours"
+
+    reasoning:
+        instructions: ->
+            | Help the customer explore Pronto storefronts.
+            | Call {!@actions.getStorefronts} to list the available storefronts.
+            | Call {!@actions.getStorefrontByName} when the user names a specific storefront they want details for.
+            | Call {!@actions.getStorefrontHours} to retrieve a storefront's operating hours. Use the storefront Id returned by {!@actions.getStorefrontByName} or {!@actions.getStorefronts}.
+            | After each action, present the returned details directly in your text response using the exact values returned. Do NOT call an action again unless the user asks for new information.
+        actions:
+            getStorefronts: @actions.getStorefronts
+                set @variables.storefronts=@outputs.storefronts
+            getStorefrontByName: @actions.getStorefrontByName
+                with storefrontName=...
+                set @variables.storefrontDetails=@outputs.storefront
+            getStorefrontHours: @actions.getStorefrontHours
+                with storefrontId=...
+                set @variables.storefrontHours=@outputs.hours
+            transition_to_manage_orders: @utils.transition to @subagent.manage_orders
+                description: "Call this when the user is done with storefronts and wants to manage their orders"
+
+    actions:
+        getStorefronts:
+            description: "Retrieves the first 10 storefronts"
+            inputs:
+                recordLimit: integer
+                    description: "Optional maximum number of storefronts to return. Defaults to 10."
+                    label: "Record Limit"
+                    is_required: False
+            outputs:
+                storefronts: list[object]
+                    label: "Storefronts"
+                    complex_data_type_name: "lightning__recordInfoType"
+            target: "apex://GetStorefrontsAction"
+            label: "Get Storefronts"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving storefronts..."
+
+        getStorefrontByName:
+            description: "Retrieves a storefront record by its name"
+            inputs:
+                storefrontName: string
+                    description: "The name of the storefront to retrieve."
+                    label: "Storefront Name"
+                    is_required: True
+            outputs:
+                storefront: object
+                    label: "Storefront"
+                    complex_data_type_name: "lightning__recordInfoType"
+            target: "apex://GetStorefrontByNameAction"
+            label: "Get Storefront By Name"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving storefront..."
+
+        getStorefrontHours:
+            description: "Retrieves the operating hours for a storefront by its Id"
+            inputs:
+                storefrontId: object
+                    description: "The Id of the storefront whose operating hours are retrieved."
+                    label: "Storefront Id"
+                    is_required: True
+                    complex_data_type_name: "lightning__recordIdType"
+            outputs:
+                hours: list[object]
+                    label: "Hours of Operation"
+                    complex_data_type_name: "lightning__recordInfoType"
+            target: "apex://GetStorefrontHoursAction"
+            label: "Get Storefront Hours"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving operating hours..."
 
