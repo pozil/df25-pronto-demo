@@ -154,7 +154,6 @@ public virtual with sharing class OrderService {
     newOrder.Delivery_Address__City__s = customer.MailingCity;
     newOrder.Delivery_Address__StateCode__s = customer.MailingState;
     newOrder.Delivery_Address__PostalCode__s = customer.MailingPostalCode;
-    newOrder.Delivery_Address__CountryCode__s = customer.MailingCountry;
     insert as user newOrder;
 
     // Return the inserted order with its generated Name
