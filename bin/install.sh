@@ -9,43 +9,47 @@ echo ""
 echo "Installing Pronto org ($ORG_ALIAS)"
 echo ""
 
-echo "Cleaning previous scratch org..."
+echo "[1/11] Cleaning previous scratch org..."
 sf org delete scratch -p -o $ORG_ALIAS &> /dev/null
 echo ""
 
-echo "Creating scratch org..." && \
+echo "[2/11] Cleaning previous agent metadata..."
+node bin/clean-service-agent.js "force-app/main/default/aiAuthoringBundles/Customer_Service_Assistant/Customer_Service_Assistant.agent" && \
+echo "" && \
+
+echo "[3/11] Creating scratch org..." && \
 sf org create scratch -f config/project-scratch-def.json -a $ORG_ALIAS -d -y 30 && \
 echo "" && \
 
-echo "Creating agent user for service agent..." && \
-agent_user=$(node bin/setup-service-agent.js --agent-file "force-app/main/default/aiAuthoringBundles/Pronto_Customer_Service_Assistant/Pronto_Customer_Service_Assistant.agent") && \
+echo "[4/11] Creating agent user for service agent..." && \
+agent_user=$(node bin/setup-service-agent.js --agent-file "force-app/main/default/aiAuthoringBundles/Customer_Service_Assistant/Customer_Service_Assistant.agent") && \
 echo "" && \
 
-echo "Pushing source..." && \
+echo "[5/11] Pushing source..." && \
 sf project deploy start && \
 echo "" && \
 
-echo "Assigning user permission set..." && \
+echo "[6/11] Assigning user permission set..." && \
 sf org assign permset -n Merchant_Management_App && \
 echo "" && \
 
-echo "Assigning agent permission set..." && \
-sf org assign permset -n Agent_Script_Recipes_Data --on-behalf-of "$agent_user" && \
+echo "[7/11] Assigning agent permission set..." && \
+sf org assign permset -n Customer_Service_Assistant --on-behalf-of "$agent_user" && \
 echo "" && \
 
-echo "Importing sample data..." && \
+echo "[8/11] Importing sample data..." && \
 sf data tree import -p data/data-plan.json && \
 echo "" && \
 
-echo "Generating sample data: adding storefront thumbnails..." && \
+echo "[9/11] Generating sample data: adding storefront thumbnails..." && \
 sf apex run -f apex-scripts/set-storefront-thumbnails.apex && \
 echo "" && \
 
-echo "Generating sample data: setting storefront operating hours..." && \
+echo "[10/11] Generating sample data: setting storefront operating hours..." && \
 sf apex run -f apex-scripts/set-storefront-opening-hours.apex && \
 echo "" && \
 
-echo "Opening org..." && \
+echo "[11/11] Opening org..." && \
 sf org open -p lightning/page/home && \
 echo ""
 EXIT_CODE="$?"

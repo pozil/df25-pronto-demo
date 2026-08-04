@@ -30,5 +30,5 @@ for (const filePath of agentFiles) {
   }
 }
 if (restoredCount > 0) {
-  console.log(`\nRestored ${PLACEHOLDER} in ${restoredCount} file(s) before commit.`);
+  console.log(`\nRestored ${PLACEHOLDER} in ${restoredCount} file(s).`);
 }

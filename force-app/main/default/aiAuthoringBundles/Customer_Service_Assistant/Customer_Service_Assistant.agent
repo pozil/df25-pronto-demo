@@ -6,8 +6,8 @@ system:
         error: "Sorry, it looks like something has gone wrong."
 
 config:
-    agent_label: "Pronto Customer Service Assistant"
-    developer_name: "Pronto_Customer_Service_Assistant"
+    agent_label: "Customer Service Assistant"
+    developer_name: "Customer_Service_Assistant"
     agent_type: "AgentforceServiceAgent"
     description: "You are an AI assistant for Pronto, helping customers browse storefronts and manage their food orders."
     enable_enhanced_event_logs: True
@@ -32,6 +32,8 @@ variables:
         description: "The contact ID for the current user when they are a verified customer"
     orderStatus: mutable string = ""
         description: "The status of the order"
+    draftOrderId: mutable string = ""
+        description: "The record ID of the draft order currently being created"
     orders: mutable list[object]
         description: "The customer's orders"
     storefronts: mutable list[object]
@@ -40,6 +42,8 @@ variables:
         description: "Details of a specific storefront"
     storefrontHours: mutable list[object]
         description: "The operating hours of a storefront"
+    menuItems: mutable list[object]
+        description: "The available menu items of a storefront"
 
 start_agent agent_router:
     description: "Welcome the customer and ask them about their intent"
@@ -52,14 +56,19 @@ start_agent agent_router:
         instructions: ->
             | Greet the user and ask them about their intent.
             if @variables.isVerifiedCustomer == False:
-                | Call {!@actions.transition_to_identify_customer} when the user inquires about orders.
+                | Call {!@actions.transition_to_identify_customer} when the user inquires about orders or wants to place a new order.
             else:
-                | Call {!@actions.transition_to_manage_orders} when the user inquires about orders.
-            | Call {!@actions.transition_to_browse_storefronts} when the user wants to browse storefronts, look up a storefront, or check a storefront's opening hours, transition to the browse storefront subagent.        actions:
+                | Call {!@actions.transition_to_manage_orders} when the user inquires about their existing orders.
+                | Call {!@actions.transition_to_create_order} when the user wants to place a new order or start a new order.
+            | Call {!@actions.transition_to_browse_storefronts} when the user wants to browse storefronts, look up a storefront, or check a storefront's opening hours, transition to the browse storefront subagent.
 
         actions:
             transition_to_manage_orders: @utils.transition to @subagent.manage_orders
                 description: "Call this when the user wants to manage their orders"
+                available when @variables.isVerifiedCustomer == True
+
+            transition_to_create_order: @utils.transition to @subagent.create_order
+                description: "Call this when the user wants to place a new order"
                 available when @variables.isVerifiedCustomer == True
 
             transition_to_browse_storefronts: @utils.transition to @subagent.browse_storefronts
@@ -119,6 +128,7 @@ subagent manage_orders:
         instructions: ->
             | Call {!@actions.getOrders} to retrieve the customer's orders
             | Call {!@actions.getOrderStatus} when the user inquires about a specific order. Identify the order the customer refers to (for example by its order number) and pass that order's record ID from the {!@actions.getOrders} results as the orderId input. Do NOT ask the customer for a record ID.
+            | Call {!@actions.transition_to_create_order} when the user wants to place a new order or start a new order.
             | If the user wants to browse storefronts, look up a storefront, or check a storefront's opening hours, transition to the browse storefront subagent.
         actions:
             getOrders: @actions.getOrders
@@ -127,6 +137,8 @@ subagent manage_orders:
             getOrderStatus: @actions.getOrderStatus
                 with orderId=...
                 set @variables.orderStatus=@outputs.orderStatus
+            transition_to_create_order: @utils.transition to @subagent.create_order
+                description: "Call this when the user wants to place a new order"
             transition_to_browse_storefronts: @utils.transition to @subagent.browse_storefronts
                 description: "Call this when the user wants to browse storefronts, find a storefront by name, or check a storefront's operating hours"
     actions:
@@ -172,6 +184,7 @@ subagent browse_storefronts:
             | Call {!@actions.getStorefronts} to list the available storefronts.
             | Call {!@actions.getStorefrontByName} when the user names a specific storefront they want details for.
             | Call {!@actions.getStorefrontHours} to retrieve a storefront's operating hours. Use the storefront Id returned by {!@actions.getStorefrontByName} or {!@actions.getStorefronts}.
+            | Call {!@actions.getMenuItems} to retrieve a storefront's available menu items when the user asks about the menu, dishes, or what they can order. Use the storefront Id returned by {!@actions.getStorefrontByName} or {!@actions.getStorefronts}.
             | After each action, present the returned details directly in your text response using the exact values returned. Do NOT call an action again unless the user asks for new information.
         actions:
             getStorefronts: @actions.getStorefronts
@@ -182,6 +195,9 @@ subagent browse_storefronts:
             getStorefrontHours: @actions.getStorefrontHours
                 with storefrontId=...
                 set @variables.storefrontHours=@outputs.hours
+            getMenuItems: @actions.getMenuItems
+                with storefrontId=...
+                set @variables.menuItems=@outputs.menuItems
             transition_to_manage_orders: @utils.transition to @subagent.manage_orders
                 description: "Call this when the user is done with storefronts and wants to manage their orders"
 
@@ -237,4 +253,169 @@ subagent browse_storefronts:
             require_user_confirmation: False
             include_in_progress_indicator: True
             progress_indicator_message: "Retrieving operating hours..."
+
+        getMenuItems:
+            description: "Retrieves the available menu items for a storefront by its Id"
+            inputs:
+                storefrontId: id
+                    description: "The Id of the storefront whose menu items are retrieved."
+                    label: "Storefront Id"
+                    is_required: True
+            outputs:
+                isSuccess: boolean
+                    label: "Is Success"
+                message: string
+                    label: "Message"
+                menuItems: list[object]
+                    label: "Menu Items"
+                    complex_data_type_name: "lightning__recordInfoType"
+            target: "apex://GetMenuItemsAction"
+            label: "Get Menu Items"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving menu items..."
+
+subagent create_order:
+    description: "Place a new order: create a draft order for a storefront, add menu items to it, then confirm it"
+
+    reasoning:
+        instructions: ->
+            | Help the verified customer place a new order.
+            if @variables.draftOrderId == "":
+                | First, determine which storefront the customer wants to order from. If you don't already know the storefront's record ID from an earlier storefront lookup, ask the customer which storefront they want and transition to the browse storefronts subagent to look it up.
+                | Once you have the storefront's record ID, call {!@actions.createOrder} to start a draft order. Pass that storefront's record ID as the storefrontId input. Do NOT ask the customer for a record ID.
+                | After the draft order is created, tell the customer using the exact message returned by the action, then ask what items they would like to add.
+            else:
+                | A draft order already exists. Call {!@actions.addItemToOrder} to add each menu item the customer requests, passing the item name and quantity. After each item is added, confirm it using the exact message returned by the action and ask if they want to add anything else.
+                | When the customer is done adding items, call {!@actions.confirmOrder} to finalize the order. After confirming, report the exact message returned by the action.
+                | If the customer decides not to place the order or wants to cancel it, call {!@actions.cancelOrder} to cancel the draft order. If the customer gives a reason for canceling, pass it as the cancelationReason input; otherwise leave it empty. After canceling, report the exact message returned by the action.
+                | Do NOT call an action again for a request you have already fulfilled — rely on the results you already have.
+            | If the customer wants to review their existing orders, transition to the manage orders subagent.
+        actions:
+            createOrder: @actions.createOrder
+                with customerId=@variables.verifiedCustomerId
+                with storefrontId=...
+                set @variables.draftOrderId=@outputs.orderId
+                set @variables.actionOutputMessage=@outputs.message
+                available when @variables.draftOrderId == ""
+            addItemToOrder: @actions.addItemToOrder
+                with orderId=@variables.draftOrderId
+                with orderItemName=...
+                with quantity=...
+                set @variables.actionOutputMessage=@outputs.message
+                available when @variables.draftOrderId != ""
+            confirmOrder: @actions.confirmOrder
+                with orderId=@variables.draftOrderId
+                set @variables.actionOutputMessage=@outputs.message
+                set @variables.draftOrderId=""
+                available when @variables.draftOrderId != ""
+            cancelOrder: @actions.cancelOrder
+                with orderId=@variables.draftOrderId
+                with cancelationReason=...
+                set @variables.actionOutputMessage=@outputs.message
+                set @variables.draftOrderId=""
+                available when @variables.draftOrderId != ""
+            transition_to_manage_orders: @utils.transition to @subagent.manage_orders
+                description: "Call this when the user wants to review or manage their existing orders"
+            transition_to_browse_storefronts: @utils.transition to @subagent.browse_storefronts
+                description: "Call this when the user needs to find a storefront to order from"
+
+    actions:
+        createOrder:
+            description: "Creates a draft order for the verified customer at a given storefront"
+            inputs:
+                customerId: string
+                    description: "The record ID of the customer (Contact) to create the order for."
+                    label: "Customer ID"
+                    is_required: True
+                storefrontId: string
+                    description: "The record ID of the storefront to create the order for. Obtain this from a storefront lookup; do not ask the customer for a record ID."
+                    label: "Storefront ID"
+                    is_required: True
+            outputs:
+                isSuccess: boolean
+                    label: "Is Success"
+                orderId: string
+                    label: "Order ID"
+                message: string
+                    label: "Message"
+            target: "apex://CreateOrderAction"
+            label: "Create Order"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Creating draft order..."
+
+        addItemToOrder:
+            description: "Adds a menu item with a quantity to the current draft order"
+            inputs:
+                orderId: string
+                    description: "The record ID of the draft order to add the item to."
+                    label: "Order ID"
+                    is_required: True
+                orderItemName: string
+                    description: "The name of the menu item to add to the order."
+                    label: "Order Item Name"
+                    is_required: True
+                quantity: number
+                    description: "The quantity of the item to add to the order."
+                    label: "Quantity"
+                    is_required: True
+            outputs:
+                isSuccess: boolean
+                    label: "Success"
+                message: string
+                    label: "Message"
+                orderId: string
+                    label: "Order ID"
+                orderItemId: string
+                    label: "Order Item ID"
+            target: "apex://AddItemToOrderAction"
+            label: "Add Item to Order"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Adding item to order..."
+
+        confirmOrder:
+            description: "Confirms the current draft order, finalizing it"
+            inputs:
+                orderId: string
+                    description: "The record ID of the draft order to confirm."
+                    label: "Order ID"
+                    is_required: True
+            outputs:
+                success: boolean
+                    label: "Success"
+                message: string
+                    label: "Message"
+                orderId: string
+                    label: "Order ID"
+            target: "apex://ConfirmOrderAction"
+            label: "Confirm Order"
+            require_user_confirmation: True
+            include_in_progress_indicator: True
+            progress_indicator_message: "Confirming order..."
+
+        cancelOrder:
+            description: "Cancels the current draft order"
+            inputs:
+                orderId: id
+                    description: "The record ID of the draft order to cancel."
+                    label: "Order ID"
+                    is_required: True
+                cancelationReason: string
+                    description: "Optional reason the customer gave for canceling the order."
+                    label: "Cancelation Reason"
+                    is_required: False
+            outputs:
+                isSuccess: boolean
+                    label: "Success"
+                message: string
+                    label: "Message"
+                orderId: string
+                    label: "Order ID"
+            target: "apex://CancelOrderAction"
+            label: "Cancel Order"
+            require_user_confirmation: True
+            include_in_progress_indicator: True
+            progress_indicator_message: "Canceling order..."
 
