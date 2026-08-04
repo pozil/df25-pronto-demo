@@ -7,6 +7,8 @@ private class StorefrontServiceTest {
   static void setupTestData() {
     List<Storefront__c> storefronts = TestDataFactory.createStorefronts(3, true);
     TestDataFactory.createWeekdayHours(storefronts[0].Id, true);
+    Menu__c menu = TestDataFactory.createMenu(storefronts[0].Id, true);
+    TestDataFactory.createMenuItems(menu.Id, 4, true);
   }
 
   @isTest
@@ -194,6 +196,88 @@ private class StorefrontServiceTest {
     // When
     Test.startTest();
     List<Storefront_Hours_of_Operation__c> results = service.getStorefrontHours(null);
+    Test.stopTest();
+
+    // Then
+    Assert.areEqual(0, results.size(), 'Should return empty list when storefront ID is null');
+  }
+
+  @isTest
+  static void shouldGetMenuItems_WhenItemsExist() {
+    // Given
+    StorefrontService service = new StorefrontService();
+    Storefront__c storefront = [
+      SELECT Id
+      FROM Storefront__c
+      WHERE Name = :TestDataFactory.STOREFRONT_NAME_PREFIX + '0'
+      LIMIT 1
+    ];
+
+    // When
+    Test.startTest();
+    List<Menu_Item__c> results = service.getMenuItems(storefront.Id);
+    Test.stopTest();
+
+    // Then
+    Assert.areEqual(4, results.size(), 'Should return all available menu items for the storefront');
+    for (Menu_Item__c menuItem : results) {
+      Assert.isTrue(menuItem.Available__c, 'Only available menu items should be returned');
+      Assert.isNotNull(menuItem.Name, 'Should include menu item name');
+      Assert.isNotNull(menuItem.Menu__c, 'Should include parent menu');
+    }
+  }
+
+  @isTest
+  static void shouldExcludeUnavailableItems_WhenGettingMenuItems() {
+    // Given
+    StorefrontService service = new StorefrontService();
+    Storefront__c storefront = [
+      SELECT Id
+      FROM Storefront__c
+      WHERE Name = :TestDataFactory.STOREFRONT_NAME_PREFIX + '0'
+      LIMIT 1
+    ];
+    List<Menu_Item__c> items = [SELECT Id FROM Menu_Item__c LIMIT 1];
+    items[0].Available__c = false;
+    update items;
+
+    // When
+    Test.startTest();
+    List<Menu_Item__c> results = service.getMenuItems(storefront.Id);
+    Test.stopTest();
+
+    // Then
+    Assert.areEqual(3, results.size(), 'Should exclude unavailable menu items');
+  }
+
+  @isTest
+  static void shouldReturnEmptyList_WhenStorefrontHasNoMenuItems() {
+    // Given
+    StorefrontService service = new StorefrontService();
+    Storefront__c storefront = [
+      SELECT Id
+      FROM Storefront__c
+      WHERE Name = :TestDataFactory.STOREFRONT_NAME_PREFIX + '1'
+      LIMIT 1
+    ];
+
+    // When
+    Test.startTest();
+    List<Menu_Item__c> results = service.getMenuItems(storefront.Id);
+    Test.stopTest();
+
+    // Then
+    Assert.areEqual(0, results.size(), 'Should return empty list when no menu items exist');
+  }
+
+  @isTest
+  static void shouldReturnEmptyList_WhenMenuItemsStorefrontIdIsNull() {
+    // Given
+    StorefrontService service = new StorefrontService();
+
+    // When
+    Test.startTest();
+    List<Menu_Item__c> results = service.getMenuItems(null);
     Test.stopTest();
 
     // Then

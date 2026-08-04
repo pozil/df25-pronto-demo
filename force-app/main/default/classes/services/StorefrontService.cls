@@ -93,6 +93,40 @@ public virtual with sharing class StorefrontService {
     ];
   }
 
+  /**
+   * Retrieves the available menu items for a storefront by its Id.
+   * Menu items are resolved through their parent Menu's Storefront lookup and
+   * only records flagged as available are returned.
+   * @param storefrontId The Id of the storefront whose menu items are retrieved
+   * @return The available menu items for the storefront, or an empty list when
+   *         the Id is null or no items exist
+   * @example
+   * List<Menu_Item__c> items = new StorefrontService().getMenuItems(storefrontId);
+   */
+  public virtual List<Menu_Item__c> getMenuItems(Id storefrontId) {
+    if (storefrontId == null) {
+      return new List<Menu_Item__c>();
+    }
+
+    return [
+      SELECT
+        Id,
+        Name,
+        Description__c,
+        Price__c,
+        Calories__c,
+        Image_URL__c,
+        Available__c,
+        Menu__c,
+        Menu_Category__c,
+        Menu_Category__r.Name
+      FROM Menu_Item__c
+      WHERE Menu__r.Storefront__c = :storefrontId AND Available__c = TRUE
+      WITH USER_MODE
+      ORDER BY Menu_Category__r.Name NULLS LAST, Name
+    ];
+  }
+
   public class StorefrontException extends Exception {
   }
 }
