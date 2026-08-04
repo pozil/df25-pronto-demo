@@ -22,8 +22,8 @@ variables:
     EndUserLanguage: linked string
         source: @MessagingSession.EndUserLanguage
         description: "This variable may also be referred to as MessagingSession EndUserLanguage"
-    lockForInputForm: mutable string = ""
-        description: "Prevents the agent from navigating away while waiting for user input on the given form"
+    subagentGate: mutable string = ""
+        description: "Prevents the agent from navigating away from a subagent while capturing user input"
     actionOutputMessage: mutable string = ""
         description: "Holds the output message of an action"
     isVerifiedCustomer: mutable boolean = False
@@ -32,10 +32,12 @@ variables:
         description: "The contact ID for the current user when they are a verified customer"
     orderStatus: mutable string = ""
         description: "The status of the order"
-    draftOrderId: mutable string = ""
+    orderId: mutable string = ""
         description: "The record ID of the draft order currently being created"
     orders: mutable list[object]
         description: "The customer's orders"
+    storefrontId: mutable string = ""
+        description: "The record ID of the storefront being used for placing an order or reviewing the menu"
     storefronts: mutable list[object]
         description: "The list of available storefronts"
     storefrontDetails: mutable string = ""
@@ -49,8 +51,10 @@ start_agent agent_router:
     description: "Welcome the customer and ask them about their intent"
 
     before_reasoning:
-        if @variables.lockForInputForm == "identify_customer":
+        if @variables.subagentGate == "identify_customer":
             transition to @subagent.identify_customer
+        if @variables.subagentGate == "create_order":
+            transition to @subagent.create_order
 
     reasoning:
         instructions: ->
@@ -82,7 +86,7 @@ subagent identify_customer:
     description: "Identify the customer"
 
     before_reasoning:
-        set @variables.lockForInputForm="identify_customer"
+        set @variables.subagentGate="identify_customer"
 
     reasoning:
         instructions: ->
@@ -96,7 +100,7 @@ subagent identify_customer:
     
     after_reasoning:
         if @variables.isVerifiedCustomer == True:
-            set @variables.lockForInputForm=""
+            set @variables.subagentGate=""
             transition to @subagent.manage_orders
 
     actions:
@@ -192,6 +196,7 @@ subagent browse_storefronts:
             getStorefrontByName: @actions.getStorefrontByName
                 with storefrontName=...
                 set @variables.storefrontDetails=@outputs.storefront
+                set @variables.storefrontId=@outputs.storefrontId
             getStorefrontHours: @actions.getStorefrontHours
                 with storefrontId=...
                 set @variables.storefrontHours=@outputs.hours
@@ -230,6 +235,9 @@ subagent browse_storefronts:
                 storefront: object
                     label: "Storefront"
                     complex_data_type_name: "lightning__recordInfoType"
+                storefrontId: id
+                    description: "The Id of the storefront"
+                    label: "Storefront Id"
             target: "apex://GetStorefrontByNameAction"
             label: "Get Storefront By Name"
             require_user_confirmation: False
@@ -275,50 +283,115 @@ subagent browse_storefronts:
             include_in_progress_indicator: True
             progress_indicator_message: "Retrieving menu items..."
 
+subagent select_storefront:
+    description: "Help the customer select a storefront"
+
+    reasoning:
+        instructions: ->
+            | Help the customer select a storefronts.
+            | Call {!@actions.getStorefronts} to list the available storefronts.
+            | Call {!@actions.getStorefrontByName} when the user names a specific storefront they want details for.
+            | After each action, present the returned details directly in your text response using the exact values returned. Do NOT call an action again unless the user asks for new information.
+        actions:
+            getStorefronts: @actions.getStorefronts
+                set @variables.storefronts=@outputs.storefronts
+            getStorefrontByName: @actions.getStorefrontByName
+                with storefrontName=...
+                set @variables.storefrontDetails=@outputs.storefront
+                set @variables.storefrontId=@outputs.storefrontId
+
+    actions:
+        getStorefronts:
+            description: "Retrieves the first 10 storefronts"
+            inputs:
+                recordLimit: integer
+                    description: "Optional maximum number of storefronts to return. Defaults to 10."
+                    label: "Record Limit"
+                    is_required: False
+            outputs:
+                storefronts: list[object]
+                    label: "Storefronts"
+                    complex_data_type_name: "lightning__recordInfoType"
+            target: "apex://GetStorefrontsAction"
+            label: "Get Storefronts"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving storefronts..."
+
+        getStorefrontByName:
+            description: "Retrieves a storefront record by its name"
+            inputs:
+                storefrontName: string
+                    description: "The name of the storefront to retrieve."
+                    label: "Storefront Name"
+                    is_required: True
+            outputs:
+                storefront: object
+                    label: "Storefront"
+                    complex_data_type_name: "lightning__recordInfoType"
+                storefrontId: id
+                    description: "The Id of the storefront"
+                    label: "Storefront Id"
+            target: "apex://GetStorefrontByNameAction"
+            label: "Get Storefront By Name"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving storefront..."
+
 subagent create_order:
     description: "Place a new order: create a draft order for a storefront, add menu items to it, then confirm it"
+
+    before_reasoning:
+        set @variables.subagentGate="create_order"
+        if @variables.storefrontId == "":
+            transition to @subagent.select_storefront
 
     reasoning:
         instructions: ->
             | Help the verified customer place a new order.
-            if @variables.draftOrderId == "":
-                | First, determine which storefront the customer wants to order from. If you don't already know the storefront's record ID from an earlier storefront lookup, ask the customer which storefront they want and transition to the browse storefronts subagent to look it up.
-                | Once you have the storefront's record ID, call {!@actions.createOrder} to start a draft order. Pass that storefront's record ID as the storefrontId input. Do NOT ask the customer for a record ID.
+            if @variables.orderId == "":
+                | Call {!@actions.createOrder} to start a draft order. Pass that storefront's record ID as the storefrontId input. Do NOT ask the customer for a record ID.
                 | After the draft order is created, tell the customer using the exact message returned by the action, then ask what items they would like to add.
             else:
                 | A draft order already exists. Call {!@actions.addItemToOrder} to add each menu item the customer requests, passing the item name and quantity. After each item is added, confirm it using the exact message returned by the action and ask if they want to add anything else.
                 | When the customer is done adding items, call {!@actions.confirmOrder} to finalize the order. After confirming, report the exact message returned by the action.
                 | If the customer decides not to place the order or wants to cancel it, call {!@actions.cancelOrder} to cancel the draft order. If the customer gives a reason for canceling, pass it as the cancelationReason input; otherwise leave it empty. After canceling, report the exact message returned by the action.
                 | Do NOT call an action again for a request you have already fulfilled — rely on the results you already have.
-            | If the customer wants to review their existing orders, transition to the manage orders subagent.
+                | If the customer wants to review their existing orders, call {!@actions.getOrderStatus}
         actions:
             createOrder: @actions.createOrder
                 with customerId=@variables.verifiedCustomerId
-                with storefrontId=...
-                set @variables.draftOrderId=@outputs.orderId
+                with storefrontId=@variables.storefrontId
+                set @variables.orderId=@outputs.orderId
                 set @variables.actionOutputMessage=@outputs.message
-                available when @variables.draftOrderId == ""
+                available when @variables.orderId == "" and @variables.subagentGate == "create_order"
             addItemToOrder: @actions.addItemToOrder
-                with orderId=@variables.draftOrderId
+                with orderId=@variables.orderId
                 with orderItemName=...
                 with quantity=...
                 set @variables.actionOutputMessage=@outputs.message
-                available when @variables.draftOrderId != ""
+                available when @variables.orderId != ""
             confirmOrder: @actions.confirmOrder
-                with orderId=@variables.draftOrderId
+                with orderId=@variables.orderId
                 set @variables.actionOutputMessage=@outputs.message
-                set @variables.draftOrderId=""
-                available when @variables.draftOrderId != ""
+                set @variables.orderId=""
+                set @variables.subagentGate=""
+                available when @variables.orderId != ""
             cancelOrder: @actions.cancelOrder
-                with orderId=@variables.draftOrderId
+                with orderId=@variables.orderId
                 with cancelationReason=...
                 set @variables.actionOutputMessage=@outputs.message
-                set @variables.draftOrderId=""
-                available when @variables.draftOrderId != ""
+                set @variables.orderId=""
+                set @variables.subagentGate=""
+                run @actions.transition_to_manage_orders
+                available when @variables.orderId != ""
+            getMenuItems: @actions.getMenuItems
+                with storefrontId=@variables.storefrontId
+                set @variables.menuItems=@outputs.menuItems
+            getOrderStatus: @actions.getOrderStatus
+                with orderId=@variables.orderId
             transition_to_manage_orders: @utils.transition to @subagent.manage_orders
                 description: "Call this when the user wants to review or manage their existing orders"
-            transition_to_browse_storefronts: @utils.transition to @subagent.browse_storefronts
-                description: "Call this when the user needs to find a storefront to order from"
 
     actions:
         createOrder:
@@ -419,3 +492,39 @@ subagent create_order:
             include_in_progress_indicator: True
             progress_indicator_message: "Canceling order..."
 
+        getMenuItems:
+            description: "Retrieves the available menu items for a storefront by its Id"
+            inputs:
+                storefrontId: id
+                    description: "The Id of the storefront whose menu items are retrieved."
+                    label: "Storefront Id"
+                    is_required: True
+            outputs:
+                isSuccess: boolean
+                    label: "Is Success"
+                message: string
+                    label: "Message"
+                menuItems: list[object]
+                    label: "Menu Items"
+                    complex_data_type_name: "lightning__recordInfoType"
+            target: "apex://GetMenuItemsAction"
+            label: "Get Menu Items"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving menu items..."
+
+        getOrderStatus:
+            description: "Gets the status and details of an order by its ID"
+            inputs:
+                orderId: id
+                    description: "The Salesforce record ID of the order to get status for. Obtain this ID from the results of the getOrders action; do not ask the customer to provide a record ID."
+                    label: "Order ID"
+                    is_required: True
+            outputs:
+                orderStatus: string
+                    label: "Order Status"
+            target: "apex://GetOrderStatusAction"
+            label: "Get Order Status"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving order status..."

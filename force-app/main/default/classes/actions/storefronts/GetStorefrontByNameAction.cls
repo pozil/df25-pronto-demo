@@ -22,6 +22,7 @@ public with sharing class GetStorefrontByNameAction {
       Output response = new Output();
       try {
         response.storefront = storefrontService.getStorefrontFromName(request.storefrontName);
+        response.storefrontId = response.storefront.Id;
         response.message = 'Storefront retrieved successfully';
         response.isSuccess = true;
       } catch (StorefrontService.StorefrontException e) {
@@ -48,6 +49,9 @@ public with sharing class GetStorefrontByNameAction {
   public class Output {
     @InvocableVariable(label='Storefront' description='The retrieved storefront record')
     public Storefront__c storefront;
+
+    @InvocableVariable(label='Storefront ID' description='The ID of the retrieved storefront')
+    public Id storefrontId;
 
     @InvocableVariable(label='Message' description='Success or error message')
     public String message;
