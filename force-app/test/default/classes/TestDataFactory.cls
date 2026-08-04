@@ -90,9 +90,9 @@ public class TestDataFactory {
           LastName = CONTACT_LAST_NAME_PREFIX + i,
           MailingStreet = '415 Mission St',
           MailingCity = 'San Francisco',
-          MailingState = 'CA',
+          MailingStateCode = 'CA',
           MailingPostalCode = '94105',
-          MailingCountry = 'US'
+          MailingCountryCode = 'US'
         )
       );
     }

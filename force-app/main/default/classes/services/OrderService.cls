@@ -138,7 +138,7 @@ public virtual with sharing class OrderService {
   public virtual Order__c createDraftOrder(Id customerId, Id storefrontId) {
     // Get contact with delivery address
     Contact customer = [
-      SELECT Id, MailingAddress, MailingStreet, MailingCity, MailingState, MailingPostalCode, MailingCountry
+      SELECT Id, MailingStreet, MailingCity, MailingStateCode, MailingPostalCode, MailingCountryCode
       FROM Contact
       WHERE Id = :customerId
       WITH USER_MODE
@@ -152,7 +152,8 @@ public virtual with sharing class OrderService {
     newOrder.Status__c = 'Draft';
     newOrder.Delivery_Address__Street__s = customer.MailingStreet;
     newOrder.Delivery_Address__City__s = customer.MailingCity;
-    newOrder.Delivery_Address__StateCode__s = customer.MailingState;
+    newOrder.Delivery_Address__CountryCode__s = customer.MailingCountryCode;
+    newOrder.Delivery_Address__StateCode__s = customer.MailingStateCode;
     newOrder.Delivery_Address__PostalCode__s = customer.MailingPostalCode;
     insert as user newOrder;
 

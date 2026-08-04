@@ -168,7 +168,11 @@ private class OrderServiceTest {
   static void shouldCreateDraftOrder_WhenValidInput() {
     // Given
     OrderService service = new OrderService();
-    Contact customer = [SELECT Id FROM Contact LIMIT 1];
+    Contact customer = [
+      SELECT Id, MailingStreet, MailingCity, MailingStateCode, MailingPostalCode, MailingCountryCode
+      FROM Contact
+      LIMIT 1
+    ];
     Storefront__c storefront = [SELECT Id FROM Storefront__c LIMIT 1];
 
     // When
