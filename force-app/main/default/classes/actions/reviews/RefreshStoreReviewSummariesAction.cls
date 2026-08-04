@@ -2,6 +2,9 @@
  * Invocable Action for refreshing store review summaries
  */
 public with sharing class RefreshStoreReviewSummariesAction {
+  @TestVisible
+  private static ReviewService reviewService = new ReviewService();
+
   /**
    * Invocable action to refresh store review summaries
    * This action triggers the AI job to generate new review summaries for all storefronts
@@ -16,7 +19,7 @@ public with sharing class RefreshStoreReviewSummariesAction {
     for (Input request : requests) {
       Output response = new Output();
       try {
-        ReviewService.refreshStoreReviewSummaries(request.forceRefresh);
+        reviewService.refreshStoreReviewSummaries(request.forceRefresh);
         response.isSuccess = true;
         response.message = 'Store review summaries refresh job has been started successfully.';
       } catch (Exception e) {

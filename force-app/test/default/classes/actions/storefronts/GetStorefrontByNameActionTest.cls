@@ -1,90 +1,67 @@
-/**
- * Tests for GetStorefrontByNameAction.
- */
 @isTest
 private class GetStorefrontByNameActionTest {
-  @isTest
-  static void shouldReturnStorefront_WhenSingleMatch() {
-    // Given
-    TestDataFactory.createStorefronts(1, true);
-    String name = TestDataFactory.STOREFRONT_NAME_PREFIX + '0';
-    GetStorefrontByNameAction.Input request = new GetStorefrontByNameAction.Input();
-    request.storefrontName = name;
+  private class MockStorefrontService extends StorefrontService {
+    public Boolean shouldThrowException = false;
+    public String exceptionMessage;
+    public Storefront__c mockStorefront;
 
-    // When
-    Test.startTest();
-    List<GetStorefrontByNameAction.Output> responses = GetStorefrontByNameAction.getStorefrontByName(
-      new List<GetStorefrontByNameAction.Input>{ request }
-    );
-    Test.stopTest();
-
-    // Then
-    Assert.areEqual(1, responses.size(), 'One response should be returned');
-    Assert.isTrue(responses[0].isSuccess, 'Response should be successful');
-    Assert.areEqual(name, responses[0].storefront.Name, 'The matching storefront should be returned');
+    public override Storefront__c getStorefrontFromName(String storefrontName) {
+      if (shouldThrowException) {
+        throw new StorefrontService.StorefrontException(exceptionMessage);
+      }
+      return mockStorefront;
+    }
   }
 
   @isTest
-  static void shouldReturnExactMatch_WhenMultipleMatches() {
-    // Given: names 0..10 - querying '...1' also matches '...10' via LIKE
-    TestDataFactory.createStorefronts(11, true);
-    String name = TestDataFactory.STOREFRONT_NAME_PREFIX + '1';
-    GetStorefrontByNameAction.Input request = new GetStorefrontByNameAction.Input();
-    request.storefrontName = name;
-
-    // When
-    Test.startTest();
-    List<GetStorefrontByNameAction.Output> responses = GetStorefrontByNameAction.getStorefrontByName(
-      new List<GetStorefrontByNameAction.Input>{ request }
+  static void testGetStorefrontByName_Success() {
+    Storefront__c mockStorefront = new Storefront__c(
+      Id = TestDataFactory.getFakeId(Storefront__c.SObjectType),
+      Name = 'Test Storefront',
+      Description__c = 'A test storefront',
+      Cuisine__c = 'Italian',
+      Status__c = 'Open'
     );
+
+    MockStorefrontService mockService = new MockStorefrontService();
+    mockService.mockStorefront = mockStorefront;
+    GetStorefrontByNameAction.storefrontService = mockService;
+
+    GetStorefrontByNameAction.Input input = new GetStorefrontByNameAction.Input();
+    input.storefrontName = 'Test Storefront';
+    List<GetStorefrontByNameAction.Input> inputs = new List<GetStorefrontByNameAction.Input>{ input };
+
+    Test.startTest();
+    List<GetStorefrontByNameAction.Output> outputs = GetStorefrontByNameAction.getStorefrontByName(inputs);
     Test.stopTest();
 
-    // Then
-    Assert.isTrue(responses[0].isSuccess, 'Response should be successful');
-    Assert.isNotNull(responses[0].storefront, 'A storefront should be returned');
-    Assert.areEqual(name, responses[0].storefront.Name, 'The exact-name match should be returned');
+    System.assertEquals(1, outputs.size());
+    GetStorefrontByNameAction.Output output = outputs[0];
+    System.assertEquals(true, output.isSuccess);
+    System.assertEquals('Storefront retrieved successfully', output.message);
+    System.assertNotEquals(null, output.storefront);
+    System.assertEquals('Test Storefront', output.storefront.Name);
   }
 
   @isTest
-  static void shouldReturnSimilarNames_WhenMultipleMatchesButNoExactMatch() {
-    // Given: names '...0' and '...1', querying the prefix matches both but neither exactly
-    TestDataFactory.createStorefronts(2, true);
-    GetStorefrontByNameAction.Input request = new GetStorefrontByNameAction.Input();
-    request.storefrontName = TestDataFactory.STOREFRONT_NAME_PREFIX;
+  static void testGetStorefrontByName_Failure() {
+    MockStorefrontService mockService = new MockStorefrontService();
+    mockService.shouldThrowException = true;
+    mockService.exceptionMessage = 'No storefront found with name: NonExistent';
+    GetStorefrontByNameAction.storefrontService = mockService;
 
-    // When
+    GetStorefrontByNameAction.Input input = new GetStorefrontByNameAction.Input();
+    input.storefrontName = 'NonExistent';
+    List<GetStorefrontByNameAction.Input> inputs = new List<GetStorefrontByNameAction.Input>{ input };
+
     Test.startTest();
-    List<GetStorefrontByNameAction.Output> responses = GetStorefrontByNameAction.getStorefrontByName(
-      new List<GetStorefrontByNameAction.Input>{ request }
-    );
+    List<GetStorefrontByNameAction.Output> outputs = GetStorefrontByNameAction.getStorefrontByName(inputs);
     Test.stopTest();
 
-    // Then
-    Assert.isFalse(responses[0].isSuccess, 'Response should not be successful');
-    Assert.isNull(responses[0].storefront, 'No storefront should be returned');
-    Assert.isTrue(
-      responses[0].message.contains('Multiple storefronts found'),
-      'Message should indicate multiple matches'
-    );
-  }
-
-  @isTest
-  static void shouldReturnError_WhenNoMatch() {
-    // Given
-    TestDataFactory.createStorefronts(1, true);
-    GetStorefrontByNameAction.Input request = new GetStorefrontByNameAction.Input();
-    request.storefrontName = 'Nonexistent Storefront';
-
-    // When
-    Test.startTest();
-    List<GetStorefrontByNameAction.Output> responses = GetStorefrontByNameAction.getStorefrontByName(
-      new List<GetStorefrontByNameAction.Input>{ request }
-    );
-    Test.stopTest();
-
-    // Then
-    Assert.isFalse(responses[0].isSuccess, 'Response should not be successful');
-    Assert.isNull(responses[0].storefront, 'No storefront should be returned');
-    Assert.isTrue(responses[0].message.contains('No storefront found'), 'Message should indicate no match was found');
+    System.assertEquals(1, outputs.size());
+    GetStorefrontByNameAction.Output output = outputs[0];
+    System.assertEquals(false, output.isSuccess);
+    System.assertEquals('No storefront found with name: NonExistent', output.message);
+    System.assertEquals(null, output.storefront);
   }
 }

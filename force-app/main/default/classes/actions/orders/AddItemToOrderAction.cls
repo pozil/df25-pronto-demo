@@ -2,6 +2,9 @@
  * @description Invocable action to add items to an order
  */
 public with sharing class AddItemToOrderAction {
+  @TestVisible
+  private static OrderService orderService = new OrderService();
+
   /**
    * @description Invocable method to add items to an order
    * @param inputs List of Input containing order ID/name, item name, and quantity
@@ -19,7 +22,7 @@ public with sharing class AddItemToOrderAction {
       Output output = new Output();
 
       try {
-        Order_Item__c orderItem = OrderService.addItemToOrder(input.orderId, input.orderItemName, input.quantity);
+        Order_Item__c orderItem = orderService.addItemToOrder(input.orderId, input.orderItemName, input.quantity);
 
         // Set success message
         output.isSuccess = true;

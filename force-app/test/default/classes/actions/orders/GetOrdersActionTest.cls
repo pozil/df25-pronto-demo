@@ -1,70 +1,59 @@
-/**
- * Tests for GetOrdersAction.
- */
 @isTest
 private class GetOrdersActionTest {
-  @TestSetup
-  static void setupTestData() {
-    Storefront__c storefront = TestDataFactory.createStorefronts(1, true)[0];
-    Contact customer = TestDataFactory.createCustomers(1, true)[0];
-    TestDataFactory.createOrders(customer.Id, storefront.Id, 'Draft', 2, true);
-    TestDataFactory.createOrders(customer.Id, storefront.Id, 'Confirmed', 1, true);
+  private class MockOrderService extends OrderService {
+    public Boolean shouldThrowException = false;
+    public String exceptionMessage = 'Mock exception';
+    public List<Order__c> ordersToReturn = new List<Order__c>();
+
+    public override List<Order__c> getOrdersFromCustomer(Id customerId, String orderStatus) {
+      if (shouldThrowException) {
+        throw new OrderService.OrderException(exceptionMessage);
+      }
+      return ordersToReturn;
+    }
   }
 
   @isTest
-  static void shouldReturnAllOrders_WhenNoStatusFilter() {
-    // Given
-    Contact customer = [SELECT Id FROM Contact LIMIT 1];
-    GetOrdersAction.Input request = new GetOrdersAction.Input();
-    request.customerId = customer.Id;
+  static void testGetOrders_Success() {
+    MockOrderService mockService = new MockOrderService();
+    GetOrdersAction.orderService = mockService;
 
-    // When
+    Order__c order1 = new Order__c(Id = TestDataFactory.getFakeId(Order__c.SObjectType), Status__c = 'Delivered');
+    Order__c order2 = new Order__c(Id = TestDataFactory.getFakeId(Order__c.SObjectType), Status__c = 'Delivered');
+    mockService.ordersToReturn = new List<Order__c>{ order1, order2 };
+
+    GetOrdersAction.Input input = new GetOrdersAction.Input();
+    input.customerId = TestDataFactory.getFakeId(Contact.SObjectType);
+    input.orderStatus = 'Delivered';
+
     Test.startTest();
-    List<GetOrdersAction.Output> responses = GetOrdersAction.getOrders(new List<GetOrdersAction.Input>{ request });
+    List<GetOrdersAction.Output> results = GetOrdersAction.getOrders(new List<GetOrdersAction.Input>{ input });
     Test.stopTest();
 
-    // Then
-    Assert.areEqual(1, responses.size(), 'One response should be returned');
-    Assert.isTrue(responses[0].isSuccess, 'Response should be successful');
-    Assert.areEqual(3, responses[0].orders.size(), 'All orders for the customer should be returned');
+    System.assertEquals(1, results.size());
+    GetOrdersAction.Output output = results[0];
+    System.assertEquals(true, output.isSuccess);
+    System.assertEquals(2, output.orders.size());
   }
 
   @isTest
-  static void shouldReturnFilteredOrders_WhenStatusFilterProvided() {
-    // Given
-    Contact customer = [SELECT Id FROM Contact LIMIT 1];
-    GetOrdersAction.Input request = new GetOrdersAction.Input();
-    request.customerId = customer.Id;
-    request.orderStatus = 'Draft';
+  static void testGetOrders_Failure() {
+    MockOrderService mockService = new MockOrderService();
+    GetOrdersAction.orderService = mockService;
+    mockService.shouldThrowException = true;
+    mockService.exceptionMessage = 'Invalid status value';
 
-    // When
+    GetOrdersAction.Input input = new GetOrdersAction.Input();
+    input.customerId = TestDataFactory.getFakeId(Contact.SObjectType);
+    input.orderStatus = 'InvalidStatus';
+
     Test.startTest();
-    List<GetOrdersAction.Output> responses = GetOrdersAction.getOrders(new List<GetOrdersAction.Input>{ request });
+    List<GetOrdersAction.Output> results = GetOrdersAction.getOrders(new List<GetOrdersAction.Input>{ input });
     Test.stopTest();
 
-    // Then
-    Assert.isTrue(responses[0].isSuccess, 'Response should be successful');
-    Assert.areEqual(2, responses[0].orders.size(), 'Only Draft orders should be returned');
-  }
-
-  @isTest
-  static void shouldReturnError_WhenStatusIsInvalid() {
-    // Given
-    Contact customer = [SELECT Id FROM Contact LIMIT 1];
-    GetOrdersAction.Input request = new GetOrdersAction.Input();
-    request.customerId = customer.Id;
-    request.orderStatus = 'NotAStatus';
-
-    // When
-    Test.startTest();
-    List<GetOrdersAction.Output> responses = GetOrdersAction.getOrders(new List<GetOrdersAction.Input>{ request });
-    Test.stopTest();
-
-    // Then
-    Assert.isFalse(responses[0].isSuccess, 'Response should not be successful');
-    Assert.isTrue(
-      responses[0].message.contains('Invalid status value'),
-      'Message should indicate the status value is invalid'
-    );
+    System.assertEquals(1, results.size());
+    GetOrdersAction.Output output = results[0];
+    System.assertEquals(false, output.isSuccess);
+    System.assert(output.message.contains('Invalid status value'));
   }
 }

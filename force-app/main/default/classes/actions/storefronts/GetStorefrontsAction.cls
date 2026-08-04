@@ -2,6 +2,9 @@
  * Invocable Action for retrieving the first storefronts
  */
 public with sharing class GetStorefrontsAction {
+  @TestVisible
+  private static StorefrontService storefrontService = new StorefrontService();
+
   /**
    * Invocable action to retrieve the first 10 storefronts
    * @param requests List of request objects
@@ -18,7 +21,7 @@ public with sharing class GetStorefrontsAction {
     for (Input request : requests) {
       Output response = new Output();
       try {
-        response.storefronts = StorefrontService.getStorefronts(request.recordLimit);
+        response.storefronts = storefrontService.getStorefronts(request.recordLimit);
         response.message = 'Found ' + response.storefronts.size() + ' storefronts.';
         response.isSuccess = true;
       } catch (Exception e) {

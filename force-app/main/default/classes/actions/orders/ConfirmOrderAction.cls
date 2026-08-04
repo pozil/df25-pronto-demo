@@ -2,6 +2,9 @@
  * @description Invocable action to confirm orders that are in Draft status
  */
 public with sharing class ConfirmOrderAction {
+  @TestVisible
+  private static OrderService orderService = new OrderService();
+
   /**
    * @description Invocable method to confirm orders
    * @param inputs List of Input containing order IDs
@@ -18,7 +21,7 @@ public with sharing class ConfirmOrderAction {
     for (Input input : inputs) {
       Output output = new Output();
       try {
-        Order__c order = OrderService.confirmOrder(input.orderId);
+        Order__c order = orderService.confirmOrder(input.orderId);
         output.orderId = order.Id;
         output.success = true;
         output.message = 'Order ' + order.Name + ' has been confirmed';

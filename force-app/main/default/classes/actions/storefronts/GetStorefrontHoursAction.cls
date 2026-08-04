@@ -2,6 +2,9 @@
  * Invocable Action for retrieving a storefront's operating hours by its Id
  */
 public with sharing class GetStorefrontHoursAction {
+  @TestVisible
+  private static StorefrontService storefrontService = new StorefrontService();
+
   /**
    * Invocable action to retrieve a storefront's operating hours by storefront Id
    * @param requests List of request objects containing the storefront Id
@@ -20,7 +23,7 @@ public with sharing class GetStorefrontHoursAction {
     for (Input request : requests) {
       Output response = new Output();
       try {
-        List<Storefront_Hours_of_Operation__c> hours = StorefrontService.getStorefrontHours(request.storefrontId);
+        List<Storefront_Hours_of_Operation__c> hours = storefrontService.getStorefrontHours(request.storefrontId);
         if (hours.isEmpty()) {
           response.hours = hours;
           response.isSuccess = false;

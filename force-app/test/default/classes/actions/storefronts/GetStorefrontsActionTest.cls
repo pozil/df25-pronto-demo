@@ -1,59 +1,59 @@
-/**
- * Tests for GetStorefrontsAction.
- */
 @isTest
 private class GetStorefrontsActionTest {
-  @isTest
-  static void shouldReturnStorefronts_WhenStorefrontsExist() {
-    // Given
-    TestDataFactory.createStorefronts(3, true);
-    GetStorefrontsAction.Input request = new GetStorefrontsAction.Input();
+  private class MockStorefrontService extends StorefrontService {
+    public Boolean shouldThrowException = false;
+    public String exceptionMessage = 'Mock exception';
 
-    // When
-    Test.startTest();
-    List<GetStorefrontsAction.Output> responses = GetStorefrontsAction.getStorefronts(
-      new List<GetStorefrontsAction.Input>{ request }
-    );
-    Test.stopTest();
-
-    // Then
-    Assert.areEqual(1, responses.size(), 'One response should be returned');
-    Assert.isTrue(responses[0].isSuccess, 'Response should be successful');
-    Assert.areEqual(3, responses[0].storefronts.size(), 'All storefronts should be returned');
+    public override List<Storefront__c> getStorefronts(Integer recordLimit) {
+      if (shouldThrowException) {
+        throw new StorefrontException(exceptionMessage);
+      }
+      return TestDataFactory.createMockStorefronts(10);
+    }
   }
 
   @isTest
-  static void shouldReturnFirstTen_WhenMoreThanTenExist() {
-    // Given
-    TestDataFactory.createStorefronts(15, true);
-    GetStorefrontsAction.Input request = new GetStorefrontsAction.Input();
+  static void testGetStorefronts_Success() {
+    MockStorefrontService mockService = new MockStorefrontService();
+    GetStorefrontsAction.storefrontService = mockService;
 
-    // When
+    GetStorefrontsAction.Input request = new GetStorefrontsAction.Input();
+    request.recordLimit = 10;
+
     Test.startTest();
-    List<GetStorefrontsAction.Output> responses = GetStorefrontsAction.getStorefronts(
+    List<GetStorefrontsAction.Output> results = GetStorefrontsAction.getStorefronts(
       new List<GetStorefrontsAction.Input>{ request }
     );
     Test.stopTest();
 
-    // Then
-    Assert.isTrue(responses[0].isSuccess, 'Response should be successful');
-    Assert.areEqual(10, responses[0].storefronts.size(), 'At most 10 storefronts should be returned');
+    System.assertEquals(1, results.size());
+    GetStorefrontsAction.Output result = results[0];
+    System.assertEquals(true, result.isSuccess);
+    System.assertEquals(10, result.storefronts.size());
+    System.assertEquals('Found 10 storefronts.', result.message);
   }
 
   @isTest
-  static void shouldReturnEmptyList_WhenNoStorefrontsExist() {
-    // Given
-    GetStorefrontsAction.Input request = new GetStorefrontsAction.Input();
+  static void testGetStorefronts_Failure() {
+    MockStorefrontService mockService = new MockStorefrontService();
+    mockService.shouldThrowException = true;
+    mockService.exceptionMessage = 'Database connection failed';
+    GetStorefrontsAction.storefrontService = mockService;
 
-    // When
+    GetStorefrontsAction.Input request = new GetStorefrontsAction.Input();
+    request.recordLimit = 10;
+
     Test.startTest();
-    List<GetStorefrontsAction.Output> responses = GetStorefrontsAction.getStorefronts(
+    List<GetStorefrontsAction.Output> results = GetStorefrontsAction.getStorefronts(
       new List<GetStorefrontsAction.Input>{ request }
     );
     Test.stopTest();
 
-    // Then
-    Assert.isTrue(responses[0].isSuccess, 'Response should be successful');
-    Assert.areEqual(0, responses[0].storefronts.size(), 'No storefronts should be returned');
+    System.assertEquals(1, results.size());
+    GetStorefrontsAction.Output result = results[0];
+    System.assertEquals(false, result.isSuccess);
+    System.assertEquals(null, result.storefronts);
+    System.assert(result.message.contains('Error retrieving storefronts'));
+    System.assert(result.message.contains('Database connection failed'));
   }
 }

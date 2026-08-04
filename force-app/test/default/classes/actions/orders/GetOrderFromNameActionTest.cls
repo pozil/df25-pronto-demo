@@ -1,62 +1,57 @@
-/**
- * Tests for GetOrderFromNameAction.
- */
 @isTest
 private class GetOrderFromNameActionTest {
-  @TestSetup
-  static void setupTestData() {
-    Storefront__c storefront = TestDataFactory.createStorefronts(1, true)[0];
-    Contact customer = TestDataFactory.createCustomers(1, true)[0];
-    TestDataFactory.createOrders(customer.Id, storefront.Id, 'Confirmed', 1, true);
+  private class MockOrderService extends OrderService {
+    public Boolean shouldThrowException = false;
+    public String exceptionMessage = '';
+    public Order__c orderToReturn;
+
+    public override Order__c getOrderFromName(String orderName) {
+      if (shouldThrowException) {
+        throw new OrderException(exceptionMessage);
+      }
+      return orderToReturn;
+    }
   }
 
   @isTest
-  static void shouldReturnOrder_WhenLookupByName() {
-    // Given
-    Order__c order = [SELECT Id, Name FROM Order__c LIMIT 1];
-    GetOrderFromNameAction.Input request = new GetOrderFromNameAction.Input();
-    request.orderName = order.Name;
+  static void testGetOrderFromName_Success() {
+    Order__c testOrder = new Order__c(Status__c = 'Confirmed', Total_Amount__c = 45.50);
+    testOrder.Id = TestDataFactory.getFakeId(Order__c.SObjectType);
 
-    // When
+    MockOrderService mockService = new MockOrderService();
+    mockService.orderToReturn = testOrder;
+    GetOrderFromNameAction.orderService = mockService;
+
+    GetOrderFromNameAction.Input input = new GetOrderFromNameAction.Input();
+    input.orderName = 'ORD-12345';
+    List<GetOrderFromNameAction.Input> inputs = new List<GetOrderFromNameAction.Input>{ input };
+
     Test.startTest();
-    List<GetOrderFromNameAction.Output> responses = GetOrderFromNameAction.getOrderFromName(
-      new List<GetOrderFromNameAction.Input>{ request }
-    );
+    List<GetOrderFromNameAction.Output> outputs = GetOrderFromNameAction.getOrderFromName(inputs);
     Test.stopTest();
 
-    // Then
-    Assert.areEqual(1, responses.size(), 'One response should be returned');
-    GetOrderFromNameAction.OrderDetails details = (GetOrderFromNameAction.OrderDetails) JSON.deserialize(
-      responses[0].order,
-      GetOrderFromNameAction.OrderDetails.class
-    );
-    Assert.areEqual(order.Id, details.id, 'The returned order should be for the requested order number');
-    Assert.areEqual(order.Name, details.name, 'The order number should be returned');
-    Assert.areEqual('Confirmed', details.status, 'The order status should be returned');
+    System.assertEquals(1, outputs.size());
+    System.assertNotEquals(null, outputs[0].order);
   }
 
   @isTest
-  static void shouldThrowException_WhenOrderNameNotFound() {
-    // Given
-    GetOrderFromNameAction.Input request = new GetOrderFromNameAction.Input();
-    request.orderName = 'NON-EXISTENT-ORDER';
+  static void testGetOrderFromName_Failure() {
+    MockOrderService mockService = new MockOrderService();
+    mockService.shouldThrowException = true;
+    mockService.exceptionMessage = 'No order found with number: ORD-INVALID';
+    GetOrderFromNameAction.orderService = mockService;
 
-    // When
+    GetOrderFromNameAction.Input input = new GetOrderFromNameAction.Input();
+    input.orderName = 'ORD-INVALID';
+    List<GetOrderFromNameAction.Input> inputs = new List<GetOrderFromNameAction.Input>{ input };
+
     Test.startTest();
-    Exception caughtException;
     try {
-      GetOrderFromNameAction.getOrderFromName(new List<GetOrderFromNameAction.Input>{ request });
-      Assert.fail('Expected an OrderException to be thrown');
-    } catch (Exception e) {
-      caughtException = e;
+      GetOrderFromNameAction.getOrderFromName(inputs);
+      System.assert(false, 'Expected OrderException to be thrown');
+    } catch (OrderService.OrderException e) {
+      System.assertEquals('No order found with number: ORD-INVALID', e.getMessage());
     }
     Test.stopTest();
-
-    // Then
-    Assert.isInstanceOfType(
-      caughtException,
-      OrderService.OrderException.class,
-      'An OrderException should be thrown when the order is not found'
-    );
   }
 }

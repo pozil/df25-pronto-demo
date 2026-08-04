@@ -1,63 +1,61 @@
-/**
- * Tests for CancelOrderAction.
- */
 @isTest
 private class CancelOrderActionTest {
-  @TestSetup
-  static void setupTestData() {
-    Storefront__c storefront = TestDataFactory.createStorefronts(1, true)[0];
-    Contact customer = TestDataFactory.createCustomers(1, true)[0];
-    TestDataFactory.createOrders(customer.Id, storefront.Id, 'Draft', 1, true);
+  private class MockOrderService extends OrderService {
+    public Boolean shouldThrowException = false;
+    public String exceptionMessage;
+    public Order__c orderToReturn;
+
+    public override Order__c cancelOrder(Id orderId, String cancelationReason) {
+      if (shouldThrowException) {
+        throw new OrderService.OrderException(exceptionMessage);
+      }
+      return orderToReturn;
+    }
   }
 
   @isTest
-  static void shouldCancelOrder_WhenOrderIsDraft() {
-    // Given
-    Order__c order = [SELECT Id FROM Order__c LIMIT 1];
-    CancelOrderAction.Input request = new CancelOrderAction.Input();
-    request.orderId = order.Id;
-    request.cancelationReason = 'Customer changed their mind';
-
-    // When
-    Test.startTest();
-    List<CancelOrderAction.Output> responses = CancelOrderAction.cancelOrder(
-      new List<CancelOrderAction.Input>{ request }
+  static void testCancelOrder_Success() {
+    MockOrderService mockService = new MockOrderService();
+    Order__c mockOrder = new Order__c(
+      Id = TestDataFactory.getFakeId(Order__c.SObjectType),
+      Status__c = 'Canceled',
+      Cancelation_Reason__c = 'Customer requested'
     );
+    mockService.orderToReturn = mockOrder;
+    CancelOrderAction.orderService = mockService;
+
+    CancelOrderAction.Input input = new CancelOrderAction.Input();
+    input.orderId = mockOrder.Id;
+    input.cancelationReason = 'Customer requested';
+
+    Test.startTest();
+    List<CancelOrderAction.Output> results = CancelOrderAction.cancelOrder(new List<CancelOrderAction.Input>{ input });
     Test.stopTest();
 
-    // Then
-    Assert.areEqual(1, responses.size(), 'One response should be returned');
-    Assert.isTrue(responses[0].isSuccess, 'Response should be successful');
-    Order__c canceled = [SELECT Status__c, Cancelation_Reason__c FROM Order__c WHERE Id = :order.Id LIMIT 1];
-    Assert.areEqual('Canceled', canceled.Status__c, 'The order should be Canceled');
-    Assert.areEqual(
-      'Customer changed their mind',
-      canceled.Cancelation_Reason__c,
-      'The cancelation reason should be stored'
-    );
+    System.assertEquals(1, results.size(), 'Expected one output result');
+    CancelOrderAction.Output output = results[0];
+    System.assertEquals(true, output.isSuccess, 'Expected success to be true');
+    System.assert(output.message.contains('was canceled'), 'Expected success message');
   }
 
   @isTest
-  static void shouldReturnError_WhenOrderCannotBeCanceled() {
-    // Given
-    Order__c order = [SELECT Id FROM Order__c LIMIT 1];
-    order.Status__c = 'Delivered';
-    update order;
-    CancelOrderAction.Input request = new CancelOrderAction.Input();
-    request.orderId = order.Id;
+  static void testCancelOrder_Failure() {
+    MockOrderService mockService = new MockOrderService();
+    mockService.shouldThrowException = true;
+    mockService.exceptionMessage = 'Order cannot be canceled';
+    CancelOrderAction.orderService = mockService;
 
-    // When
+    CancelOrderAction.Input input = new CancelOrderAction.Input();
+    input.orderId = TestDataFactory.getFakeId(Order__c.SObjectType);
+    input.cancelationReason = 'Test reason';
+
     Test.startTest();
-    List<CancelOrderAction.Output> responses = CancelOrderAction.cancelOrder(
-      new List<CancelOrderAction.Input>{ request }
-    );
+    List<CancelOrderAction.Output> results = CancelOrderAction.cancelOrder(new List<CancelOrderAction.Input>{ input });
     Test.stopTest();
 
-    // Then
-    Assert.isFalse(responses[0].isSuccess, 'Response should not be successful');
-    Assert.isTrue(
-      responses[0].message.contains('cannot be canceled'),
-      'Message should indicate the order cannot be canceled'
-    );
+    System.assertEquals(1, results.size(), 'Expected one output result');
+    CancelOrderAction.Output output = results[0];
+    System.assertEquals(false, output.isSuccess, 'Expected success to be false');
+    System.assertEquals('Order cannot be canceled', output.message, 'Expected error message');
   }
 }

@@ -1,5 +1,6 @@
 public with sharing class GetOrdersAction {
-  private static List<String> statusValues;
+  @TestVisible
+  private static OrderService orderService = new OrderService();
 
   @InvocableMethod(label='Get Customer Orders' description='Get orders from a customer' category='Order Management')
   public static List<Output> getOrders(List<Input> requests) {
@@ -7,7 +8,7 @@ public with sharing class GetOrdersAction {
     for (Input request : requests) {
       Output response = new Output();
       try {
-        List<Order__c> orders = OrderService.getOrdersFromCustomer(request.customerId, request.orderStatus);
+        List<Order__c> orders = orderService.getOrdersFromCustomer(request.customerId, request.orderStatus);
         response.isSuccess = true;
         response.orders = orders;
         response.message = 'Found ' + orders.size() + ' orders.';

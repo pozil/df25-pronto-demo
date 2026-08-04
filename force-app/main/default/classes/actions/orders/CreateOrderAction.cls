@@ -1,11 +1,14 @@
 public with sharing class CreateOrderAction {
+  @TestVisible
+  private static OrderService orderService = new OrderService();
+
   @InvocableMethod(label='Create Order' description='Creates a draft order' category='Order Management')
   public static List<Output> createOrder(List<Input> requests) {
     List<Output> responses = new List<Output>();
     for (Input request : requests) {
       Output response = new Output();
       try {
-        Order__c order = OrderService.createDraftOrder(request.customerId, request.storefrontId);
+        Order__c order = orderService.createDraftOrder(request.customerId, request.storefrontId);
         response.isSuccess = true;
         response.orderId = order.Id;
         response.message = 'Draft order ' + order.Name + ' created successfully. You can now add items to the order.';

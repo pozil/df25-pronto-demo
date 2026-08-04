@@ -2,6 +2,9 @@
  * Invocable Action for retrieving a storefront by its name
  */
 public with sharing class GetStorefrontByNameAction {
+  @TestVisible
+  private static StorefrontService storefrontService = new StorefrontService();
+
   /**
    * Invocable action to retrieve a storefront by name
    * @param requests List of request objects containing storefront name
@@ -18,7 +21,7 @@ public with sharing class GetStorefrontByNameAction {
     for (Input request : requests) {
       Output response = new Output();
       try {
-        response.storefront = StorefrontService.getStorefrontFromName(request.storefrontName);
+        response.storefront = storefrontService.getStorefrontFromName(request.storefrontName);
         response.message = 'Storefront retrieved successfully';
         response.isSuccess = true;
       } catch (StorefrontService.StorefrontException e) {

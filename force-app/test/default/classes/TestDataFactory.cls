@@ -19,6 +19,22 @@ public class TestDataFactory {
     'Sunday'
   };
 
+  private static Integer fakeRecordCount = 0;
+
+  /**
+   * Generates a fake ID for the given SObject
+   * @return fake ID
+   */
+  public static Id getFakeId(Schema.SObjectType sObjectType) {
+    // Extract the 3-character prefix unique to the object type
+    String prefix = sObjectType.getDescribe().getKeyPrefix();
+    // Format the counter into a string
+    String currentCount = String.valueOf(fakeRecordCount++);
+    // Pad with zeros to create a standard 18-character Salesforce ID format
+    String fakeIdSuffix = '0'.repeat(12 - currentCount.length()) + currentCount;
+    return (Id) (prefix + fakeIdSuffix);
+  }
+
   /**
    * Builds Storefront records.
    * @param count Number of storefronts to build
@@ -156,5 +172,67 @@ public class TestDataFactory {
       insert orders;
     }
     return orders;
+  }
+
+  /**
+   * Builds mock Review records with fake IDs.
+   * @param count Number of reviews to build
+   * @return The built mock reviews
+   */
+  public static List<Review__c> createMockReviews(Integer count) {
+    List<Review__c> reviews = new List<Review__c>();
+    for (Integer i = 0; i < count; i++) {
+      reviews.add(
+        new Review__c(
+          Id = getFakeId(Schema.Review__c.SObjectType),
+          Rating__c = Math.mod(i, 5) + 1.0,
+          Comments__c = 'Test review ' + i,
+          Status__c = 'Approved',
+          Order_Date__c = Date.today().addDays(-i)
+        )
+      );
+    }
+    return reviews;
+  }
+
+  /**
+   * Builds mock Storefront Hours of Operation records.
+   * @param storefrontId The parent storefront Id
+   * @param count Number of hours records to build (max 7 for days of week)
+   * @return The built mock hours records
+   */
+  public static List<Storefront_Hours_of_Operation__c> createMockHours(Id storefrontId, Integer count) {
+    List<Storefront_Hours_of_Operation__c> hours = new List<Storefront_Hours_of_Operation__c>();
+    for (Integer i = 0; i < count && i < WEEK_DAYS.size(); i++) {
+      hours.add(
+        new Storefront_Hours_of_Operation__c(
+          Storefront__c = storefrontId,
+          Day_of_Week__c = WEEK_DAYS[i],
+          Opening_Time__c = '09:00',
+          Closing_Time__c = '17:00'
+        )
+      );
+    }
+    return hours;
+  }
+
+  /**
+   * Builds mock Storefront records.
+   * @param count Number of storefronts to build
+   * @return The built mock storefronts
+   */
+  public static List<Storefront__c> createMockStorefronts(Integer count) {
+    List<Storefront__c> storefronts = new List<Storefront__c>();
+    for (Integer i = 0; i < count; i++) {
+      storefronts.add(
+        new Storefront__c(
+          Name = 'Test Storefront ' + i,
+          Description__c = 'Test Description ' + i,
+          Cuisine__c = 'Test Cuisine',
+          Status__c = 'Open'
+        )
+      );
+    }
+    return storefronts;
   }
 }

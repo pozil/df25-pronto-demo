@@ -2,6 +2,9 @@
  * @description Invocable action to cancel orders that are in Draft or Confirmed status
  */
 public with sharing class CancelOrderAction {
+  @TestVisible
+  private static OrderService orderService = new OrderService();
+
   /**
    * @description Invocable method to cancel orders
    * @param inputs List of Input containing order IDs and optional cancelation reasons
@@ -17,7 +20,7 @@ public with sharing class CancelOrderAction {
     for (Input input : inputs) {
       Output output = new Output();
       try {
-        Order__c order = OrderService.cancelOrder(input.orderId, input.cancelationReason);
+        Order__c order = orderService.cancelOrder(input.orderId, input.cancelationReason);
         output.isSuccess = true;
         output.message = 'Order ' + order.Name + ' was canceled';
       } catch (Exception e) {

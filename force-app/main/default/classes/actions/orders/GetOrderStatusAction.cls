@@ -2,6 +2,9 @@
  * @description Invocable action to get the status of an order by its ID
  */
 public with sharing class GetOrderStatusAction {
+  @TestVisible
+  private static OrderService orderService = new OrderService();
+
   /**
    * @description Invocable method to get order status
    * @param inputs List of Input parameters
@@ -17,7 +20,7 @@ public with sharing class GetOrderStatusAction {
 
     for (Input input : inputs) {
       // Use OrderService to get the order
-      Order__c order = OrderService.getOrderFromId(input.orderId);
+      Order__c order = orderService.getOrderFromId(input.orderId);
 
       OrderStatus orderStatus = new OrderStatus();
       orderStatus.id = order.Id;
@@ -28,7 +31,7 @@ public with sharing class GetOrderStatusAction {
       orderStatus.totalAmount = order.Total_Amount__c;
       orderStatus.orderTime = order.Order_Time__c;
       orderStatus.deliveryTime = order.Delivery_Time__c;
-      orderStatus.items = OrderService.getOrderItems(order.Id);
+      orderStatus.items = orderService.getOrderItems(order.Id);
 
       Output output = new Output();
       output.orderStatus = JSON.serialize(orderStatus);

@@ -2,6 +2,9 @@
  * Invocable Action for retrieving customer reviews for a given storefront
  */
 public with sharing class GetCustomerReviewsAction {
+  @TestVisible
+  private static ReviewService reviewService = new ReviewService();
+
   /**
    * Invocable action to retrieve customer reviews for a storefront
    * @param requests List of request objects containing storefront ID
@@ -19,7 +22,7 @@ public with sharing class GetCustomerReviewsAction {
       Output response = new Output();
       try {
         // Retrieve reviews via the service layer
-        List<Review__c> reviews = ReviewService.getReviewsForStorefront(request.storefrontId);
+        List<Review__c> reviews = reviewService.getReviewsForStorefront(request.storefrontId);
 
         // Format the response
         response.isSuccess = true;

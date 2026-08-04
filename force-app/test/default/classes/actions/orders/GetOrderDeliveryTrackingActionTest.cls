@@ -1,27 +1,37 @@
-/**
- * Tests for GetOrderDeliveryTrackingAction.
- */
 @isTest
 private class GetOrderDeliveryTrackingActionTest {
   @isTest
-  static void shouldReturnTracking_WhenOrderIdProvided() {
-    // Given
-    String orderId = 'a00000000000000AAA';
-    GetOrderDeliveryTrackingAction.Input request = new GetOrderDeliveryTrackingAction.Input();
-    request.orderId = orderId;
+  static void testGetDeliveryTracking_Success() {
+    String testOrderId = TestDataFactory.getFakeId(Order.SObjectType);
+    GetOrderDeliveryTrackingAction.Input input = new GetOrderDeliveryTrackingAction.Input();
+    input.orderId = testOrderId;
+    List<GetOrderDeliveryTrackingAction.Input> inputs = new List<GetOrderDeliveryTrackingAction.Input>{ input };
 
-    // When
     Test.startTest();
-    List<GetOrderDeliveryTrackingAction.Output> responses = GetOrderDeliveryTrackingAction.getDeliveryTracking(
-      new List<GetOrderDeliveryTrackingAction.Input>{ request }
-    );
+    List<GetOrderDeliveryTrackingAction.Output> outputs = GetOrderDeliveryTrackingAction.getDeliveryTracking(inputs);
     Test.stopTest();
 
-    // Then
-    Assert.areEqual(1, responses.size(), 'One response should be returned');
-    GetOrderDeliveryTrackingAction.DeliveryTracking tracking = responses[0].deliveryTracking;
-    Assert.areEqual(orderId, tracking.orderId, 'The tracking should be for the requested order');
-    Assert.areEqual('In Progress', tracking.status, 'The tracking status should be returned');
-    Assert.areEqual(3, tracking.mapMarkers.size(), 'The tracking should include all map markers');
+    System.assertEquals(1, outputs.size());
+    GetOrderDeliveryTrackingAction.Output output = outputs[0];
+    System.assertNotEquals(null, output.deliveryTracking);
+    System.assertEquals(testOrderId, output.deliveryTracking.orderId);
+    System.assertEquals('In Progress', output.deliveryTracking.status);
+    System.assertEquals(3, output.deliveryTracking.mapMarkers.size());
+  }
+
+  @isTest
+  static void testGetDeliveryTracking_Failure() {
+    GetOrderDeliveryTrackingAction.Input input = new GetOrderDeliveryTrackingAction.Input();
+    input.orderId = null;
+    List<GetOrderDeliveryTrackingAction.Input> inputs = new List<GetOrderDeliveryTrackingAction.Input>{ input };
+
+    Test.startTest();
+    List<GetOrderDeliveryTrackingAction.Output> outputs = GetOrderDeliveryTrackingAction.getDeliveryTracking(inputs);
+    Test.stopTest();
+
+    System.assertEquals(1, outputs.size());
+    GetOrderDeliveryTrackingAction.Output output = outputs[0];
+    System.assertNotEquals(null, output.deliveryTracking);
+    System.assertEquals(null, output.deliveryTracking.orderId);
   }
 }

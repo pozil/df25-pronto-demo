@@ -2,6 +2,9 @@
  * @description Invocable action to get an order by its order number (Name)
  */
 public with sharing class GetOrderFromNameAction {
+  @TestVisible
+  private static OrderService orderService = new OrderService();
+
   /**
    * @description Invocable method to get an order from its order number (Name)
    * @param inputs List of Input parameters
@@ -17,7 +20,7 @@ public with sharing class GetOrderFromNameAction {
 
     for (Input input : inputs) {
       // Use OrderService to look up the order by its order number (Name)
-      Order__c order = OrderService.getOrderFromName(input.orderName);
+      Order__c order = orderService.getOrderFromName(input.orderName);
 
       OrderDetails orderDetails = new OrderDetails();
       orderDetails.id = order.Id;

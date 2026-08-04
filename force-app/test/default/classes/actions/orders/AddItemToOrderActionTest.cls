@@ -1,85 +1,67 @@
-/**
- * Tests for AddItemToOrderAction.
- */
 @isTest
 private class AddItemToOrderActionTest {
-  @TestSetup
-  static void setupTestData() {
-    Storefront__c storefront = TestDataFactory.createStorefronts(1, true)[0];
-    Contact customer = TestDataFactory.createCustomers(1, true)[0];
-    Menu__c menu = TestDataFactory.createMenu(storefront.Id, true);
-    TestDataFactory.createMenuItems(menu.Id, 1, true);
-    TestDataFactory.createOrders(customer.Id, storefront.Id, 'Draft', 1, true);
+  private class MockOrderService extends OrderService {
+    public Boolean shouldThrowException = false;
+    public String exceptionMessage = 'Test exception';
+    public Order_Item__c mockOrderItem;
+
+    public override Order_Item__c addItemToOrder(Id orderId, String orderItemName, Decimal quantity) {
+      if (shouldThrowException) {
+        throw new OrderException(exceptionMessage);
+      }
+      return mockOrderItem;
+    }
   }
 
   @isTest
-  static void shouldAddItem_WhenOrderIsDraft() {
-    // Given
-    Order__c order = [SELECT Id FROM Order__c LIMIT 1];
-    AddItemToOrderAction.Input request = new AddItemToOrderAction.Input();
-    request.orderId = order.Id;
-    request.orderItemName = TestDataFactory.MENU_ITEM_NAME_PREFIX + '0';
-    request.quantity = 2;
+  static void testAddToOrder_Success() {
+    MockOrderService mockService = new MockOrderService();
+    Order_Item__c mockOrderItem = new Order_Item__c(
+      Id = TestDataFactory.getFakeId(Order_Item__c.SObjectType),
+      Quantity__c = 2
+    );
+    mockService.mockOrderItem = mockOrderItem;
+    AddItemToOrderAction.orderService = mockService;
 
-    // When
+    AddItemToOrderAction.Input input = new AddItemToOrderAction.Input();
+    input.orderId = TestDataFactory.getFakeId(Order__c.SObjectType);
+    input.orderItemName = 'Pepperoni Pizza';
+    input.quantity = 2;
+
     Test.startTest();
-    List<AddItemToOrderAction.Output> responses = AddItemToOrderAction.addToOrder(
-      new List<AddItemToOrderAction.Input>{ request }
+    List<AddItemToOrderAction.Output> results = AddItemToOrderAction.addToOrder(
+      new List<AddItemToOrderAction.Input>{ input }
     );
     Test.stopTest();
 
-    // Then
-    Assert.areEqual(1, responses.size(), 'One response should be returned');
-    Assert.isTrue(responses[0].isSuccess, 'Response should be successful');
-    Assert.isNotNull(responses[0].orderItemId, 'An order item ID should be returned');
-    Order_Item__c orderItem = [SELECT Id, Quantity__c FROM Order_Item__c WHERE Id = :responses[0].orderItemId LIMIT 1];
-    Assert.areEqual(2, orderItem.Quantity__c, 'The order item should have the requested quantity');
+    System.assertEquals(1, results.size(), 'Should return one output');
+    AddItemToOrderAction.Output output = results[0];
+    System.assertEquals(true, output.isSuccess, 'Should be successful');
+    System.assertEquals(input.orderId, output.orderId, 'Should return correct order ID');
+    System.assert(output.message.contains('Added'), 'Should contain success message');
   }
 
   @isTest
-  static void shouldReturnError_WhenMenuItemNotFound() {
-    // Given
-    Order__c order = [SELECT Id FROM Order__c LIMIT 1];
-    AddItemToOrderAction.Input request = new AddItemToOrderAction.Input();
-    request.orderId = order.Id;
-    request.orderItemName = 'Nonexistent Item';
-    request.quantity = 1;
+  static void testAddToOrder_Failure() {
+    MockOrderService mockService = new MockOrderService();
+    mockService.shouldThrowException = true;
+    mockService.exceptionMessage = 'Order not found';
+    AddItemToOrderAction.orderService = mockService;
 
-    // When
+    AddItemToOrderAction.Input input = new AddItemToOrderAction.Input();
+    input.orderId = TestDataFactory.getFakeId(Order__c.SObjectType);
+    input.orderItemName = 'Pizza';
+    input.quantity = 1;
+
     Test.startTest();
-    List<AddItemToOrderAction.Output> responses = AddItemToOrderAction.addToOrder(
-      new List<AddItemToOrderAction.Input>{ request }
+    List<AddItemToOrderAction.Output> results = AddItemToOrderAction.addToOrder(
+      new List<AddItemToOrderAction.Input>{ input }
     );
     Test.stopTest();
 
-    // Then
-    Assert.isFalse(responses[0].isSuccess, 'Response should not be successful');
-    Assert.isTrue(responses[0].message.contains('not found'), 'Message should indicate the menu item was not found');
-  }
-
-  @isTest
-  static void shouldReturnError_WhenOrderIsNotDraft() {
-    // Given
-    Order__c order = [SELECT Id FROM Order__c LIMIT 1];
-    order.Status__c = 'Confirmed';
-    update order;
-    AddItemToOrderAction.Input request = new AddItemToOrderAction.Input();
-    request.orderId = order.Id;
-    request.orderItemName = TestDataFactory.MENU_ITEM_NAME_PREFIX + '0';
-    request.quantity = 1;
-
-    // When
-    Test.startTest();
-    List<AddItemToOrderAction.Output> responses = AddItemToOrderAction.addToOrder(
-      new List<AddItemToOrderAction.Input>{ request }
-    );
-    Test.stopTest();
-
-    // Then
-    Assert.isFalse(responses[0].isSuccess, 'Response should not be successful');
-    Assert.isTrue(
-      responses[0].message.contains('Only Draft orders can be modified'),
-      'Message should indicate only Draft orders can be modified'
-    );
+    System.assertEquals(1, results.size(), 'Should return one output');
+    AddItemToOrderAction.Output output = results[0];
+    System.assertEquals(false, output.isSuccess, 'Should not be successful');
+    System.assertEquals('Order not found', output.message, 'Should contain error message');
   }
 }

@@ -1,59 +1,63 @@
-/**
- * Tests for CreateOrderAction.
- */
 @isTest
 private class CreateOrderActionTest {
-  @TestSetup
-  static void setupTestData() {
-    Storefront__c storefront = TestDataFactory.createStorefronts(1, true)[0];
-    TestDataFactory.createCustomers(1, true);
+  private class MockOrderService extends OrderService {
+    public Boolean shouldThrowException = false;
+    public String exceptionMessage = 'Test exception';
+    public Order__c mockOrder;
+
+    public override Order__c createDraftOrder(Id customerId, Id storefrontId) {
+      if (shouldThrowException) {
+        throw new OrderService.OrderException(exceptionMessage);
+      }
+      return mockOrder;
+    }
   }
 
   @isTest
-  static void shouldCreateDraftOrder_WhenValidInput() {
-    // Given
-    Contact customer = [SELECT Id FROM Contact LIMIT 1];
-    Storefront__c storefront = [SELECT Id FROM Storefront__c LIMIT 1];
-    CreateOrderAction.Input request = new CreateOrderAction.Input();
-    request.customerId = customer.Id;
-    request.storefrontId = storefront.Id;
+  static void testCreateOrder_Success() {
+    MockOrderService mockService = new MockOrderService();
+    Order__c testOrder = new Order__c(Id = TestDataFactory.getFakeId(Order__c.SObjectType));
+    mockService.mockOrder = testOrder;
+    CreateOrderAction.orderService = mockService;
 
-    // When
-    Test.startTest();
-    List<CreateOrderAction.Output> responses = CreateOrderAction.createOrder(
-      new List<CreateOrderAction.Input>{ request }
+    CreateOrderAction.Input input = new CreateOrderAction.Input();
+    input.customerId = TestDataFactory.getFakeId(Contact.SObjectType);
+    input.storefrontId = TestDataFactory.getFakeId(
+      Schema.getGlobalDescribe().get('Storefront__c').getDescribe().getSObjectType()
     );
+
+    Test.startTest();
+    List<CreateOrderAction.Output> results = CreateOrderAction.createOrder(new List<CreateOrderAction.Input>{ input });
     Test.stopTest();
 
-    // Then
-    Assert.areEqual(1, responses.size(), 'One response should be returned');
-    Assert.isTrue(responses[0].isSuccess, 'Response should be successful');
-    Assert.isNotNull(responses[0].orderId, 'An order ID should be returned');
-    Order__c order = [SELECT Id, Status__c FROM Order__c WHERE Id = :responses[0].orderId LIMIT 1];
-    Assert.areEqual('Draft', order.Status__c, 'The created order should be in Draft status');
+    System.assertEquals(1, results.size(), 'Should return one result');
+    CreateOrderAction.Output result = results[0];
+    System.assertEquals(true, result.isSuccess, 'Should be successful');
+    System.assertEquals(testOrder.Id, result.orderId, 'Should return the correct order ID');
+    System.assert(result.message.contains('created successfully'), 'Message should indicate success');
   }
 
   @isTest
-  static void shouldReturnError_WhenCustomerDoesNotExist() {
-    // Given
-    Storefront__c storefront = [SELECT Id FROM Storefront__c LIMIT 1];
-    CreateOrderAction.Input request = new CreateOrderAction.Input();
-    request.customerId = '003000000000000AAA';
-    request.storefrontId = storefront.Id;
+  static void testCreateOrder_Failure() {
+    MockOrderService mockService = new MockOrderService();
+    mockService.shouldThrowException = true;
+    mockService.exceptionMessage = 'Customer not found';
+    CreateOrderAction.orderService = mockService;
 
-    // When
-    Test.startTest();
-    List<CreateOrderAction.Output> responses = CreateOrderAction.createOrder(
-      new List<CreateOrderAction.Input>{ request }
+    CreateOrderAction.Input input = new CreateOrderAction.Input();
+    input.customerId = TestDataFactory.getFakeId(Contact.SObjectType);
+    input.storefrontId = TestDataFactory.getFakeId(
+      Schema.getGlobalDescribe().get('Storefront__c').getDescribe().getSObjectType()
     );
+
+    Test.startTest();
+    List<CreateOrderAction.Output> results = CreateOrderAction.createOrder(new List<CreateOrderAction.Input>{ input });
     Test.stopTest();
 
-    // Then
-    Assert.isFalse(responses[0].isSuccess, 'Response should not be successful');
-    Assert.isNull(responses[0].orderId, 'No order ID should be returned');
-    Assert.isTrue(
-      responses[0].message.contains('Error creating draft order'),
-      'Message should indicate an error occurred'
-    );
+    System.assertEquals(1, results.size(), 'Should return one result');
+    CreateOrderAction.Output result = results[0];
+    System.assertEquals(false, result.isSuccess, 'Should not be successful');
+    System.assertEquals(null, result.orderId, 'Order ID should be null on error');
+    System.assert(result.message.contains('Customer not found'), 'Message should contain exception details');
   }
 }

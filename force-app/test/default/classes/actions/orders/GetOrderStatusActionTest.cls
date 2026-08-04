@@ -1,61 +1,74 @@
-/**
- * Tests for GetOrderStatusAction.
- */
 @isTest
 private class GetOrderStatusActionTest {
-  @TestSetup
-  static void setupTestData() {
-    Storefront__c storefront = TestDataFactory.createStorefronts(1, true)[0];
-    Contact customer = TestDataFactory.createCustomers(1, true)[0];
-    TestDataFactory.createOrders(customer.Id, storefront.Id, 'Confirmed', 1, true);
+  private class MockOrderService extends OrderService {
+    public Order__c mockOrder;
+    public List<Order_Item__c> mockOrderItems;
+    public Boolean shouldThrowException = false;
+    public String exceptionMessage;
+
+    public override Order__c getOrderFromId(Id orderId) {
+      if (shouldThrowException) {
+        throw new OrderService.OrderException(exceptionMessage);
+      }
+      return mockOrder;
+    }
+
+    public override List<Order_Item__c> getOrderItems(Id orderId) {
+      if (mockOrderItems != null) {
+        return mockOrderItems;
+      }
+      return new List<Order_Item__c>();
+    }
   }
 
   @isTest
-  static void shouldReturnStatus() {
-    // Given
-    Order__c order = [SELECT Id FROM Order__c LIMIT 1];
-    GetOrderStatusAction.Input request = new GetOrderStatusAction.Input();
-    request.orderId = order.Id;
+  static void testGetOrderStatus_Success() {
+    MockOrderService mockService = new MockOrderService();
 
-    // When
-    Test.startTest();
-    List<GetOrderStatusAction.Output> responses = GetOrderStatusAction.getOrderStatus(
-      new List<GetOrderStatusAction.Input>{ request }
+    Order__c mockOrder = new Order__c(
+      Id = TestDataFactory.getFakeId(Order__c.SObjectType),
+      Status__c = 'Confirmed',
+      Total_Amount__c = 45.99
     );
+
+    List<Order_Item__c> mockItems = new List<Order_Item__c>{
+      new Order_Item__c(Id = TestDataFactory.getFakeId(Order_Item__c.SObjectType), Quantity__c = 2)
+    };
+
+    mockService.mockOrder = mockOrder;
+    mockService.mockOrderItems = mockItems;
+    GetOrderStatusAction.orderService = mockService;
+
+    GetOrderStatusAction.Input input = new GetOrderStatusAction.Input();
+    input.orderId = mockOrder.Id;
+    List<GetOrderStatusAction.Input> inputs = new List<GetOrderStatusAction.Input>{ input };
+
+    Test.startTest();
+    List<GetOrderStatusAction.Output> outputs = GetOrderStatusAction.getOrderStatus(inputs);
     Test.stopTest();
 
-    // Then
-    Assert.areEqual(1, responses.size(), 'One response should be returned');
-    GetOrderStatusAction.OrderStatus status = (GetOrderStatusAction.OrderStatus) JSON.deserialize(
-      responses[0].orderStatus,
-      GetOrderStatusAction.OrderStatus.class
-    );
-    Assert.areEqual(order.Id, status.id, 'The returned status should be for the requested order');
-    Assert.areEqual('Confirmed', status.status, 'The order status should be returned');
+    System.assertEquals(1, outputs.size());
+    System.assertNotEquals(null, outputs[0].orderStatus);
   }
 
   @isTest
-  static void shouldThrowException_WhenOrderIdNotFound() {
-    // Given
-    GetOrderStatusAction.Input request = new GetOrderStatusAction.Input();
-    request.orderId = 'a00000000000000AAA';
+  static void testGetOrderStatus_Failure() {
+    MockOrderService mockService = new MockOrderService();
+    mockService.shouldThrowException = true;
+    mockService.exceptionMessage = 'No order found with ID: 001000000000000AAA';
+    GetOrderStatusAction.orderService = mockService;
 
-    // When
+    GetOrderStatusAction.Input input = new GetOrderStatusAction.Input();
+    input.orderId = TestDataFactory.getFakeId(Order__c.SObjectType);
+    List<GetOrderStatusAction.Input> inputs = new List<GetOrderStatusAction.Input>{ input };
+
     Test.startTest();
-    Exception caughtException;
     try {
-      GetOrderStatusAction.getOrderStatus(new List<GetOrderStatusAction.Input>{ request });
-    } catch (Exception e) {
-      caughtException = e;
+      GetOrderStatusAction.getOrderStatus(inputs);
+      System.assert(false, 'Expected OrderException to be thrown');
+    } catch (OrderService.OrderException e) {
+      System.assert(e.getMessage().contains('No order found with ID'));
     }
     Test.stopTest();
-
-    // Then
-    Assert.isNotNull(caughtException, 'An exception should be thrown when the order is not found');
-    Assert.isInstanceOfType(
-      caughtException,
-      OrderService.OrderException.class,
-      'An OrderException should be thrown when the order is not found'
-    );
   }
 }

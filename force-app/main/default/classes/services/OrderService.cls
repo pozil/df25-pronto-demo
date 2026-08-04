@@ -2,7 +2,7 @@
  * Service class for managing `Order__c` records and their line items,
  * including lifecycle transitions (draft, confirm, cancel) and item handling.
  */
-public with sharing class OrderService {
+public virtual with sharing class OrderService {
   private static Set<String> orderStatusValues;
 
   /**
@@ -11,7 +11,7 @@ public with sharing class OrderService {
    * @return The matching `Order__c` record.
    * @throws OrderException If no order exists with the given ID.
    */
-  public static Order__c getOrderFromId(Id orderId) {
+  public virtual Order__c getOrderFromId(Id orderId) {
     List<Order__c> orders = [
       SELECT
         Id,
@@ -40,7 +40,7 @@ public with sharing class OrderService {
    * @return The matching `Order__c` record.
    * @throws OrderException If no order exists with the given number.
    */
-  public static Order__c getOrderFromName(String orderName) {
+  public virtual Order__c getOrderFromName(String orderName) {
     List<Order__c> orders = [
       SELECT
         Id,
@@ -71,7 +71,7 @@ public with sharing class OrderService {
    * @return The canceled `Order__c` record.
    * @throws OrderException If the order is not found or cannot be canceled in its current status.
    */
-  public static Order__c cancelOrder(Id orderId, String cancelationReason) {
+  public virtual Order__c cancelOrder(Id orderId, String cancelationReason) {
     List<Order__c> orders = [SELECT Id, Name, Status__c FROM Order__c WHERE Id = :orderId WITH USER_MODE LIMIT 1];
     if (orders.isEmpty()) {
       throw new OrderException('No order found with ID: ' + orderId);
@@ -103,7 +103,7 @@ public with sharing class OrderService {
    * @return The confirmed `Order__c` record.
    * @throws OrderException If the order is not found or is not in `Draft` status.
    */
-  public static Order__c confirmOrder(Id orderId) {
+  public virtual Order__c confirmOrder(Id orderId) {
     List<Order__c> orders = [SELECT Id, Name, Status__c FROM Order__c WHERE Id = :orderId WITH USER_MODE LIMIT 1];
     if (orders.isEmpty()) {
       throw new OrderException('No order found with ID: ' + orderId);
@@ -135,7 +135,7 @@ public with sharing class OrderService {
    * @param storefrontId ID of the storefront the order is placed with.
    * @return The newly created `Order__c` record with its generated Name.
    */
-  public static Order__c createDraftOrder(Id customerId, Id storefrontId) {
+  public virtual Order__c createDraftOrder(Id customerId, Id storefrontId) {
     // Get contact with delivery address
     Contact customer = [
       SELECT Id, MailingAddress, MailingStreet, MailingCity, MailingState, MailingPostalCode, MailingCountry
@@ -169,7 +169,7 @@ public with sharing class OrderService {
    * @return The newly created `Order_Item__c` record.
    * @throws OrderException If the quantity is invalid, the order is not found or not in `Draft` status, or the menu item is not found.
    */
-  public static Order_Item__c addItemToOrder(Id orderId, String orderItemName, Decimal quantity) {
+  public virtual Order_Item__c addItemToOrder(Id orderId, String orderItemName, Decimal quantity) {
     // Validate quantity
     if (quantity == null || quantity <= 0) {
       throw new OrderException('Quantity must be greater than 0.');
@@ -223,7 +223,7 @@ public with sharing class OrderService {
    * @return A list of matching `Order__c` records, newest first.
    * @throws OrderException If the provided status is not a valid picklist value.
    */
-  public static List<Order__c> getOrdersFromCustomer(Id customerId, String orderStatus) {
+  public virtual List<Order__c> getOrdersFromCustomer(Id customerId, String orderStatus) {
     if (!isValidOrderStatus(orderStatus)) {
       throw new OrderException('Invalid status value: ' + orderStatus);
     }
@@ -246,7 +246,7 @@ public with sharing class OrderService {
    * @param orderId ID of the order whose items to retrieve.
    * @return A list of `Order_Item__c` records for the order.
    */
-  public static List<Order_Item__c> getOrderItems(Id orderId) {
+  public virtual List<Order_Item__c> getOrderItems(Id orderId) {
     return [
       SELECT Id, Item_Name__c, Quantity__c, Total_Amount__c
       FROM Order_Item__c
@@ -263,7 +263,7 @@ public with sharing class OrderService {
    * @param value The status value to validate.
    * @return `true` if the value is blank or an active picklist value; otherwise `false`.
    */
-  private static Boolean isValidOrderStatus(String value) {
+  private Boolean isValidOrderStatus(String value) {
     // A blank value means "no status filter", which is valid
     if (String.isBlank(value)) {
       return true;

@@ -1,7 +1,7 @@
-public with sharing class StorefrontService {
-  private static final Integer DEFAULT_STOREFRONT_LIMIT = 10;
+public virtual with sharing class StorefrontService {
+  private final Integer DEFAULT_STOREFRONT_LIMIT = 10;
 
-  public static Storefront__c getStorefrontFromName(String storefrontName) {
+  public virtual Storefront__c getStorefrontFromName(String storefrontName) {
     if (String.isBlank(storefrontName)) {
       throw new StorefrontException('A storefront name must be provided.');
     }
@@ -40,7 +40,7 @@ public with sharing class StorefrontService {
     return resolveExactMatch(storefronts, storefrontName);
   }
 
-  private static Storefront__c resolveExactMatch(List<Storefront__c> storefronts, String storefrontName) {
+  private Storefront__c resolveExactMatch(List<Storefront__c> storefronts, String storefrontName) {
     Set<String> storefrontNames = new Set<String>();
     for (Storefront__c storefront : storefronts) {
       if (storefront.Name == storefrontName) {
@@ -55,7 +55,7 @@ public with sharing class StorefrontService {
     );
   }
 
-  public static List<Storefront__c> getStorefronts(Integer recordLimit) {
+  public virtual List<Storefront__c> getStorefronts(Integer recordLimit) {
     Integer resolvedLimit = (recordLimit == null || recordLimit <= 0) ? DEFAULT_STOREFRONT_LIMIT : recordLimit;
 
     return [
@@ -79,7 +79,7 @@ public with sharing class StorefrontService {
     ];
   }
 
-  public static List<Storefront_Hours_of_Operation__c> getStorefrontHours(Id storefrontId) {
+  public virtual List<Storefront_Hours_of_Operation__c> getStorefrontHours(Id storefrontId) {
     if (storefrontId == null) {
       return new List<Storefront_Hours_of_Operation__c>();
     }

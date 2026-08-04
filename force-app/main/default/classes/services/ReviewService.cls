@@ -3,16 +3,17 @@
  * SOQL/DML and job orchestration related to Review__c records so that invocable
  * actions and other callers remain free of data-access logic.
  */
-public with sharing class ReviewService {
+public virtual with sharing class ReviewService {
   /**
    * @description Retrieves customer reviews for a given storefront, most recent first.
    * @param storefrontId The ID of the storefront to retrieve reviews for
    * @return List of reviews for the storefront (never null)
    * @throws ReviewException if the storefront ID is blank
    * @example
-   * List<Review__c> reviews = ReviewService.getReviewsForStorefront(storefrontId);
+   * ReviewService service = new ReviewService();
+   * List<Review__c> reviews = service.getReviewsForStorefront(storefrontId);
    */
-  public static List<Review__c> getReviewsForStorefront(Id storefrontId) {
+  public virtual List<Review__c> getReviewsForStorefront(Id storefrontId) {
     if (storefrontId == null) {
       throw new ReviewException('Storefront ID is required');
     }
@@ -29,9 +30,10 @@ public with sharing class ReviewService {
    * @description Starts the asynchronous job that regenerates store review summaries.
    * @param forceRefresh Whether to force a refresh even if summaries already exist
    * @example
-   * ReviewService.refreshStoreReviewSummaries(true);
+   * ReviewService service = new ReviewService();
+   * service.refreshStoreReviewSummaries(true);
    */
-  public static void refreshStoreReviewSummaries(Boolean forceRefresh) {
+  public virtual void refreshStoreReviewSummaries(Boolean forceRefresh) {
     StoreReviewSummaryAiJob.startJob(forceRefresh == true);
   }
 
