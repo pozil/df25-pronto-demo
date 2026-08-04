@@ -11,7 +11,7 @@ private class GetOrderStatusActionTest {
   }
 
   @isTest
-  static void shouldReturnStatus_WhenLookupById() {
+  static void shouldReturnStatus() {
     // Given
     Order__c order = [SELECT Id FROM Order__c LIMIT 1];
     GetOrderStatusAction.Input request = new GetOrderStatusAction.Input();
@@ -35,25 +35,27 @@ private class GetOrderStatusActionTest {
   }
 
   @isTest
-  static void shouldReturnStatus_WhenLookupByName() {
+  static void shouldThrowException_WhenOrderIdNotFound() {
     // Given
-    Order__c order = [SELECT Id, Name FROM Order__c LIMIT 1];
     GetOrderStatusAction.Input request = new GetOrderStatusAction.Input();
-    request.orderId = order.Name;
+    request.orderId = 'a00000000000000AAA';
 
     // When
     Test.startTest();
-    List<GetOrderStatusAction.Output> responses = GetOrderStatusAction.getOrderStatus(
-      new List<GetOrderStatusAction.Input>{ request }
-    );
+    Exception caughtException;
+    try {
+      GetOrderStatusAction.getOrderStatus(new List<GetOrderStatusAction.Input>{ request });
+    } catch (Exception e) {
+      caughtException = e;
+    }
     Test.stopTest();
 
     // Then
-    GetOrderStatusAction.OrderStatus status = (GetOrderStatusAction.OrderStatus) JSON.deserialize(
-      responses[0].orderStatus,
-      GetOrderStatusAction.OrderStatus.class
+    Assert.isNotNull(caughtException, 'An exception should be thrown when the order is not found');
+    Assert.isInstanceOfType(
+      caughtException,
+      OrderService.OrderException.class,
+      'An OrderException should be thrown when the order is not found'
     );
-    Assert.areEqual(order.Id, status.id, 'The returned status should be for the requested order');
-    Assert.areEqual(order.Name, status.name, 'The order name should be returned');
   }
 }
