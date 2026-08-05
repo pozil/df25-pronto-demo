@@ -1,0 +1,229 @@
+system:
+    instructions: "You are an AI assistant for Pronto employees, helping them browse storefronts (restaurants) and check order status."
+
+    messages:
+        welcome: "Hi, I'm the Pronto employee assistant. How can I help you?"
+        error: "Sorry, it looks like something has gone wrong."
+
+config:
+    agent_label: "Employee Assistant"
+    developer_name: "Employee_Assistant"
+    agent_type: "AgentforceEmployeeAgent"
+    description: "You are an AI assistant for Pronto employees, helping them browse storefronts and check order status."
+    enable_enhanced_event_logs: True
+
+variables:
+    orderStatus: mutable string = ""
+        description: "The status of the order"
+    orders: mutable list[object]
+        description: "Customer orders"
+    storefrontId: mutable string = ""
+        description: "The record ID of the storefront being viewed"
+    storefronts: mutable list[object]
+        description: "The list of available storefronts"
+    storefrontDetails: mutable string = ""
+        description: "Details of a specific storefront"
+    storefrontHours: mutable list[object]
+        description: "The operating hours of a storefront"
+    menuItems: mutable list[object]
+        description: "The available menu items of a storefront"
+    reviews: mutable list[object]
+        description: "Customer reviews for a storefront"
+
+start_agent agent_router:
+    description: "Welcome the employee and ask them about their intent"
+
+    reasoning:
+        instructions: ->
+            | Greet the employee and ask them how you can help.
+            | Call {!@actions.transition_to_view_orders} when the employee wants to check order status or view orders.
+            | Call {!@actions.transition_to_browse_storefronts} when the employee wants to browse storefronts, look up a storefront, check operating hours, or view menu items.
+
+        actions:
+            transition_to_view_orders: @utils.transition to @subagent.view_orders
+                description: "Call this when the employee wants to view or check order status"
+
+            transition_to_browse_storefronts: @utils.transition to @subagent.browse_storefronts
+                description: "Call this when the employee wants to browse storefronts"
+
+subagent view_orders:
+    description: "View and check order status"
+
+    reasoning:
+        instructions: ->
+            | Help the employee check order status and view order details.
+            | Ask the employee for the order ID they want to check, then call {!@actions.getOrderStatus} with that order ID.
+            | You can also call {!@actions.getOrders} to retrieve orders for a specific customer if the employee provides a customer ID.
+            | After each action, present the returned details directly in your text response using the exact values returned.
+        actions:
+            getOrderStatus: @actions.getOrderStatus
+                with orderId=...
+                set @variables.orderStatus=@outputs.orderStatus
+            getOrders: @actions.getOrders
+                with customerId=...
+                set @variables.orders=@outputs.orders
+            transition_to_browse_storefronts: @utils.transition to @subagent.browse_storefronts
+                description: "Call this when the employee wants to browse storefronts"
+
+    actions:
+        getOrderStatus:
+            description: "Gets the status and details of an order by its ID"
+            inputs:
+                orderId: id
+                    description: "The Salesforce record ID of the order to get status for."
+                    label: "Order ID"
+                    is_required: True
+            outputs:
+                orderStatus: string
+                    label: "Order Status"
+            target: "apex://GetOrderStatusAction"
+            label: "Get Order Status"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving order status..."
+
+        getOrders:
+            description: "Gets customer orders"
+            inputs:
+                customerId: string
+                    description: "Customer ID to retrieve orders from."
+                    label: "Customer ID"
+                    is_required: True
+            outputs:
+                orders: list[object]
+                    label: "Orders"
+                    complex_data_type_name: "lightning__recordInfoType"
+            target: "apex://GetOrdersAction"
+            label: "Get Orders"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving orders..."
+
+subagent browse_storefronts:
+    description: "Browse storefronts, look one up by name, and check its operating hours"
+
+    reasoning:
+        instructions: ->
+            | Help the employee explore Pronto storefronts.
+            | Call {!@actions.getStorefronts} to list the available storefronts.
+            | Call {!@actions.getStorefrontByName} when the employee names a specific storefront they want details for.
+            | Call {!@actions.getStorefrontHours} to retrieve a storefront's operating hours. Use the storefront Id returned by {!@actions.getStorefrontByName} or {!@actions.getStorefronts}.
+            | Call {!@actions.getMenuItems} to retrieve a storefront's available menu items when asked about the menu, dishes, or what's available. Use the storefront Id returned by {!@actions.getStorefrontByName} or {!@actions.getStorefronts}.
+            | Call {!@actions.getCustomerReviews} to retrieve customer reviews for a storefront when asked about reviews, ratings, or customer feedback. Use the storefront Id returned by {!@actions.getStorefrontByName} or {!@actions.getStorefronts}.
+            | After each action, present the returned details directly in your text response using the exact values returned. Do NOT call an action again unless the employee asks for new information.
+        actions:
+            getStorefronts: @actions.getStorefronts
+                set @variables.storefronts=@outputs.storefronts
+            getStorefrontByName: @actions.getStorefrontByName
+                with storefrontName=...
+                set @variables.storefrontDetails=@outputs.storefront
+                set @variables.storefrontId=@outputs.storefrontId
+            getStorefrontHours: @actions.getStorefrontHours
+                with storefrontId=...
+                set @variables.storefrontHours=@outputs.hours
+            getMenuItems: @actions.getMenuItems
+                with storefrontId=...
+                set @variables.menuItems=@outputs.menuItems
+            getCustomerReviews: @actions.getCustomerReviews
+                with storefrontId=...
+                set @variables.reviews=@outputs.reviews
+            transition_to_view_orders: @utils.transition to @subagent.view_orders
+                description: "Call this when the employee wants to check order status"
+
+    actions:
+        getStorefronts:
+            description: "Retrieves the first 10 storefronts"
+            inputs:
+                recordLimit: integer
+                    description: "Optional maximum number of storefronts to return. Defaults to 10."
+                    label: "Record Limit"
+                    is_required: False
+            outputs:
+                storefronts: list[object]
+                    label: "Storefronts"
+                    complex_data_type_name: "lightning__recordInfoType"
+            target: "apex://GetStorefrontsAction"
+            label: "Get Storefronts"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving storefronts..."
+
+        getStorefrontByName:
+            description: "Retrieves a storefront record by its name"
+            inputs:
+                storefrontName: string
+                    description: "The name of the storefront to retrieve."
+                    label: "Storefront Name"
+                    is_required: True
+            outputs:
+                storefront: object
+                    label: "Storefront"
+                    complex_data_type_name: "lightning__recordInfoType"
+                storefrontId: id
+                    description: "The Id of the storefront"
+                    label: "Storefront Id"
+            target: "apex://GetStorefrontByNameAction"
+            label: "Get Storefront By Name"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving storefront..."
+
+        getStorefrontHours:
+            description: "Retrieves the operating hours for a storefront by its Id"
+            inputs:
+                storefrontId: object
+                    description: "The Id of the storefront whose operating hours are retrieved."
+                    label: "Storefront Id"
+                    is_required: True
+                    complex_data_type_name: "lightning__recordIdType"
+            outputs:
+                hours: list[object]
+                    label: "Hours of Operation"
+                    complex_data_type_name: "lightning__recordInfoType"
+            target: "apex://GetStorefrontHoursAction"
+            label: "Get Storefront Hours"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving operating hours..."
+
+        getMenuItems:
+            description: "Retrieves the available menu items for a storefront by its Id"
+            inputs:
+                storefrontId: id
+                    description: "The Id of the storefront whose menu items are retrieved."
+                    label: "Storefront Id"
+                    is_required: True
+            outputs:
+                isSuccess: boolean
+                    label: "Is Success"
+                message: string
+                    label: "Message"
+                menuItems: list[object]
+                    label: "Menu Items"
+                    complex_data_type_name: "lightning__recordInfoType"
+            target: "apex://GetMenuItemsAction"
+            label: "Get Menu Items"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving menu items..."
+
+        getCustomerReviews:
+            description: "Retrieves customer reviews for a storefront by its Id"
+            inputs:
+                storefrontId: id
+                    description: "The Id of the storefront whose customer reviews are retrieved."
+                    label: "Storefront Id"
+                    is_required: True
+            outputs:
+                isSuccess: boolean
+                    label: "Is Success"
+                message: string
+                    label: "Message"
+                reviews: list[object]
+                    label: "Reviews"
+                    complex_data_type_name: "lightning__recordInfoType"
+            target: "apex://GetCustomerReviewsAction"
+            label: "Get Customer Reviews"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Retrieving customer reviews..."

@@ -1,5 +1,5 @@
 system:
-    instructions: "You are an AI assistant for Pronto, helping customer browse storefronts (restaurants) and manage their food orders (Order__c custom object)."
+    instructions: "You are an AI assistant for Pronto, helping customer browse storefronts (restaurants) and manage their food orders (Order__c custom object). Do not offer to make reservations. Only offer to place orders."
 
     messages:
         welcome: "Hi, I'm the Pronto customer service assistant. How can I help you?"
@@ -163,7 +163,7 @@ subagent manage_orders:
             progress_indicator_message: "Retrieving order status..."
 
         getOrders:
-            description: "Gets the customer orders"
+            description: "Gets customer orders"
             inputs:
                 customerId: string
                     description: "Customer ID to retrieve orders from."
