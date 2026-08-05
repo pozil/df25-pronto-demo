@@ -5,28 +5,20 @@
 private class ReviewServiceTest {
   @TestSetup
   static void setupTestData() {
-    Storefront__c storefront = TestDataFactory.createStorefronts(1, true)[0];
-
-    // Create reviews for the storefront
-    List<Review__c> reviews = new List<Review__c>();
-    for (Integer i = 0; i < 3; i++) {
-      reviews.add(
-        new Review__c(
-          Storefront__c = storefront.Id,
-          Rating__c = 4 + (Math.mod(i, 2)),
-          Comments__c = 'Test review ' + i,
-          Status__c = 'Published'
-        )
-      );
-    }
-    insert reviews;
+    List<Storefront__c> storefronts = TestDataFactory.createStorefronts(2, true);
+    TestDataFactory.createReviews(storefronts[0].Id, 5, true);
   }
 
   @isTest
   static void shouldGetReviewsForStorefront_WhenStorefrontHasReviews() {
     // Given
     ReviewService service = new ReviewService();
-    Storefront__c storefront = [SELECT Id FROM Storefront__c LIMIT 1];
+    Storefront__c storefront = [
+      SELECT Id
+      FROM Storefront__c
+      WHERE Name = :TestDataFactory.STOREFRONT_NAME_PREFIX + '0'
+      LIMIT 1
+    ];
 
     // When
     Test.startTest();
@@ -34,15 +26,40 @@ private class ReviewServiceTest {
     Test.stopTest();
 
     // Then
-    Assert.areEqual(3, results.size(), 'Should return all reviews for the storefront');
-    // Re-query to get the Storefront__c field for verification
-    List<Review__c> queriedReviews = [SELECT Storefront__c FROM Review__c WHERE Id IN :results];
-    for (Review__c review : queriedReviews) {
-      Assert.areEqual(storefront.Id, review.Storefront__c, 'All reviews should belong to the storefront');
-    }
+    Assert.areEqual(5, results.size(), 'Should return all reviews for the storefront');
     for (Review__c review : results) {
+      Assert.areEqual(storefront.Id, review.Storefront__c, 'All reviews should belong to the storefront');
       Assert.isNotNull(review.Rating__c, 'Should include rating');
       Assert.isNotNull(review.Comments__c, 'Should include comments');
+      Assert.isNotNull(review.Status__c, 'Should include status');
+    }
+  }
+
+  @isTest
+  static void shouldReturnReviewsInDescendingOrderByDate() {
+    // Given
+    ReviewService service = new ReviewService();
+    Storefront__c storefront = [
+      SELECT Id
+      FROM Storefront__c
+      WHERE Name = :TestDataFactory.STOREFRONT_NAME_PREFIX + '0'
+      LIMIT 1
+    ];
+
+    // When
+    Test.startTest();
+    List<Review__c> results = service.getReviewsForStorefront(storefront.Id);
+    Test.stopTest();
+
+    // Then
+    Assert.areEqual(5, results.size(), 'Should return all reviews');
+    Date previousDate = Date.today().addDays(1);
+    for (Review__c review : results) {
+      Assert.isTrue(
+        review.Order_Date__c <= previousDate,
+        'Reviews should be ordered by Order_Date__c in descending order'
+      );
+      previousDate = review.Order_Date__c;
     }
   }
 
@@ -50,11 +67,16 @@ private class ReviewServiceTest {
   static void shouldReturnEmptyList_WhenStorefrontHasNoReviews() {
     // Given
     ReviewService service = new ReviewService();
-    Storefront__c newStorefront = TestDataFactory.createStorefronts(1, true)[0];
+    Storefront__c storefront = [
+      SELECT Id
+      FROM Storefront__c
+      WHERE Name = :TestDataFactory.STOREFRONT_NAME_PREFIX + '1'
+      LIMIT 1
+    ];
 
     // When
     Test.startTest();
-    List<Review__c> results = service.getReviewsForStorefront(newStorefront.Id);
+    List<Review__c> results = service.getReviewsForStorefront(storefront.Id);
     Test.stopTest();
 
     // Then
@@ -72,7 +94,7 @@ private class ReviewServiceTest {
       service.getReviewsForStorefront(null);
       Assert.fail('Should have thrown ReviewException');
     } catch (ReviewService.ReviewException e) {
-      Assert.isTrue(e.getMessage().contains('required'), 'Exception should indicate storefront ID is required');
+      Assert.isTrue(e.getMessage().contains('must be provided'), 'Exception should indicate ID is required');
     }
     Test.stopTest();
   }

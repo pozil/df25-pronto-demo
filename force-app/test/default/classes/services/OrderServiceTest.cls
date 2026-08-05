@@ -368,4 +368,36 @@ private class OrderServiceTest {
     // Then
     Assert.areEqual(0, results.size(), 'Should return empty list when no items exist');
   }
+
+  @isTest
+  static void shouldThrowException_WhenGetOrderItemsOrderIdIsNull() {
+    // Given
+    OrderService service = new OrderService();
+
+    // When / Then
+    Test.startTest();
+    try {
+      service.getOrderItems(null);
+      Assert.fail('Should have thrown OrderException');
+    } catch (OrderService.OrderException e) {
+      Assert.isTrue(e.getMessage().contains('must be provided'), 'Exception should indicate ID is required');
+    }
+    Test.stopTest();
+  }
+
+  @isTest
+  static void shouldThrowException_WhenGetOrdersFromCustomerIdIsNull() {
+    // Given
+    OrderService service = new OrderService();
+
+    // When / Then
+    Test.startTest();
+    try {
+      service.getOrdersFromCustomer(null, '');
+      Assert.fail('Should have thrown OrderException');
+    } catch (OrderService.OrderException e) {
+      Assert.isTrue(e.getMessage().contains('must be provided'), 'Exception should indicate ID is required');
+    }
+    Test.stopTest();
+  }
 }

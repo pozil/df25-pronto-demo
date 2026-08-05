@@ -81,7 +81,7 @@ public virtual with sharing class StorefrontService {
 
   public virtual List<Storefront_Hours_of_Operation__c> getStorefrontHours(Id storefrontId) {
     if (storefrontId == null) {
-      return new List<Storefront_Hours_of_Operation__c>();
+      throw new StorefrontException('A storefront ID must be provided.');
     }
 
     return [
@@ -98,14 +98,14 @@ public virtual with sharing class StorefrontService {
    * Menu items are resolved through their parent Menu's Storefront lookup and
    * only records flagged as available are returned.
    * @param storefrontId The Id of the storefront whose menu items are retrieved
-   * @return The available menu items for the storefront, or an empty list when
-   *         the Id is null or no items exist
+   * @return The available menu items for the storefront
+   * @throws StorefrontException if storefrontId is null
    * @example
    * List<Menu_Item__c> items = new StorefrontService().getMenuItems(storefrontId);
    */
   public virtual List<Menu_Item__c> getMenuItems(Id storefrontId) {
     if (storefrontId == null) {
-      return new List<Menu_Item__c>();
+      throw new StorefrontException('A storefront ID must be provided.');
     }
 
     return [

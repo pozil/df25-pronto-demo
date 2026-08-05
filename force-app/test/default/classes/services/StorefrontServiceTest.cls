@@ -189,17 +189,19 @@ private class StorefrontServiceTest {
   }
 
   @isTest
-  static void shouldReturnEmptyList_WhenStorefrontIdIsNull() {
+  static void shouldThrowException_WhenStorefrontHoursIdIsNull() {
     // Given
     StorefrontService service = new StorefrontService();
 
-    // When
+    // When / Then
     Test.startTest();
-    List<Storefront_Hours_of_Operation__c> results = service.getStorefrontHours(null);
+    try {
+      service.getStorefrontHours(null);
+      Assert.fail('Should have thrown StorefrontException');
+    } catch (StorefrontService.StorefrontException e) {
+      Assert.isTrue(e.getMessage().contains('must be provided'), 'Exception should indicate ID is required');
+    }
     Test.stopTest();
-
-    // Then
-    Assert.areEqual(0, results.size(), 'Should return empty list when storefront ID is null');
   }
 
   @isTest
@@ -271,16 +273,18 @@ private class StorefrontServiceTest {
   }
 
   @isTest
-  static void shouldReturnEmptyList_WhenMenuItemsStorefrontIdIsNull() {
+  static void shouldThrowException_WhenMenuItemsStorefrontIdIsNull() {
     // Given
     StorefrontService service = new StorefrontService();
 
-    // When
+    // When / Then
     Test.startTest();
-    List<Menu_Item__c> results = service.getMenuItems(null);
+    try {
+      service.getMenuItems(null);
+      Assert.fail('Should have thrown StorefrontException');
+    } catch (StorefrontService.StorefrontException e) {
+      Assert.isTrue(e.getMessage().contains('must be provided'), 'Exception should indicate ID is required');
+    }
     Test.stopTest();
-
-    // Then
-    Assert.areEqual(0, results.size(), 'Should return empty list when storefront ID is null');
   }
 }

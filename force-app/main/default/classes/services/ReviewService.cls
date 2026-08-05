@@ -7,22 +7,35 @@ public virtual with sharing class ReviewService {
   /**
    * @description Retrieves customer reviews for a given storefront, most recent first.
    * @param storefrontId The ID of the storefront to retrieve reviews for
-   * @return List of reviews for the storefront (never null)
-   * @throws ReviewException if the storefront ID is blank
+   * @return List of reviews for the storefront
+   * @throws ReviewException if storefrontId is null
    * @example
    * ReviewService service = new ReviewService();
    * List<Review__c> reviews = service.getReviewsForStorefront(storefrontId);
    */
   public virtual List<Review__c> getReviewsForStorefront(Id storefrontId) {
     if (storefrontId == null) {
-      throw new ReviewException('Storefront ID is required');
+      throw new ReviewException('A storefront ID must be provided.');
     }
+
     return [
-      SELECT Id, Rating__c, Comments__c, Status__c, Order_Date__c, CreatedDate
+      SELECT
+        Id,
+        Name,
+        Comments__c,
+        Rating__c,
+        Customer__c,
+        Customer_Email__c,
+        Order_Date__c,
+        Positive_or_Negative__c,
+        Status__c,
+        Category__c,
+        Restaurant_Response__c,
+        Storefront__c
       FROM Review__c
       WHERE Storefront__c = :storefrontId
       WITH USER_MODE
-      ORDER BY CreatedDate DESC
+      ORDER BY Order_Date__c DESC NULLS LAST, CreatedDate DESC
     ];
   }
 
@@ -37,9 +50,6 @@ public virtual with sharing class ReviewService {
     StoreReviewSummaryAiJob.startJob(forceRefresh == true);
   }
 
-  /**
-   * @description Domain exception for review service errors.
-   */
   public class ReviewException extends Exception {
   }
 }

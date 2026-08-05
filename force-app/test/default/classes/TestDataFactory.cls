@@ -175,6 +175,32 @@ public class TestDataFactory {
   }
 
   /**
+   * Builds Review records for the given storefront.
+   * @param storefrontId The parent storefront Id
+   * @param count Number of reviews to build
+   * @param doInsert Whether to insert the records
+   * @return The built (and optionally inserted) reviews
+   */
+  public static List<Review__c> createReviews(Id storefrontId, Integer count, Boolean doInsert) {
+    List<Review__c> reviews = new List<Review__c>();
+    for (Integer i = 0; i < count; i++) {
+      reviews.add(
+        new Review__c(
+          Storefront__c = storefrontId,
+          Rating__c = Math.mod(i, 5) + 1.0,
+          Comments__c = 'Test review ' + i,
+          Status__c = 'Published',
+          Order_Date__c = Date.today().addDays(-i)
+        )
+      );
+    }
+    if (doInsert && !reviews.isEmpty()) {
+      insert reviews;
+    }
+    return reviews;
+  }
+
+  /**
    * Builds mock Review records with fake IDs.
    * @param count Number of reviews to build
    * @return The built mock reviews
@@ -187,7 +213,7 @@ public class TestDataFactory {
           Id = getFakeId(Schema.Review__c.SObjectType),
           Rating__c = Math.mod(i, 5) + 1.0,
           Comments__c = 'Test review ' + i,
-          Status__c = 'Approved',
+          Status__c = 'Published',
           Order_Date__c = Date.today().addDays(-i)
         )
       );

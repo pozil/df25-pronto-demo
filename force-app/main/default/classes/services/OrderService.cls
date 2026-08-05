@@ -221,9 +221,13 @@ public virtual with sharing class OrderService {
    * @param customerId ID of the customer (Contact) whose orders to retrieve.
    * @param orderStatus Optional status to filter by; blank returns all statuses.
    * @return A list of matching `Order__c` records, newest first.
-   * @throws OrderException If the provided status is not a valid picklist value.
+   * @throws OrderException If customerId is null or the provided status is not a valid picklist value.
    */
   public virtual List<Order__c> getOrdersFromCustomer(Id customerId, String orderStatus) {
+    if (customerId == null) {
+      throw new OrderException('A customer ID must be provided.');
+    }
+
     if (!isValidOrderStatus(orderStatus)) {
       throw new OrderException('Invalid status value: ' + orderStatus);
     }
@@ -245,8 +249,13 @@ public virtual with sharing class OrderService {
    * Retrieves all line items for a given order.
    * @param orderId ID of the order whose items to retrieve.
    * @return A list of `Order_Item__c` records for the order.
+   * @throws OrderException If orderId is null.
    */
   public virtual List<Order_Item__c> getOrderItems(Id orderId) {
+    if (orderId == null) {
+      throw new OrderException('An order ID must be provided.');
+    }
+
     return [
       SELECT Id, Item_Name__c, Quantity__c, Total_Amount__c
       FROM Order_Item__c
