@@ -1,19 +1,23 @@
-# DF25 - Pronto Customizations for Agentforce demos
+# Pronto Sample App
 
 ## About
 
-Customizes the Pronto reference for Agentforce demos at DF25.
+Pronto is a fictional, AI-driven food delivery platform that uses the Headless 360 Platform to serve their customers.
 
-Adds the following features:
+The sample app ships with the following:
 
+- Custom data model (storefronts, orders, reviews, menus...) along with the related sample records
 - Storefront Explorer Lightning page
-- Menu PDF importer via Prompt Template
-- Agents with their actions
-- AI Job monitor
+- LWR Site for customer support
+- Agentforce Agents with their actions:
+  - Customer Service Assitant agent (browse storefronts, manager orders...)
+  - Employee Assistant agent (browse storefronts, view orders, view reviews...)
 
 ## Setup instructions
 
-Run the setup script on an existing Pronto org:
+1. Clone the project
+1. Set up a Dev Hub org with the Salesforce CLI
+1. Run the setup script from the project root folder to create a scratch org:
 
 ```sh
 ./bin/install.sh
