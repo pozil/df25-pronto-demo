@@ -4,6 +4,7 @@
     <description>Parses the PDF attached to a storefront and turn it into structured menu data.</description>
     <developerName>Extract_Menu</developerName>
     <masterLabel>Extract Menu</masterLabel>
+    <overridable>false</overridable>
     <templateVersions>
         <content>The attached files hold a menu for this restaurant:
 {!$RelatedList:storefront.CombinedAttachments.Records}
@@ -27,6 +28,7 @@ Directly output the array as above.
             <referenceName>Input:storefront</referenceName>
             <required>true</required>
         </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
         <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
         <responseFormat>JSON</responseFormat>
         <status>Published</status>

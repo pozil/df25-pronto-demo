@@ -3,6 +3,7 @@
     <activeVersionIdentifier>NWe5ey43TcfBa+4hPyPjwJOdYntsY9tBGVvrmmwVh/k=_1</activeVersionIdentifier>
     <developerName>Customer_Review_Summary_Flex</developerName>
     <masterLabel>Customer Review Summary Flex</masterLabel>
+    <overridable>false</overridable>
     <templateVersions>
         <content>These are the customer reviews for this storefront:
 {!$RelatedList:storefront.Reviews__r.Records}
@@ -37,6 +38,7 @@ For feedback items:
             <referenceName>Input:storefront</referenceName>
             <required>true</required>
         </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
         <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
         <status>Published</status>
         <templateDataProviders>

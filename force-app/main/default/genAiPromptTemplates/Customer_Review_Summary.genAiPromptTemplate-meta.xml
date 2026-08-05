@@ -4,6 +4,7 @@
     <description>Summarizes customer reviews</description>
     <developerName>Customer_Review_Summary</developerName>
     <masterLabel>Customer Review Summary</masterLabel>
+    <overridable>false</overridable>
     <relatedEntity>Storefront__c</relatedEntity>
     <relatedField>Storefront__c.Review_Summary__c</relatedField>
     <templateVersions>
@@ -39,6 +40,7 @@ For feedback items:
             <referenceName>Input:Storefront__c</referenceName>
             <required>true</required>
         </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
         <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
         <status>Published</status>
         <templateDataProviders>

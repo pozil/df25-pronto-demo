@@ -10,3 +10,16 @@ package.xml
 
 # LWC Jest
 **/__tests__/**
+
+# Standard metadata
+**/dashboards/**
+**/permissionsetgroups/force__**
+**/permissionsets/sfdc__**
+**/permissionsets/sfdcInternalInt__**
+**/profiles/**
+**/profilePasswordPolicies/**
+**/profileSessionSettings/**
+**/reports/**
+**/reportTypes/**
+**/cspTrustedSites/Voice_https_**
+**/cspTrustedSites/Voice_wss_**
