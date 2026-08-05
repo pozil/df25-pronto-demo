@@ -14,7 +14,7 @@ package.xml
 # Standard metadata
 **/dashboards/**
 **/permissionsetgroups/force__**
-**/permissionsets/sfdc__**
+**/permissionsets/sfdc_**
 **/permissionsets/sfdcInternalInt__**
 **/profiles/**
 **/profilePasswordPolicies/**
